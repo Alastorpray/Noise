@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 import { useMemo, useState, useRef } from 'react'
-import { createPortal, useFrame } from '@react-three/fiber'
+import { createPortal, useFrame, useThree } from '@react-three/fiber'
 import { useFBO } from '@react-three/drei'
 import './shaders/simulationMaterial'
 import './shaders/dofPointsMaterial'
@@ -8,6 +8,9 @@ import './shaders/dofPointsMaterial'
 export function Particles({ speed, fov, aperture, focus, curl, size = 512, windX = -1, windY = 0, windSpeed = 1.0, fallSpeed = 0.4, windOsc = 1.0, sizeMode = 'fixed', sizeFixed = 3, sizeMin = 1, sizeMax = 5, ...props }) {
   const simRef = useRef()
   const renderRef = useRef()
+  const { viewport, camera: mainCamera } = useThree()
+  const mousePos = useRef(new THREE.Vector3(0, 0, 0))
+  const [mouseActive, setMouseActive] = useState(false)
   // Set up FBO
   const [scene] = useState(() => new THREE.Scene())
   const [camera] = useState(() => new THREE.OrthographicCamera(-1, 1, 1, -1, 1 / Math.pow(2, 53), 1))
@@ -30,6 +33,33 @@ export function Particles({ speed, fov, aperture, focus, curl, size = 512, windX
     }
     return particles
   }, [size])
+
+  // Track mouse movement
+  useMemo(() => {
+    const handleMouseMove = (event) => {
+      const x = (event.clientX / window.innerWidth) * 2 - 1
+      const y = -(event.clientY / window.innerHeight) * 2 + 1
+
+      const vec = new THREE.Vector3(x, y, 0.5)
+      vec.unproject(mainCamera)
+      vec.sub(mainCamera.position).normalize()
+      const distance = -mainCamera.position.z / vec.z
+      mousePos.current.copy(mainCamera.position).add(vec.multiplyScalar(distance))
+      setMouseActive(true)
+    }
+
+    const handleMouseLeave = () => {
+      setMouseActive(false)
+    }
+
+    window.addEventListener('mousemove', handleMouseMove)
+    window.addEventListener('mouseleave', handleMouseLeave)
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove)
+      window.removeEventListener('mouseleave', handleMouseLeave)
+    }
+  }, [mainCamera])
   // Update FBO and pointcloud every frame
   useFrame((state) => {
     if (!renderRef.current || !simRef.current) return
@@ -47,6 +77,10 @@ export function Particles({ speed, fov, aperture, focus, curl, size = 512, windX
     simRef.current.uniforms.uWindSpeed.value = windSpeed
     simRef.current.uniforms.uFallSpeed.value = fallSpeed
     simRef.current.uniforms.uWindOsc.value = windOsc
+    simRef.current.uniforms.uMousePos.value = mousePos.current
+    simRef.current.uniforms.uMouseActive.value = mouseActive ? 1.0 : 0.0
+    renderRef.current.uniforms.uMousePos.value = mousePos.current
+    renderRef.current.uniforms.uMouseActive.value = mouseActive ? 1.0 : 0.0
     renderRef.current.uniforms.uSizeMode.value = sizeMode === 'random' ? 1 : 0
     renderRef.current.uniforms.uSizeFixed.value = sizeFixed
     renderRef.current.uniforms.uSizeMin.value = sizeMin

@@ -27,6 +27,8 @@ class SimulationMaterial extends THREE.ShaderMaterial {
       uniform float uWindSpeed;
       uniform float uFallSpeed;
       uniform float uWindOsc;
+      uniform vec3 uMousePos;
+      uniform float uMouseActive;
       varying vec2 vUv;
       float hash(vec2 p){
         return fract(sin(dot(p, vec2(12.9898,78.233))) * 43758.5453);
@@ -41,6 +43,18 @@ class SimulationMaterial extends THREE.ShaderMaterial {
         float y = (uv.y - 0.5) * 12.0 + wind.y + (sin(t * 1.7 + n.y * 6.0) * 0.5);
         float z = h * 20.0;
         vec3 pos = vec3(x, y, z);
+
+        // Atracción al mouse
+        if (uMouseActive > 0.5) {
+          vec3 toMouse = uMousePos - pos;
+          float dist = length(toMouse);
+          float attractionRadius = 1.0;
+          if (dist < attractionRadius) {
+            float strength = (1.0 - dist / attractionRadius) * 0.8;
+            pos += toMouse * strength;
+          }
+        }
+
         gl_FragColor = vec4(pos, 1.0);
       }`,
       uniforms: {
@@ -48,7 +62,9 @@ class SimulationMaterial extends THREE.ShaderMaterial {
         uWindDir: { value: new THREE.Vector2(1, 0) },
         uWindSpeed: { value: 0.5 },
         uFallSpeed: { value: 0.4 },
-        uWindOsc: { value: 1.0 }
+        uWindOsc: { value: 1.0 },
+        uMousePos: { value: new THREE.Vector3(0, 0, 0) },
+        uMouseActive: { value: 0.0 }
       }
     })
   }
