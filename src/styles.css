@@ -43,14 +43,10 @@ canvas {
   user-select: none;
 }
 
-#text-overlay .title {
-  font-size: 42px;
-  font-weight: 500;
-  letter-spacing: 0.02em;
-  margin-bottom: 8px;
-}
-
-#text-overlay .subtitle {
-  font-size: 20px;
-  font-weight: 400;
+#text-overlay img {
+  max-width: 20vw;
+  max-height: 8vh;
+  width: auto;
+  height: auto;
+  display: block;
 }

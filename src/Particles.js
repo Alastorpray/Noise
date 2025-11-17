@@ -39,9 +39,9 @@ export function Particles({ speed, fov, aperture, focus, curl, size = 512, windX
     state.gl.setRenderTarget(null)
     renderRef.current.uniforms.positions.value = target.texture
     renderRef.current.uniforms.uTime.value = state.clock.elapsedTime
-    renderRef.current.uniforms.uFocus.value = THREE.MathUtils.lerp(renderRef.current.uniforms.uFocus.value, focus, 0.1)
-    renderRef.current.uniforms.uFov.value = THREE.MathUtils.lerp(renderRef.current.uniforms.uFov.value, fov, 0.1)
-    renderRef.current.uniforms.uBlur.value = THREE.MathUtils.lerp(renderRef.current.uniforms.uBlur.value, (5.6 - aperture) * 9, 0.1)
+    renderRef.current.uniforms.uFocus.value = focus
+    renderRef.current.uniforms.uFov.value = fov
+    renderRef.current.uniforms.uBlur.value = (5.6 - aperture) * 9
     simRef.current.uniforms.uTime.value = state.clock.elapsedTime * speed
     simRef.current.uniforms.uWindDir.value.set(windX, windY)
     simRef.current.uniforms.uWindSpeed.value = windSpeed
