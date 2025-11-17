@@ -31,6 +31,8 @@ class SimulationMaterial extends THREE.ShaderMaterial {
       uniform float uMouseActive;
       uniform float uAttractionRadius;
       uniform float uAttractionStrength;
+      uniform float uVortexStrength;
+      uniform float uVortexSpeed;
       varying vec2 vUv;
       float hash(vec2 p){
         return fract(sin(dot(p, vec2(12.9898,78.233))) * 43758.5453);
@@ -46,13 +48,33 @@ class SimulationMaterial extends THREE.ShaderMaterial {
         float z = h * 20.0;
         vec3 pos = vec3(x, y, z);
 
-        // Atracción al mouse
+        // Efecto vórtex alrededor del mouse
         if (uMouseActive > 0.5) {
           vec3 toMouse = uMousePos - pos;
           float dist = length(toMouse);
-          if (dist < uAttractionRadius) {
-            float strength = (1.0 - dist / uAttractionRadius) * uAttractionStrength;
-            pos += toMouse * strength;
+
+          if (dist < uAttractionRadius && dist > 0.01) {
+            float influence = 1.0 - (dist / uAttractionRadius);
+            influence = pow(influence, 1.5);
+
+            // Fuerza de atracción radial (hacia el mouse)
+            vec3 attractionForce = normalize(toMouse) * influence * uAttractionStrength;
+
+            // Fuerza tangencial (rotación) para crear el vórtex
+            // Calcular vector perpendicular para rotación
+            vec3 tangent = cross(toMouse, vec3(0.0, 0.0, 1.0));
+            if (length(tangent) < 0.01) {
+              tangent = cross(toMouse, vec3(0.0, 1.0, 0.0));
+            }
+            tangent = normalize(tangent);
+
+            // La fuerza de rotación es más fuerte cerca del mouse
+            float rotationStrength = influence * uVortexStrength * uVortexSpeed;
+            vec3 vortexForce = tangent * rotationStrength;
+
+            // Combinar fuerzas
+            pos += attractionForce * 0.3;
+            pos += vortexForce * 0.15;
           }
         }
 
@@ -67,7 +89,9 @@ class SimulationMaterial extends THREE.ShaderMaterial {
         uMousePos: { value: new THREE.Vector3(0, 0, 0) },
         uMouseActive: { value: 0.0 },
         uAttractionRadius: { value: 1.0 },
-        uAttractionStrength: { value: 0.8 }
+        uAttractionStrength: { value: 0.8 },
+        uVortexStrength: { value: 1.5 },
+        uVortexSpeed: { value: 1.0 }
       }
     })
   }

@@ -31,6 +31,10 @@ export default function App() {
     // Controles de atracción del mouse
     attractionRadius: { value: 1.0, min: 0.1, max: 5, step: 0.1 },
     attractionStrength: { value: 0.8, min: 0, max: 2, step: 0.1 },
+    vortexStrength: { value: 1.5, min: 0, max: 5, step: 0.1 },
+    vortexSpeed: { value: 1.0, min: 0, max: 5, step: 0.1 },
+    vortexColor: { value: '#ff6600' },
+    vortexIntensity: { value: 3.0, min: 0, max: 10, step: 0.1 },
 
     // Controles de brillo/glow
     glowIntensity: { value: 3.5, min: 0, max: 10, step: 0.1 },

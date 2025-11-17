@@ -52,6 +52,8 @@ class DofPointsMaterial extends THREE.ShaderMaterial {
       uniform float uMouseActive;
       uniform float uAttractionRadius;
       uniform float uGlowIntensity;
+      uniform vec3 uVortexColor;
+      uniform float uVortexIntensity;
       uniform float uCenterGlowRadius;
       uniform float uCenterGlowIntensity;
       varying float vDistance;
@@ -84,26 +86,25 @@ class DofPointsMaterial extends THREE.ShaderMaterial {
           isGlowing = true;
         }
 
-        // Efecto glow para partículas cerca del mouse
+        // Efecto glow para partículas cerca del mouse (vórtex)
         if (uMouseActive > 0.5 && vMouseDist < uAttractionRadius) {
           float mixFactor = 1.0 - (vMouseDist / uAttractionRadius);
           mixFactor = pow(mixFactor, 0.5);
 
-          // Color naranja intenso para el glow del mouse
-          vec3 orange = vec3(1.0, 0.4, 0.0);
-          color = mix(color, orange, mixFactor * 0.8);
+          // Color del vórtex personalizable
+          color = mix(color, uVortexColor, mixFactor * 0.8);
 
           // Glow con gradiente radial suave
           float glow = 1.0 - smoothstep(0.0, 1.0, dist);
           glow = pow(glow, 0.8);
 
-          // Intensificar el brillo
-          color *= mix(1.0, uGlowIntensity, mixFactor);
+          // Intensificar el brillo con intensidad personalizada
+          color *= mix(1.0, uVortexIntensity, mixFactor);
           alpha *= glow;
 
-          // Añadir brillo extra en el centro
+          // Añadir brillo extra en el centro con el color del vórtex
           float core = 1.0 - smoothstep(0.0, 0.3, dist);
-          color += orange * core * mixFactor * 2.0;
+          color += uVortexColor * core * mixFactor * 2.0;
           isGlowing = true;
         }
 
@@ -130,6 +131,8 @@ class DofPointsMaterial extends THREE.ShaderMaterial {
         uMousePos: { value: new THREE.Vector3(0, 0, 0) },
         uMouseActive: { value: 0.0 },
         uAttractionRadius: { value: 1.0 },
+        uVortexColor: { value: new THREE.Vector3(1.0, 0.4, 0.0) },
+        uVortexIntensity: { value: 3.0 },
         uGlowIntensity: { value: 2.0 },
         uGlowSize: { value: 1.5 },
         uCenterGlowRadius: { value: 3.0 },

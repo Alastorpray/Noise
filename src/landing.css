@@ -1,0 +1,605 @@
+/* Landing Container */
+.landing-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 100;
+  overflow-y: auto;
+}
+
+/* Logo central */
+.logo-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  pointer-events: auto;
+  z-index: 101;
+  animation: fadeOut 0.8s ease-out forwards;
+  animation-play-state: paused;
+}
+
+.logo-container.fade-out {
+  animation-play-state: running;
+}
+
+.logo-text {
+  text-align: center;
+  user-select: none;
+}
+
+.logo-main {
+  font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 6rem;
+  font-weight: 900;
+  color: #ffffff;
+  letter-spacing: 0.15em;
+  margin: 0;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+}
+
+.logo-sub {
+  font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 3.5rem;
+  font-weight: 300;
+  color: #ffffff;
+  letter-spacing: 0.05em;
+  margin-top: 0;
+  transition: all 0.3s ease;
+  text-transform: capitalize;
+}
+
+.logo-container:hover .logo-main {
+  color: #ff6600;
+}
+
+.logo-container:hover .logo-sub {
+  color: #ffffff;
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.8);
+  }
+}
+
+/* Página completa */
+.page-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  min-height: 100%;
+  pointer-events: auto;
+  opacity: 0;
+}
+
+.page-content.expanded {
+  animation: fadeInContent 0.8s ease-out forwards;
+}
+
+.page-content.collapsed {
+  animation: converge 0.8s ease-in-out forwards;
+}
+
+@keyframes fadeInContent {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes converge {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(0.9);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.5);
+    transform-origin: center center;
+  }
+}
+
+/* Animaciones slide-in para elementos */
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Navigation */
+.main-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  padding: 2rem 0;
+  backdrop-filter: blur(10px);
+  background: rgba(24, 24, 32, 0.8);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  opacity: 0;
+  animation: slideInUp 0.6s ease-out forwards;
+  animation-delay: 0.2s;
+}
+
+.nav-content {
+  max-width: 1520px;
+  margin: 0 auto;
+  padding: 0 4rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-logo {
+  font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #ffffff;
+  letter-spacing: 0.02em;
+}
+
+.nav-links {
+  display: flex;
+  gap: 3rem;
+  align-items: center;
+}
+
+.nav-link {
+  font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  transition: color 0.3s ease;
+  font-weight: 400;
+}
+
+.nav-link:hover {
+  color: #ff6600;
+}
+
+/* Hero Section */
+.hero {
+  padding: 120px 4rem 60px;
+  max-width: 1520px;
+  margin: 0 auto;
+}
+
+.hero-content {
+  max-width: 900px;
+}
+
+.hero-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 4rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0 0 1rem 0;
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+  opacity: 0;
+  animation: slideInLeft 0.8s ease-out forwards;
+  animation-delay: 0.4s;
+}
+
+.hero-subtitle {
+  font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 1.125rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin: 0;
+  line-height: 1.6;
+  font-weight: 300;
+  max-width: 700px;
+  opacity: 0;
+  animation: slideInLeft 0.8s ease-out forwards;
+  animation-delay: 0.6s;
+}
+
+/* Section Layout */
+.section {
+  padding: 60px 4rem;
+  max-width: 1520px;
+  margin: 0 auto;
+}
+
+.section-wrapper {
+  width: 100%;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 50px;
+  align-items: start;
+}
+
+.grid-item {
+  width: 100%;
+  opacity: 0;
+}
+
+.grid-item:first-child {
+  animation: slideInLeft 0.8s ease-out forwards;
+  animation-delay: 0.8s;
+}
+
+.grid-item:last-child {
+  animation: slideInRight 0.8s ease-out forwards;
+  animation-delay: 1s;
+}
+
+/* Typography */
+.section-heading {
+  font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 2.25rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  position: sticky;
+  top: 120px;
+}
+
+.body-text {
+  font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.6;
+  margin: 0 0 1rem 0;
+  font-weight: 300;
+}
+
+.body-text:last-child {
+  margin-bottom: 0;
+}
+
+/* Services */
+.section-heading-center {
+  font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 2.25rem;
+  font-weight: 600;
+  color: #ffffff;
+  text-align: center;
+  margin: 0 0 3rem 0;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  opacity: 0;
+  animation: slideInUp 0.6s ease-out forwards;
+  animation-delay: 0.8s;
+}
+
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+}
+
+.service-card {
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  transition: all 0.4s ease;
+  opacity: 0;
+  animation: slideInUp 0.6s ease-out forwards;
+}
+
+.service-card:nth-child(1) {
+  animation-delay: 1s;
+}
+
+.service-card:nth-child(2) {
+  animation-delay: 1.2s;
+}
+
+.service-card:nth-child(3) {
+  animation-delay: 1.4s;
+}
+
+.service-card:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 102, 0, 0.3);
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(255, 102, 0, 0.1);
+}
+
+.service-card-title {
+  font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #ff6600;
+  margin: 0 0 1rem 0;
+  letter-spacing: -0.01em;
+}
+
+.service-card-desc {
+  font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 1.6;
+  margin: 0;
+  font-weight: 300;
+}
+
+/* Buttons */
+.cta-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+  opacity: 0;
+  animation: slideInUp 0.6s ease-out forwards;
+  animation-delay: 1.2s;
+}
+
+.btn-primary,
+.btn-secondary {
+  font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  padding: 1rem 2rem;
+  font-size: 1rem;
+  font-weight: 500;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+}
+
+.btn-primary {
+  background: #ff6600;
+  color: #ffffff;
+}
+
+.btn-primary:hover {
+  background: #ff7711;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(255, 102, 0, 0.4);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.4);
+  color: #ffffff;
+  transform: translateY(-2px);
+}
+
+/* Footer */
+.footer {
+  padding: 60px 4rem;
+  max-width: 1520px;
+  margin: 0 auto;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  opacity: 0;
+  animation: slideInUp 0.6s ease-out forwards;
+  animation-delay: 1.8s;
+}
+
+.footer-content {
+  text-align: center;
+}
+
+.footer-text {
+  font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.3);
+  margin: 0;
+  font-weight: 300;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .nav-content {
+    padding: 0 2rem;
+  }
+
+  .hero {
+    padding: 100px 2rem 50px;
+  }
+
+  .hero-title {
+    font-size: 3rem;
+  }
+
+  .section {
+    padding: 50px 2rem;
+  }
+
+  .grid-2 {
+    gap: 40px;
+  }
+
+  .section-heading {
+    font-size: 2rem;
+    top: 100px;
+  }
+
+  .services-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .footer {
+    padding: 50px 2rem;
+  }
+}
+
+@media (max-width: 810px) {
+  .nav-content {
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 0 1.5rem;
+  }
+
+  .nav-links {
+    gap: 2rem;
+  }
+
+  .hero {
+    padding: 100px 1.5rem 50px;
+  }
+
+  .hero-title {
+    font-size: 2.25rem;
+  }
+
+  .hero-subtitle {
+    font-size: 1rem;
+  }
+
+  .section {
+    padding: 50px 1.5rem;
+  }
+
+  .grid-2 {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .section-heading {
+    font-size: 2rem;
+    position: static;
+  }
+
+  .section-heading-center {
+    font-size: 1.75rem;
+    margin-bottom: 2rem;
+  }
+
+  .body-text {
+    font-size: 1rem;
+  }
+
+  .services-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .service-card {
+    padding: 1.5rem;
+  }
+
+  .service-card-title {
+    font-size: 1.25rem;
+  }
+
+  .service-card-desc {
+    font-size: 0.9rem;
+  }
+
+  .cta-buttons {
+    flex-direction: column;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    width: 100%;
+    text-align: center;
+  }
+
+  .footer {
+    padding: 50px 1.5rem;
+  }
+
+  .logo-main {
+    font-size: 3.5rem;
+  }
+
+  .logo-sub {
+    font-size: 2rem;
+  }
+
+  /* Reduce animation delays en mobile */
+  .main-nav {
+    animation-delay: 0.1s;
+  }
+
+  .hero-title {
+    animation-delay: 0.2s;
+  }
+
+  .hero-subtitle {
+    animation-delay: 0.3s;
+  }
+
+  .grid-item:first-child {
+    animation-delay: 0.4s;
+  }
+
+  .grid-item:last-child {
+    animation-delay: 0.5s;
+  }
+
+  .section-heading-center {
+    animation-delay: 0.4s;
+  }
+
+  .service-card:nth-child(1) {
+    animation-delay: 0.5s;
+  }
+
+  .service-card:nth-child(2) {
+    animation-delay: 0.6s;
+  }
+
+  .service-card:nth-child(3) {
+    animation-delay: 0.7s;
+  }
+
+  .cta-buttons {
+    animation-delay: 0.6s;
+  }
+
+  .footer {
+    animation-delay: 0.9s;
+  }
+}

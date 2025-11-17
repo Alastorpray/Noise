@@ -5,12 +5,21 @@ import { useFBO } from '@react-three/drei'
 import './shaders/simulationMaterial'
 import './shaders/dofPointsMaterial'
 
-export function Particles({ speed, fov, aperture, focus, curl, size = 512, windX = -1, windY = 0, windSpeed = 1.0, fallSpeed = 0.4, windOsc = 1.0, sizeMode = 'fixed', sizeFixed = 3, sizeMin = 1, sizeMax = 5, attractionRadius = 1.0, attractionStrength = 0.8, glowIntensity = 2.0, glowSize = 1.5, centerGlowRadius = 3.0, centerGlowIntensity = 2.0, ...props }) {
+export function Particles({ speed, fov, aperture, focus, curl, size = 512, windX = -1, windY = 0, windSpeed = 1.0, fallSpeed = 0.4, windOsc = 1.0, sizeMode = 'fixed', sizeFixed = 3, sizeMin = 1, sizeMax = 5, attractionRadius = 1.0, attractionStrength = 0.8, vortexStrength = 1.5, vortexSpeed = 1.0, vortexColor = '#ff6600', vortexIntensity = 3.0, glowIntensity = 2.0, glowSize = 1.5, centerGlowRadius = 3.0, centerGlowIntensity = 2.0, ...props }) {
   const simRef = useRef()
   const renderRef = useRef()
   const { viewport, camera: mainCamera } = useThree()
   const mousePos = useRef(new THREE.Vector3(0, 0, 0))
   const [mouseActive, setMouseActive] = useState(false)
+
+  // Convertir color hex a RGB normalizado
+  const vortexColorRGB = useMemo(() => {
+    const hex = vortexColor.replace('#', '')
+    const r = parseInt(hex.substring(0, 2), 16) / 255
+    const g = parseInt(hex.substring(2, 4), 16) / 255
+    const b = parseInt(hex.substring(4, 6), 16) / 255
+    return new THREE.Vector3(r, g, b)
+  }, [vortexColor])
   // Set up FBO
   const [scene] = useState(() => new THREE.Scene())
   const [camera] = useState(() => new THREE.OrthographicCamera(-1, 1, 1, -1, 1 / Math.pow(2, 53), 1))
@@ -81,9 +90,13 @@ export function Particles({ speed, fov, aperture, focus, curl, size = 512, windX
     simRef.current.uniforms.uMouseActive.value = mouseActive ? 1.0 : 0.0
     simRef.current.uniforms.uAttractionRadius.value = attractionRadius
     simRef.current.uniforms.uAttractionStrength.value = attractionStrength
+    simRef.current.uniforms.uVortexStrength.value = vortexStrength
+    simRef.current.uniforms.uVortexSpeed.value = vortexSpeed
     renderRef.current.uniforms.uMousePos.value = mousePos.current
     renderRef.current.uniforms.uMouseActive.value = mouseActive ? 1.0 : 0.0
     renderRef.current.uniforms.uAttractionRadius.value = attractionRadius
+    renderRef.current.uniforms.uVortexColor.value = vortexColorRGB
+    renderRef.current.uniforms.uVortexIntensity.value = vortexIntensity
     renderRef.current.uniforms.uGlowIntensity.value = glowIntensity
     renderRef.current.uniforms.uGlowSize.value = glowSize
     renderRef.current.uniforms.uCenterGlowRadius.value = centerGlowRadius

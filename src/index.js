@@ -1,7 +1,9 @@
 import * as THREE from 'three'
 import { render, events, extend } from '@react-three/fiber'
+import { createRoot } from 'react-dom/client'
 import './styles.css'
 import App from './App'
+import { LandingPage } from './LandingPage'
 
 extend(THREE)
 
@@ -21,3 +23,9 @@ window.addEventListener('resize', () =>
 )
 
 window.dispatchEvent(new Event('resize'))
+
+// Renderizar la landing page
+const landingRoot = document.createElement('div')
+landingRoot.id = 'landing-root'
+document.body.appendChild(landingRoot)
+createRoot(landingRoot).render(<LandingPage />)
