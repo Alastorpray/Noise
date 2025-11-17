@@ -9,13 +9,19 @@ class DofPointsMaterial extends THREE.ShaderMaterial {
       uniform float uFocus;
       uniform float uFov;
       uniform float uBlur;
+      uniform int uSizeMode;
+      uniform float uSizeFixed;
+      uniform float uSizeMin;
+      uniform float uSizeMax;
       varying float vDistance;
       void main() { 
         vec3 pos = texture2D(positions, position.xy).xyz;
         vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
         gl_Position = projectionMatrix * mvPosition;
         vDistance = abs(uFocus - -mvPosition.z);
-        gl_PointSize = (step(1.0 - (1.0 / uFov), position.x)) * vDistance * uBlur * 2.0;
+        float r = fract(sin(dot(position.xy, vec2(12.9898, 78.233))) * 43758.5453);
+        float sizeFactor = uSizeMode == 1 ? mix(uSizeMin, uSizeMax, r) : uSizeFixed;
+        gl_PointSize = sizeFactor;
       }`,
       fragmentShader: `uniform float uOpacity;
       varying float vDistance;
@@ -29,7 +35,11 @@ class DofPointsMaterial extends THREE.ShaderMaterial {
         uTime: { value: 0 },
         uFocus: { value: 5.1 },
         uFov: { value: 50 },
-        uBlur: { value: 30 }
+        uBlur: { value: 30 },
+        uSizeMode: { value: 0 },
+        uSizeFixed: { value: 3.0 },
+        uSizeMin: { value: 1.0 },
+        uSizeMax: { value: 5.0 }
       },
       transparent: true,
       blending: THREE.NormalBlending,

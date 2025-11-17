@@ -5,7 +5,7 @@ import { useFBO } from '@react-three/drei'
 import './shaders/simulationMaterial'
 import './shaders/dofPointsMaterial'
 
-export function Particles({ speed, fov, aperture, focus, curl, size = 512, ...props }) {
+export function Particles({ speed, fov, aperture, focus, curl, size = 512, windX = -1, windY = 0, windSpeed = 1.0, fallSpeed = 0.4, windOsc = 1.0, sizeMode = 'fixed', sizeFixed = 3, sizeMin = 1, sizeMax = 5, ...props }) {
   const simRef = useRef()
   const renderRef = useRef()
   // Set up FBO
@@ -32,6 +32,7 @@ export function Particles({ speed, fov, aperture, focus, curl, size = 512, ...pr
   }, [size])
   // Update FBO and pointcloud every frame
   useFrame((state) => {
+    if (!renderRef.current || !simRef.current) return
     state.gl.setRenderTarget(target)
     state.gl.clear()
     state.gl.render(scene, camera)
@@ -42,7 +43,14 @@ export function Particles({ speed, fov, aperture, focus, curl, size = 512, ...pr
     renderRef.current.uniforms.uFov.value = THREE.MathUtils.lerp(renderRef.current.uniforms.uFov.value, fov, 0.1)
     renderRef.current.uniforms.uBlur.value = THREE.MathUtils.lerp(renderRef.current.uniforms.uBlur.value, (5.6 - aperture) * 9, 0.1)
     simRef.current.uniforms.uTime.value = state.clock.elapsedTime * speed
-    simRef.current.uniforms.uCurlFreq.value = THREE.MathUtils.lerp(simRef.current.uniforms.uCurlFreq.value, curl, 0.1)
+    simRef.current.uniforms.uWindDir.value.set(windX, windY)
+    simRef.current.uniforms.uWindSpeed.value = windSpeed
+    simRef.current.uniforms.uFallSpeed.value = fallSpeed
+    simRef.current.uniforms.uWindOsc.value = windOsc
+    renderRef.current.uniforms.uSizeMode.value = sizeMode === 'random' ? 1 : 0
+    renderRef.current.uniforms.uSizeFixed.value = sizeFixed
+    renderRef.current.uniforms.uSizeMin.value = sizeMin
+    renderRef.current.uniforms.uSizeMax.value = sizeMax
   })
   return (
     <>
