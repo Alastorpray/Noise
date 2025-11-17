@@ -9,14 +9,13 @@ window.addEventListener('resize', () =>
   render(<App />, document.querySelector('canvas'), {
     events,
     linear: true,
-    dpr: 2,
+    dpr: Math.min(window.devicePixelRatio, 2),
     camera: { fov: 25, position: [0, 0, 6] },
-    // https://barradeau.com/blog/?p=621
-    // This examples needs WebGL1 (?)
-    gl: new THREE.WebGL1Renderer({
-      canvas: document.querySelector('canvas'),
+    gl: (canvas) => new THREE.WebGLRenderer({
+      canvas,
       antialias: true,
-      alpha: true
+      alpha: true,
+      powerPreference: 'high-performance'
     })
   })
 )

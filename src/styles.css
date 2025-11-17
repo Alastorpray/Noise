@@ -22,3 +22,28 @@ canvas {
   width: 100%;
   height: 100%;
 }
+
+#text-overlay {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  pointer-events: none;
+  text-align: center;
+  color: #ffffff;
+  font-family: 'Cormorant Garamond', serif;
+  user-select: none;
+}
+
+#text-overlay .title {
+  font-size: 42px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  margin-bottom: 8px;
+}
+
+#text-overlay .subtitle {
+  font-size: 20px;
+  font-weight: 400;
+}

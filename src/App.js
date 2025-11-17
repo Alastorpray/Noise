@@ -1,4 +1,4 @@
-import { OrbitControls, Html } from '@react-three/drei'
+import { OrbitControls } from '@react-three/drei'
 import { useControls } from 'leva'
 import { Particles } from './Particles'
 
@@ -20,13 +20,19 @@ export default function App() {
   })
   return (
     <>
-      <OrbitControls makeDefault enableRotate={false} enablePan={false} zoomSpeed={0.1} />
-      
+      <OrbitControls
+        makeDefault
+        enableRotate={false}
+        enablePan={false}
+        enableZoom={false}
+        mouseButtons={{
+          LEFT: null,
+          MIDDLE: null,
+          RIGHT: null
+        }}
+      />
+
       <Particles {...props} />
-      <Html center style={{ pointerEvents: 'none', color: '#ffffff', textAlign: 'center', fontFamily: 'Cormorant Garamond, serif' }}>
-        <div style={{ fontSize: '42px', fontWeight: 600, letterSpacing: '0.02em' }}>Coresearch</div>
-        <div style={{ fontSize: '20px', marginTop: '8px' }}>conectado mundos</div>
-      </Html>
     </>
   )
 }
