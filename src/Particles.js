@@ -5,7 +5,7 @@ import { useFBO } from '@react-three/drei'
 import './shaders/simulationMaterial'
 import './shaders/dofPointsMaterial'
 
-export function Particles({ speed, fov, aperture, focus, curl, size = 512, windX = -1, windY = 0, windSpeed = 1.0, fallSpeed = 0.4, windOsc = 1.0, sizeMode = 'fixed', sizeFixed = 3, sizeMin = 1, sizeMax = 5, ...props }) {
+export function Particles({ speed, fov, aperture, focus, curl, size = 512, windX = -1, windY = 0, windSpeed = 1.0, fallSpeed = 0.4, windOsc = 1.0, sizeMode = 'fixed', sizeFixed = 3, sizeMin = 1, sizeMax = 5, attractionRadius = 1.0, attractionStrength = 0.8, glowIntensity = 2.0, glowSize = 1.5, centerGlowRadius = 3.0, centerGlowIntensity = 2.0, ...props }) {
   const simRef = useRef()
   const renderRef = useRef()
   const { viewport, camera: mainCamera } = useThree()
@@ -79,8 +79,15 @@ export function Particles({ speed, fov, aperture, focus, curl, size = 512, windX
     simRef.current.uniforms.uWindOsc.value = windOsc
     simRef.current.uniforms.uMousePos.value = mousePos.current
     simRef.current.uniforms.uMouseActive.value = mouseActive ? 1.0 : 0.0
+    simRef.current.uniforms.uAttractionRadius.value = attractionRadius
+    simRef.current.uniforms.uAttractionStrength.value = attractionStrength
     renderRef.current.uniforms.uMousePos.value = mousePos.current
     renderRef.current.uniforms.uMouseActive.value = mouseActive ? 1.0 : 0.0
+    renderRef.current.uniforms.uAttractionRadius.value = attractionRadius
+    renderRef.current.uniforms.uGlowIntensity.value = glowIntensity
+    renderRef.current.uniforms.uGlowSize.value = glowSize
+    renderRef.current.uniforms.uCenterGlowRadius.value = centerGlowRadius
+    renderRef.current.uniforms.uCenterGlowIntensity.value = centerGlowIntensity
     renderRef.current.uniforms.uSizeMode.value = sizeMode === 'random' ? 1 : 0
     renderRef.current.uniforms.uSizeFixed.value = sizeFixed
     renderRef.current.uniforms.uSizeMin.value = sizeMin
