@@ -677,6 +677,7 @@
   padding: 1.5rem;
   background: rgba(0, 0, 0, 0.06);
   transition: border-color 0.2s ease, transform 0.2s ease;
+  cursor: pointer;
 }
 
 .division-card:hover {
@@ -755,4 +756,64 @@
   font-family: var(--font-body);
   font-size: 0.95rem;
   color: var(--accent);
+}
+.flow {
+  margin-top: 1rem;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.flow-panel {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+.flow-item {
+  display: grid;
+  grid-template-columns: 16px 1fr;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.flow-bullet {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.flow-visible .flow-item:nth-child(1) .flow-content { animation: slideInFlow 0.45s ease-out forwards 0s; }
+.flow-visible .flow-item:nth-child(2) .flow-content { animation: slideInFlow 0.45s ease-out forwards 0.1s; }
+.flow-visible .flow-item:nth-child(3) .flow-content { animation: slideInFlow 0.45s ease-out forwards 0.2s; }
+
+@keyframes slideInFlow { from { opacity: 0; transform: translateX(-12px); } to { opacity: 1; transform: translateX(0); } }
+
+.flow-content h4 {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  color: var(--text);
+}
+
+.flow-content p {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.flow-visible .flow-content {
+  opacity: 0;
+  transform: translateX(-12px);
+}
+.flow-panel.flow-visible {
+  animation: revealPanel 0.35s ease-out forwards;
+}
+
+@keyframes revealPanel {
+  from { opacity: 0; transform: translateY(-6px); max-height: 0; }
+  to { opacity: 1; transform: translateY(0); max-height: 600px; }
 }

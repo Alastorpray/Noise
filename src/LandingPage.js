@@ -6,6 +6,7 @@ export function LandingPage() {
   const inactivityTimer = useRef(null)
   const [form, setForm] = useState({ nombre: '', email: '', empresa: '', mensaje: '' })
   const [formStatus, setFormStatus] = useState('idle')
+  const [expandedDivision, setExpandedDivision] = useState(null)
 
   const resetTimer = () => {
     if (inactivityTimer.current) {
@@ -68,6 +69,10 @@ export function LandingPage() {
     e.preventDefault()
     const el = document.querySelector(selector)
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+
+  const toggleDivision = (key) => {
+    setExpandedDivision((prev) => (prev === key ? null : key))
   }
 
   return (
@@ -138,17 +143,65 @@ export function LandingPage() {
             <div className="section-wrapper">
               <h2 className="section-heading-center">Divisions</h2>
               <div className="divisions-grid">
-                <div className="division-card">
+                <div className="division-card" onClick={() => toggleDivision('educational')}>
                   <h3 className="division-title">Educational</h3>
-                  <p className="division-desc">Formación y asesoramiento en desarrollo 3D y experiencias XR.</p>
+                  <p className="division-desc">Training and advisory in 3D development and XR experiences.</p>
+                  {expandedDivision === 'educational' && (
+                    <div className="flow flow-panel flow-visible">
+                      <div className="flow-item">
+                        <div className="flow-bullet" />
+                        <div className="flow-content"><h4>Sessions</h4><p>Curricula tailored for teams and universities.</p></div>
+                      </div>
+                      <div className="flow-item">
+                        <div className="flow-bullet" />
+                        <div className="flow-content"><h4>XR Advisory</h4><p>Design reviews, interaction models and prototyping.</p></div>
+                      </div>
+                      <div className="flow-item">
+                        <div className="flow-bullet" />
+                        <div className="flow-content"><h4>Partnerships</h4><p>Academic and industry collaborations.</p></div>
+                      </div>
+                    </div>
+                  )}
                 </div>
-                <div className="division-card">
+                <div className="division-card" onClick={() => toggleDivision('3dprint')}>
                   <h3 className="division-title">3D print development</h3>
                   <p className="division-desc">Development for additive manufacturing, prototyping and 3D print workflows.</p>
+                  {expandedDivision === '3dprint' && (
+                    <div className="flow flow-panel flow-visible">
+                      <div className="flow-item">
+                        <div className="flow-bullet" />
+                        <div className="flow-content"><h4>Prototypes</h4><p>Functional iterations and fit‑for‑purpose parts.</p></div>
+                      </div>
+                      <div className="flow-item">
+                        <div className="flow-bullet" />
+                        <div className="flow-content"><h4>Materials</h4><p>PLA, PETG, ABS, resins and composites workflows.</p></div>
+                      </div>
+                      <div className="flow-item">
+                        <div className="flow-bullet" />
+                        <div className="flow-content"><h4>Integration</h4><p>Printers, slicers and QC pipelines.</p></div>
+                      </div>
+                    </div>
+                  )}
                 </div>
-                <div className="division-card">
+                <div className="division-card" onClick={() => toggleDivision('xr')}>
                   <h3 className="division-title">XR development</h3>
                   <p className="division-desc">XR simulators and applications with Unity and Meta Quest 2/3.</p>
+                  {expandedDivision === 'xr' && (
+                    <div className="flow flow-panel flow-visible">
+                      <div className="flow-item">
+                        <div className="flow-bullet" />
+                        <div className="flow-content"><h4>Simulators</h4><p>Task training and procedural environments.</p></div>
+                      </div>
+                      <div className="flow-item">
+                        <div className="flow-bullet" />
+                        <div className="flow-content"><h4>Platforms</h4><p>Meta Quest 2/3 and desktop XR targets.</p></div>
+                      </div>
+                      <div className="flow-item">
+                        <div className="flow-bullet" />
+                        <div className="flow-content"><h4>Performance</h4><p>Frame‑rate goals and interaction fidelity.</p></div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
