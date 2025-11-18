@@ -7,6 +7,11 @@ export function LandingPage() {
   const [form, setForm] = useState({ nombre: '', email: '', empresa: '', mensaje: '' })
   const [formStatus, setFormStatus] = useState('idle')
   const [expandedDivision, setExpandedDivision] = useState(null)
+  const [theme, setTheme] = useState('dark')
+
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'))
+  }
 
   const resetTimer = () => {
     if (inactivityTimer.current) {
@@ -89,7 +94,7 @@ export function LandingPage() {
 
       {/* Contenido expandido */}
       {isExpanded && (
-        <div className={`page-content ${isExpanded ? 'expanded' : 'collapsed'}`}>
+        <div className={`page-content ${isExpanded ? 'expanded' : 'collapsed'} theme-${theme}`}>
           {/* Navigation */}
           <nav className="main-nav">
             <div className="nav-content">
@@ -102,6 +107,9 @@ export function LandingPage() {
                 <a href="#services" className="nav-link" onClick={(e) => onNavClick(e, '#services')}>Services</a>
                 <a href="#portfolio" className="nav-link" onClick={(e) => onNavClick(e, '#portfolio')}>Portfolio</a>
                 <a href="#contact" className="nav-link" onClick={(e) => onNavClick(e, '#contact')}>Contact</a>
+                <button className="theme-toggle" onClick={toggleTheme} aria-label="Toggle theme">
+                  {theme === 'dark' ? '☀' : '☾'}
+                </button>
               </div>
             </div>
           </nav>
@@ -233,12 +241,22 @@ export function LandingPage() {
           <section className="section" id="contact">
             <div className="section-wrapper">
               <div className="grid-2">
-                <div className="grid-item">
-                  <h2 className="section-heading">Let's work together</h2>
+                <div className="grid-item contact-side">
+                  <h2 className="contact-heading">Let's talk.</h2>
+                  <p className="contact-tagline">Partner with Coresearch to build your next XR project.</p>
+                  <ul className="contact-feature-list">
+                    <li className="feature-item">End‑to‑End Delivery</li>
+                    <li className="feature-item">Startup Speed</li>
+                    <li className="feature-item">Long‑Term Partnership</li>
+                    <li className="feature-item">Full IP Ownership</li>
+                    <li className="feature-item">World‑Class Team</li>
+                    <li className="feature-item">Enterprise‑Grade</li>
+                  </ul>
                 </div>
                 <div className="grid-item">
-                  <p className="body-text">Got a project in mind? Tell us and we’ll get back to you.</p>
-                  <form className="contact-form" onSubmit={handleSubmit}>
+                  <div className="contact-card">
+                    <h3 className="contact-title">Ready to build XR?</h3>
+                    <form className="contact-form" onSubmit={handleSubmit}>
                     <div className="input-row">
                       <div className="input-group">
                         <label htmlFor="nombre">Name</label>
@@ -258,12 +276,13 @@ export function LandingPage() {
                       <textarea id="mensaje" name="mensaje" rows="4" value={form.mensaje} onChange={handleChange} required />
                     </div>
                     <div className="form-actions">
-                      <button className="btn-primary" type="submit" disabled={formStatus === 'sending'}>
+                      <button className="contact-submit" type="submit" disabled={formStatus === 'sending'}>
                         {formStatus === 'sending' ? 'Sending…' : 'Send'}
                       </button>
                       {formStatus === 'success' && <span className="form-success">Thanks, we’ll contact you soon.</span>}
                     </div>
-                  </form>
+                    </form>
+                  </div>
                 </div>
               </div>
             </div>
