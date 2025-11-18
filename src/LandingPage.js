@@ -65,7 +65,10 @@ export function LandingPage() {
           {/* Navigation */}
           <nav className="main-nav">
             <div className="nav-content">
-              <div className="nav-logo">Coresearch</div>
+              <div className="nav-brand">
+                <div className="nav-logo">CORE</div>
+                <div className="nav-tagline">Research</div>
+              </div>
               <div className="nav-links">
                 <a href="#nosotros" className="nav-link">Nosotros</a>
                 <a href="#servicios" className="nav-link">Servicios</a>
@@ -95,14 +98,47 @@ export function LandingPage() {
                 </div>
                 <div className="grid-item">
                   <p className="body-text">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor
-                    incididunt ut labore et dolore magna aliqua.
+                    Equipo multidisciplinar especializado en investigación aplicada y desarrollo de
+                    soluciones digitales. Diseñamos y validamos tecnologías con impacto real en negocio.
                   </p>
                   <p className="body-text">
-                    Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-                    aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit.
+                    Combinamos prototipado rápido, experimentación controlada y transferencia a
+                    producción para acortar el ciclo entre idea y resultado.
                   </p>
                 </div>
+              </div>
+            </div>
+          </section>
+
+          <section className="section" id="capacidades">
+            <div className="section-wrapper">
+              <h2 className="section-heading-center">Capacidades</h2>
+              <div className="features-grid">
+                <div className="feature-card">
+                  <h3 className="feature-title">I+D de Producto</h3>
+                  <p className="feature-desc">Validación técnica y de mercado, prototipos funcionales y roadmaps.</p>
+                </div>
+                <div className="feature-card">
+                  <h3 className="feature-title">Experiencias 3D</h3>
+                  <p className="feature-desc">Visualizaciones interactivas, simulaciones y interfaces inmersivas.</p>
+                </div>
+                <div className="feature-card">
+                  <h3 className="feature-title">Data & AI</h3>
+                  <p className="feature-desc">Modelos, pipelines y evaluación con métricas accionables.</p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section className="section" id="areas">
+            <div className="section-wrapper">
+              <h2 className="section-heading-center">Áreas de Investigación</h2>
+              <div className="badge-grid">
+                <span className="badge">Visualización científica</span>
+                <span className="badge">Interacción hombre‑máquina</span>
+                <span className="badge">Simulación en tiempo real</span>
+                <span className="badge">Sistemas inteligentes</span>
+                <span className="badge">Prototipado avanzado</span>
               </div>
             </div>
           </section>
@@ -115,21 +151,19 @@ export function LandingPage() {
                 <div className="service-card">
                   <h3 className="service-card-title">Investigación</h3>
                   <p className="service-card-desc">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Análisis profundo
-                    y metodologías innovadoras.
+                    Estudios, hipótesis contrastadas y experimentos replicables para reducir incertidumbre.
                   </p>
                 </div>
                 <div className="service-card">
                   <h3 className="service-card-title">Desarrollo</h3>
                   <p className="service-card-desc">
-                    Soluciones tecnológicas a medida con las últimas herramientas y frameworks
-                    del mercado.
+                    Implementación robusta y escalable con integración continua y métricas de calidad.
                   </p>
                 </div>
                 <div className="service-card">
                   <h3 className="service-card-title">Consultoría</h3>
                   <p className="service-card-desc">
-                    Asesoramiento estratégico para transformar tu visión en realidad digital.
+                    Alineación estratégica y hojas de ruta técnicas para acelerar la transferencia.
                   </p>
                 </div>
               </div>
