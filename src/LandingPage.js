@@ -247,10 +247,7 @@ export function LandingPage() {
                   <ul className="contact-feature-list">
                     <li className="feature-item">End‑to‑End Delivery</li>
                     <li className="feature-item">Startup Speed</li>
-                    <li className="feature-item">Long‑Term Partnership</li>
-                    <li className="feature-item">Full IP Ownership</li>
                     <li className="feature-item">World‑Class Team</li>
-                    <li className="feature-item">Enterprise‑Grade</li>
                   </ul>
                 </div>
                 <div className="grid-item">
