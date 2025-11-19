@@ -40,8 +40,7 @@
   cursor: pointer;
   pointer-events: auto;
   z-index: 101;
-  animation: fadeOut 0.8s ease-out forwards;
-  animation-play-state: paused;
+  animation: fadeInLogo 0.8s ease-out forwards;
 }
 
 .logo-container.fade-out {
@@ -86,6 +85,17 @@
 
 .logo-container:hover .logo-sub {
   color: #ffffff;
+}
+
+@keyframes fadeInLogo {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
 }
 
 @keyframes fadeOut {
@@ -134,14 +144,9 @@
     opacity: 1;
     transform: scale(1);
   }
-  50% {
-    opacity: 0.5;
-    transform: scale(0.9);
-  }
   100% {
     opacity: 0;
-    transform: scale(0.5);
-    transform-origin: center center;
+    transform: scale(0.95);
   }
 }
 

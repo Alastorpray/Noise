@@ -3,6 +3,7 @@ import './landing.css'
 
 export function LandingPage() {
   const [isExpanded, setIsExpanded] = useState(false)
+  const [isClosing, setIsClosing] = useState(false)
   const inactivityTimer = useRef(null)
   const [form, setForm] = useState({ nombre: '', email: '', empresa: '', mensaje: '' })
   const [formStatus, setFormStatus] = useState('idle')
@@ -13,21 +14,31 @@ export function LandingPage() {
     setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'))
   }
 
+  const handleCollapse = () => {
+    setIsClosing(true)
+    setTimeout(() => {
+      setIsExpanded(false)
+      setIsClosing(false)
+    }, 800) // Duración de la animación de colapso
+  }
+
   const resetTimer = () => {
     if (inactivityTimer.current) {
       clearTimeout(inactivityTimer.current)
     }
 
-    if (isExpanded) {
+    if (isExpanded && !isClosing) {
       inactivityTimer.current = setTimeout(() => {
-        setIsExpanded(false)
+        handleCollapse()
       }, 30000) // 30 segundos
     }
   }
 
   useEffect(() => {
     const handleActivity = () => {
-      resetTimer()
+      if (!isClosing) {
+        resetTimer()
+      }
     }
 
     // Detectar actividad
@@ -45,7 +56,7 @@ export function LandingPage() {
         clearTimeout(inactivityTimer.current)
       }
     }
-  }, [isExpanded])
+  }, [isExpanded, isClosing])
 
   useEffect(() => {
     resetTimer()
@@ -83,7 +94,7 @@ export function LandingPage() {
   return (
     <div className="landing-container">
       {/* Texto central */}
-      {!isExpanded && (
+      {!isExpanded && !isClosing && (
         <div className="logo-container" onClick={handleImageClick}>
           <div className="logo-text">
             <div className="logo-main">CORE</div>
@@ -93,8 +104,8 @@ export function LandingPage() {
       )}
 
       {/* Contenido expandido */}
-      {isExpanded && (
-        <div className={`page-content ${isExpanded ? 'expanded' : 'collapsed'} theme-${theme}`}>
+      {(isExpanded || isClosing) && (
+        <div className={`page-content ${isClosing ? 'collapsed' : 'expanded'} theme-${theme}`}>
           {/* Navigation */}
           <nav className="main-nav">
             <div className="nav-content">
