@@ -115,7 +115,6 @@ export function LandingPage() {
               </div>
               <div className="nav-links">
                 <a href="#about" className="nav-link" onClick={(e) => onNavClick(e, '#about')}>About</a>
-                <a href="#services" className="nav-link" onClick={(e) => onNavClick(e, '#services')}>Services</a>
                 <a href="#portfolio" className="nav-link" onClick={(e) => onNavClick(e, '#portfolio')}>Portfolio</a>
                 <a href="#contact" className="nav-link" onClick={(e) => onNavClick(e, '#contact')}>Contact</a>
                 <button className="theme-toggle" onClick={toggleTheme} aria-label="Toggle theme">
@@ -227,26 +226,7 @@ export function LandingPage() {
           </section>
 
 
-          {/* Services Section */}
-          <section className="section" id="services">
-            <div className="section-wrapper">
-              <h2 className="section-heading-center">Services</h2>
-              <div className="services-grid">
-                <div className="service-card">
-                  <h3 className="service-card-title">Research</h3>
-                  <p className="service-card-desc">Studies, tested hypotheses and replicable experiments to reduce uncertainty.</p>
-                </div>
-                <div className="service-card">
-                  <h3 className="service-card-title">Development</h3>
-                  <p className="service-card-desc">Robust, scalable implementation with CI and quality metrics.</p>
-                </div>
-                <div className="service-card">
-                  <h3 className="service-card-title">Consulting</h3>
-                  <p className="service-card-desc">Strategic alignment and technical roadmaps to accelerate transfer.</p>
-                </div>
-              </div>
-            </div>
-          </section>
+          
 
           {/* CTA Section */}
           <section className="section" id="contact">
