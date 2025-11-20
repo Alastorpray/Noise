@@ -1,8 +1,24 @@
 import { OrbitControls } from '@react-three/drei'
 import { Particles } from './Particles'
 import { useControls } from 'leva'
+import { useState, useEffect } from 'react'
 
 export default function App() {
+  const [dynamicSpeed, setDynamicSpeed] = useState(0.01)
+
+  // Escuchar cambios en glitchIntensity
+  useEffect(() => {
+    const handleGlitchChange = (event) => {
+      const intensity = event.detail
+      // Calcular speed: de 0.01 (sin glitch) a 0.5 (glitch máximo)
+      const newSpeed = 0.01 + (intensity * 0.49)
+      setDynamicSpeed(newSpeed)
+    }
+
+    window.addEventListener('glitchIntensityChange', handleGlitchChange)
+    return () => window.removeEventListener('glitchIntensityChange', handleGlitchChange)
+  }, [])
+
   // Controles para ajustar parámetros en tiempo real
   const props = useControls({
     // Controles de cámara/enfoque
@@ -59,7 +75,7 @@ export default function App() {
         }}
       />
 
-      <Particles {...props} />
+      <Particles {...props} speed={dynamicSpeed} />
     </>
   )
 }

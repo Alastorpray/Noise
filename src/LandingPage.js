@@ -110,7 +110,7 @@ export function LandingPage() {
     if (isHovering) {
       glitchInterval.current = setInterval(() => {
         setGlitchIntensity((prev) => Math.min(prev + 0.05, 1))
-      }, 200)
+      }, 400)
     } else {
       if (glitchInterval.current) {
         clearInterval(glitchInterval.current)
@@ -123,6 +123,12 @@ export function LandingPage() {
       }
     }
   }, [isHovering])
+
+  // Emitir evento cuando cambie glitchIntensity
+  useEffect(() => {
+    const event = new CustomEvent('glitchIntensityChange', { detail: glitchIntensity })
+    window.dispatchEvent(event)
+  }, [glitchIntensity])
 
   return (
     <div className="landing-container">
