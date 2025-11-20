@@ -10,6 +10,8 @@ export function Particles({ speed, fov, aperture, focus, curl, size = 512, windX
   const renderRef = useRef()
   // Ref for smooth speed transition
   const currentSpeedRef = useRef(speed)
+  // Ref for accumulated time with variable speed
+  const accumulatedTimeRef = useRef(0)
 
   const { viewport, camera: mainCamera } = useThree()
   const mousePos = useRef(new THREE.Vector3(0, 0, 0))
@@ -73,7 +75,7 @@ export function Particles({ speed, fov, aperture, focus, curl, size = 512, windX
     }
   }, [mainCamera])
   // Update FBO and pointcloud every frame
-  useFrame((state) => {
+  useFrame((state, delta) => {
     if (!renderRef.current || !simRef.current) return
     state.gl.setRenderTarget(target)
     state.gl.clear()
@@ -86,11 +88,13 @@ export function Particles({ speed, fov, aperture, focus, curl, size = 512, windX
     renderRef.current.uniforms.uBlur.value = (5.6 - aperture) * 9
 
     // 1. Lerp current speed towards target speed for smooth transition
-    // 0.05 is the lerp factor - lower is smoother/slower response
     currentSpeedRef.current = THREE.MathUtils.lerp(currentSpeedRef.current, speed, 0.05)
 
-    // 2. Use clock elapsed time with smoothed speed (no manual accumulation needed)
-    simRef.current.uniforms.uTime.value = state.clock.elapsedTime * currentSpeedRef.current
+    // 2. Accumulate time with variable speed (prevents backwards motion)
+    accumulatedTimeRef.current += delta * currentSpeedRef.current
+
+    // 3. Use accumulated time instead of multiplied elapsed time
+    simRef.current.uniforms.uTime.value = accumulatedTimeRef.current
     simRef.current.uniforms.uWindDir.value.set(windX, windY)
     simRef.current.uniforms.uWindSpeed.value = windSpeed
     simRef.current.uniforms.uFallSpeed.value = fallSpeed
