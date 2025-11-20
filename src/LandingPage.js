@@ -9,6 +9,9 @@ export function LandingPage() {
   const [formStatus, setFormStatus] = useState('idle')
   const [expandedDivision, setExpandedDivision] = useState(null)
   const [theme, setTheme] = useState('dark')
+  const [glitchIntensity, setGlitchIntensity] = useState(0)
+  const [isHovering, setIsHovering] = useState(false)
+  const glitchInterval = useRef(null)
 
   const toggleTheme = () => {
     setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'))
@@ -91,14 +94,51 @@ export function LandingPage() {
     setExpandedDivision((prev) => (prev === key ? null : key))
   }
 
+  const handleLogoMouseEnter = () => {
+    setIsHovering(true)
+  }
+
+  const handleLogoMouseLeave = () => {
+    setIsHovering(false)
+    setGlitchIntensity(0)
+    if (glitchInterval.current) {
+      clearInterval(glitchInterval.current)
+    }
+  }
+
+  useEffect(() => {
+    if (isHovering) {
+      glitchInterval.current = setInterval(() => {
+        setGlitchIntensity((prev) => Math.min(prev + 0.05, 1))
+      }, 200)
+    } else {
+      if (glitchInterval.current) {
+        clearInterval(glitchInterval.current)
+      }
+    }
+
+    return () => {
+      if (glitchInterval.current) {
+        clearInterval(glitchInterval.current)
+      }
+    }
+  }, [isHovering])
+
   return (
     <div className="landing-container">
       {/* Texto central */}
       {!isExpanded && !isClosing && (
         <div className="logo-container" onClick={handleImageClick}>
-          <div className="logo-text">
-            <div className="logo-main">CORE</div>
-            <div className="logo-sub">Research</div>
+          <div
+            className="logo-text"
+            onMouseEnter={handleLogoMouseEnter}
+            onMouseLeave={handleLogoMouseLeave}
+            style={{
+              '--glitch-intensity': glitchIntensity
+            }}
+          >
+            <div className="logo-main" data-text="CORE">CORE</div>
+            <div className="logo-sub" data-text="Research">Research</div>
           </div>
         </div>
       )}
