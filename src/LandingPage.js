@@ -19,6 +19,9 @@ export function LandingPage() {
 
   const handleCollapse = () => {
     setIsClosing(true)
+    // Resetear el glitch inmediatamente
+    setIsHovering(false)
+    setGlitchIntensity(0)
     setTimeout(() => {
       setIsExpanded(false)
       setIsClosing(false)
@@ -104,15 +107,15 @@ export function LandingPage() {
 
   useEffect(() => {
     if (isHovering) {
-      // Incremento granular cuando está hovering
+      // Incremento granular cuando está hovering (6 segundos para llegar a 1)
       glitchInterval.current = setInterval(() => {
-        setGlitchIntensity((prev) => Math.min(prev + 0.00526, 1))
+        setGlitchIntensity((prev) => Math.min(prev + 0.021, 1))
       }, 126)
     } else {
-      // Decrecimiento suave cuando se quita el hover
+      // Decrecimiento suave cuando se quita el hover (3 segundos para llegar a 0)
       glitchInterval.current = setInterval(() => {
         setGlitchIntensity((prev) => {
-          const newValue = prev - 0.008
+          const newValue = prev - 0.02
           return newValue <= 0 ? 0 : newValue
         })
       }, 60)
