@@ -22,6 +22,11 @@ body {
   background: #181820;
 }
 
+#leva__root,
+.leva-c-dmsJDs {
+  display: none !important;
+}
+
 canvas {
   position: absolute;
   top: 0;

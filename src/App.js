@@ -57,9 +57,9 @@ export default function App() {
     glowSize: { value: 2.5, min: 1, max: 5, step: 0.1 },
 
     // Controles de brillo central
-    centerGlowRadius: { value: 3.0, min: 0.5, max: 10, step: 0.1 },
+    centerGlowRadius: { value: 1.1, min: 0.5, max: 10, step: 0.1 },
     centerGlowIntensity: { value: 2.0, min: 0, max: 5, step: 0.1 }
-  })
+  }, { hidden: true })
 
   return (
     <>
