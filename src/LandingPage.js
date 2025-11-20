@@ -100,21 +100,22 @@ export function LandingPage() {
 
   const handleLogoMouseLeave = () => {
     setIsHovering(false)
-    setGlitchIntensity(0)
-    if (glitchInterval.current) {
-      clearInterval(glitchInterval.current)
-    }
   }
 
   useEffect(() => {
     if (isHovering) {
+      // Incremento granular cuando está hovering
       glitchInterval.current = setInterval(() => {
-        setGlitchIntensity((prev) => Math.min(prev + 0.05, 1))
-      }, 400)
+        setGlitchIntensity((prev) => Math.min(prev + 0.00526, 1))
+      }, 126)
     } else {
-      if (glitchInterval.current) {
-        clearInterval(glitchInterval.current)
-      }
+      // Decrecimiento suave cuando se quita el hover
+      glitchInterval.current = setInterval(() => {
+        setGlitchIntensity((prev) => {
+          const newValue = prev - 0.008
+          return newValue <= 0 ? 0 : newValue
+        })
+      }, 60)
     }
 
     return () => {

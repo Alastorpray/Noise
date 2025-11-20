@@ -8,6 +8,9 @@ import './shaders/dofPointsMaterial'
 export function Particles({ speed, fov, aperture, focus, curl, size = 512, windX = -1, windY = 0, windSpeed = 1.0, fallSpeed = 0.4, windOsc = 1.0, sizeMode = 'fixed', sizeFixed = 3, sizeMin = 1, sizeMax = 5, attractionRadius = 1.0, attractionStrength = 0.8, vortexStrength = 1.5, vortexSpeed = 1.0, vortexColor = '#ff6600', vortexIntensity = 3.0, glowIntensity = 2.0, glowSize = 1.5, centerGlowRadius = 3.0, centerGlowIntensity = 2.0, ...props }) {
   const simRef = useRef()
   const renderRef = useRef()
+  // Ref for smooth speed transition
+  const currentSpeedRef = useRef(speed)
+
   const { viewport, camera: mainCamera } = useThree()
   const mousePos = useRef(new THREE.Vector3(0, 0, 0))
   const [mouseActive, setMouseActive] = useState(false)
@@ -81,7 +84,13 @@ export function Particles({ speed, fov, aperture, focus, curl, size = 512, windX
     renderRef.current.uniforms.uFocus.value = focus
     renderRef.current.uniforms.uFov.value = fov
     renderRef.current.uniforms.uBlur.value = (5.6 - aperture) * 9
-    simRef.current.uniforms.uTime.value = state.clock.elapsedTime * speed
+
+    // 1. Lerp current speed towards target speed for smooth transition
+    // 0.05 is the lerp factor - lower is smoother/slower response
+    currentSpeedRef.current = THREE.MathUtils.lerp(currentSpeedRef.current, speed, 0.05)
+
+    // 2. Use clock elapsed time with smoothed speed (no manual accumulation needed)
+    simRef.current.uniforms.uTime.value = state.clock.elapsedTime * currentSpeedRef.current
     simRef.current.uniforms.uWindDir.value.set(windX, windY)
     simRef.current.uniforms.uWindSpeed.value = windSpeed
     simRef.current.uniforms.uFallSpeed.value = fallSpeed
