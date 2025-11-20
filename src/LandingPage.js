@@ -112,10 +112,10 @@ export function LandingPage() {
         setGlitchIntensity((prev) => Math.min(prev + 0.021, 1))
       }, 126)
     } else {
-      // Decrecimiento suave cuando se quita el hover (3 segundos para llegar a 0)
+      // Decrecimiento suave cuando se quita el hover (1.5 segundos para llegar a 0)
       glitchInterval.current = setInterval(() => {
         setGlitchIntensity((prev) => {
-          const newValue = prev - 0.02
+          const newValue = prev - 0.04
           return newValue <= 0 ? 0 : newValue
         })
       }, 60)
