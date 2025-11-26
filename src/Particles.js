@@ -48,11 +48,11 @@ export function Particles({ speed, fov, aperture, focus, curl, size = 512, windX
     return particles
   }, [size])
 
-  // Track mouse movement
+  // Track mouse and touch movement
   useMemo(() => {
-    const handleMouseMove = (event) => {
-      const x = (event.clientX / window.innerWidth) * 2 - 1
-      const y = -(event.clientY / window.innerHeight) * 2 + 1
+    const updatePosition = (clientX, clientY) => {
+      const x = (clientX / window.innerWidth) * 2 - 1
+      const y = -(clientY / window.innerHeight) * 2 + 1
 
       const vec = new THREE.Vector3(x, y, 0.5)
       vec.unproject(mainCamera)
@@ -62,16 +62,41 @@ export function Particles({ speed, fov, aperture, focus, curl, size = 512, windX
       setMouseActive(true)
     }
 
-    const handleMouseLeave = () => {
+    const handleMouseMove = (event) => {
+      updatePosition(event.clientX, event.clientY)
+    }
+
+    const handleTouchMove = (event) => {
+      if (event.touches.length > 0) {
+        event.preventDefault()
+        updatePosition(event.touches[0].clientX, event.touches[0].clientY)
+      }
+    }
+
+    const handleTouchStart = (event) => {
+      if (event.touches.length > 0) {
+        updatePosition(event.touches[0].clientX, event.touches[0].clientY)
+      }
+    }
+
+    const handleEnd = () => {
       setMouseActive(false)
     }
 
     window.addEventListener('mousemove', handleMouseMove)
-    window.addEventListener('mouseleave', handleMouseLeave)
+    window.addEventListener('mouseleave', handleEnd)
+    window.addEventListener('touchstart', handleTouchStart, { passive: false })
+    window.addEventListener('touchmove', handleTouchMove, { passive: false })
+    window.addEventListener('touchend', handleEnd)
+    window.addEventListener('touchcancel', handleEnd)
 
     return () => {
       window.removeEventListener('mousemove', handleMouseMove)
-      window.removeEventListener('mouseleave', handleMouseLeave)
+      window.removeEventListener('mouseleave', handleEnd)
+      window.removeEventListener('touchstart', handleTouchStart)
+      window.removeEventListener('touchmove', handleTouchMove)
+      window.removeEventListener('touchend', handleEnd)
+      window.removeEventListener('touchcancel', handleEnd)
     }
   }, [mainCamera])
   // Update FBO and pointcloud every frame

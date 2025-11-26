@@ -12,6 +12,8 @@ export function LandingPage() {
   const [glitchIntensity, setGlitchIntensity] = useState(0)
   const [isHovering, setIsHovering] = useState(false)
   const glitchInterval = useRef(null)
+  const logoTextRef = useRef(null)
+  const isTouchActive = useRef(false)
 
   const toggleTheme = () => {
     setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'))
@@ -105,6 +107,32 @@ export function LandingPage() {
     setIsHovering(false)
   }
 
+  const checkTouchOverLogo = (clientX, clientY) => {
+    if (!logoTextRef.current) return false
+    const rect = logoTextRef.current.getBoundingClientRect()
+    return (
+      clientX >= rect.left &&
+      clientX <= rect.right &&
+      clientY >= rect.top &&
+      clientY <= rect.bottom
+    )
+  }
+
+  const handleLogoTouchStart = (e) => {
+    e.preventDefault()
+    isTouchActive.current = true
+    if (e.touches.length > 0) {
+      const touch = e.touches[0]
+      const isOver = checkTouchOverLogo(touch.clientX, touch.clientY)
+      setIsHovering(isOver)
+    }
+  }
+
+  const handleLogoTouchEnd = () => {
+    isTouchActive.current = false
+    setIsHovering(false)
+  }
+
   useEffect(() => {
     if (isHovering) {
       // Incremento granular cuando está hovering (6 segundos para llegar a 1)
@@ -134,15 +162,52 @@ export function LandingPage() {
     window.dispatchEvent(event)
   }, [glitchIntensity])
 
+  // Detectar cuando el dedo se mueve sobre el logo mientras está presionado
+  useEffect(() => {
+    const handleGlobalTouchMove = (e) => {
+      if (!isTouchActive.current || !logoTextRef.current) return
+
+      if (e.touches.length > 0) {
+        const touch = e.touches[0]
+        const isOver = checkTouchOverLogo(touch.clientX, touch.clientY)
+        setIsHovering(isOver)
+      }
+    }
+
+    const handleGlobalTouchStart = () => {
+      isTouchActive.current = true
+    }
+
+    const handleGlobalTouchEnd = () => {
+      isTouchActive.current = false
+      setIsHovering(false)
+    }
+
+    window.addEventListener('touchmove', handleGlobalTouchMove, { passive: true })
+    window.addEventListener('touchstart', handleGlobalTouchStart, { passive: true })
+    window.addEventListener('touchend', handleGlobalTouchEnd, { passive: true })
+    window.addEventListener('touchcancel', handleGlobalTouchEnd, { passive: true })
+
+    return () => {
+      window.removeEventListener('touchmove', handleGlobalTouchMove)
+      window.removeEventListener('touchstart', handleGlobalTouchStart)
+      window.removeEventListener('touchend', handleGlobalTouchEnd)
+      window.removeEventListener('touchcancel', handleGlobalTouchEnd)
+    }
+  }, [])
+
   return (
     <div className="landing-container">
       {/* Texto central */}
       {!isExpanded && !isClosing && (
         <div className="logo-container" onClick={handleImageClick}>
           <div
+            ref={logoTextRef}
             className="logo-text"
             onMouseEnter={handleLogoMouseEnter}
             onMouseLeave={handleLogoMouseLeave}
+            onTouchStart={handleLogoTouchStart}
+            onTouchEnd={handleLogoTouchEnd}
             style={{
               '--glitch-intensity': glitchIntensity
             }}
