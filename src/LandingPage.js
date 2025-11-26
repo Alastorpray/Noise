@@ -106,7 +106,13 @@ export function LandingPage() {
   }
 
   const handleLogoMouseEnter = () => {
+    // Activar hover INMEDIATAMENTE (no esperar al audio)
     setIsHovering(true)
+
+    // Activar AudioContext en background (sincrónico con user gesture)
+    if (audioInitialized.current) {
+      audioManager.resumeContext()
+    }
   }
 
   const handleLogoMouseLeave = () => {
@@ -125,6 +131,11 @@ export function LandingPage() {
   }
 
   const handleLogoTouchStart = (e) => {
+    // Activar AudioContext en background (sincrónico con user gesture)
+    if (audioInitialized.current) {
+      audioManager.resumeContext()
+    }
+
     isTouchActive.current = true
     if (e.touches.length > 0) {
       const touch = e.touches[0]

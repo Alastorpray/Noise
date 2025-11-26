@@ -48,7 +48,29 @@ class AudioManager {
     }
   }
 
-  play() {
+  async resumeContext() {
+    if (!this.audioContext) {
+      console.warn('⚠️ AudioContext not initialized')
+      return false
+    }
+
+    if (this.audioContext.state === 'suspended') {
+      console.log('🔓 Resuming AudioContext...')
+      try {
+        await this.audioContext.resume()
+        console.log('✅ AudioContext resumed:', this.audioContext.state)
+        return true
+      } catch (error) {
+        console.error('❌ Error resuming AudioContext:', error)
+        return false
+      }
+    }
+
+    console.log('✅ AudioContext already running:', this.audioContext.state)
+    return true
+  }
+
+  async play() {
     if (!this.audioContext || !this.audioBuffer) {
       console.warn('⚠️ Audio not initialized')
       return
@@ -62,10 +84,11 @@ class AudioManager {
 
     console.log('▶️ Starting audio playback...')
 
-    // Reanudar el contexto si está suspendido
+    // Esperar a que el contexto se reanude (IMPORTANTE: await)
     if (this.audioContext.state === 'suspended') {
-      console.log('🔄 Resuming suspended AudioContext')
-      this.audioContext.resume()
+      console.log('🔄 Resuming suspended AudioContext...')
+      await this.audioContext.resume()
+      console.log('✅ AudioContext resumed:', this.audioContext.state)
     }
 
     // Crear nueva fuente (las fuentes solo se pueden usar una vez)
