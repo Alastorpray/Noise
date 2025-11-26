@@ -665,15 +665,30 @@
   }
 
   .hero {
-    padding: 100px 1.5rem 50px;
+    padding: 180px 1.5rem 50px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .page-content {
+    padding-top: 0;
+  }
+
+  .hero-content {
+    max-width: 100%;
+    width: 100%;
   }
 
   .hero-title {
     font-size: 2.25rem;
+    line-height: 1.2;
+    word-wrap: break-word;
   }
 
   .hero-subtitle {
     font-size: 1rem;
+    max-width: 100%;
+    word-wrap: break-word;
   }
 
   .section {
@@ -728,6 +743,26 @@
 
   .input-row {
     grid-template-columns: 1fr;
+  }
+
+  .contact-card {
+    max-width: 100%;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .contact-form {
+    width: 100%;
+  }
+
+  .input-group {
+    width: 100%;
+  }
+
+  .input-group input,
+  .input-group textarea {
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .footer {
@@ -1059,4 +1094,329 @@
   max-height: 600px;
   opacity: 1;
   padding: 1rem;
+}
+
+/* Responsive para pantallas pequeñas (teléfonos) */
+@media (max-width: 480px) {
+  .logo-main {
+    font-size: 2.5rem;
+  }
+
+  .logo-sub {
+    font-size: 1.25rem;
+  }
+
+  .logo-text {
+    width: 20rem;
+    max-width: 85vw;
+  }
+
+  .nav-content {
+    padding: 0 1rem;
+  }
+
+  .nav-links {
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .nav-link {
+    font-size: 0.9rem;
+  }
+
+  .theme-toggle {
+    width: 36px;
+    height: 36px;
+    font-size: 1rem;
+  }
+
+  .hero {
+    padding: 160px 1rem 40px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .hero-content {
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .hero-title {
+    font-size: 1.875rem;
+    line-height: 1.2;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+  }
+
+  .hero-subtitle {
+    font-size: 0.95rem;
+    line-height: 1.5;
+    max-width: 100%;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+
+  .section {
+    padding: 40px 1rem;
+  }
+
+  .section-heading {
+    font-size: 1.75rem;
+  }
+
+  .section-heading-center {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .service-card {
+    padding: 1.25rem;
+  }
+
+  .service-card-title {
+    font-size: 1.1rem;
+  }
+
+  .service-card-desc {
+    font-size: 0.875rem;
+  }
+
+  .contact-heading {
+    font-size: 2.25rem;
+  }
+
+  .contact-card {
+    padding: 1rem 1.25rem;
+    max-width: 100%;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .contact-title {
+    font-size: 1.25rem;
+  }
+
+  .contact-form {
+    width: 100%;
+  }
+
+  .input-row {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .input-group {
+    width: 100%;
+  }
+
+  .input-group input,
+  .input-group textarea {
+    font-size: 0.9rem;
+    padding: 0.75rem 0.9rem;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .input-group textarea {
+    min-height: 120px;
+  }
+
+  .contact-submit {
+    padding: 0.85rem 1.25rem;
+    font-size: 0.9rem;
+    width: 100%;
+  }
+
+  .form-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .form-success {
+    text-align: center;
+    font-size: 0.875rem;
+  }
+
+  .contact-tagline {
+    font-size: 0.95rem;
+    max-width: 100%;
+  }
+
+  .division-card {
+    padding: 1.25rem;
+  }
+
+  .division-title {
+    font-size: 1rem;
+  }
+
+  .division-desc {
+    font-size: 0.875rem;
+  }
+
+  .footer {
+    padding: 40px 1rem;
+  }
+}
+
+/* Responsive para pantallas muy pequeñas */
+@media (max-width: 360px) {
+  .logo-main {
+    font-size: 2rem;
+  }
+
+  .logo-sub {
+    font-size: 1rem;
+  }
+
+  .logo-text {
+    width: 16rem;
+    max-width: 90vw;
+  }
+
+  .nav-logo {
+    font-size: 1.25rem;
+  }
+
+  .nav-tagline {
+    font-size: 0.85rem;
+  }
+
+  .nav-link {
+    font-size: 0.85rem;
+  }
+
+  .hero {
+    padding: 160px 0.75rem 30px;
+  }
+
+  .hero-title {
+    font-size: 1.5rem;
+    line-height: 1.2;
+  }
+
+  .hero-subtitle {
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+
+  .section {
+    padding: 30px 0.75rem;
+  }
+
+  .section-heading {
+    font-size: 1.5rem;
+  }
+
+  .section-heading-center {
+    font-size: 1.25rem;
+  }
+
+  .body-text {
+    font-size: 0.9rem;
+  }
+
+  .contact-heading {
+    font-size: 1.875rem;
+  }
+
+  .contact-card {
+    padding: 0.875rem 1rem;
+  }
+
+  .contact-title {
+    font-size: 1.125rem;
+  }
+
+  .input-group input,
+  .input-group textarea {
+    font-size: 0.875rem;
+    padding: 0.7rem 0.85rem;
+  }
+
+  .contact-submit {
+    font-size: 0.875rem;
+    padding: 0.8rem 1rem;
+  }
+}
+
+/* Mejoras para touch targets en móviles */
+@media (hover: none) and (pointer: coarse) {
+  .logo-container {
+    min-height: 48px;
+    min-width: 48px;
+    padding: 0.5rem;
+  }
+
+  .nav-link,
+  .theme-toggle {
+    min-height: 44px;
+    min-width: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    min-height: 48px;
+  }
+
+  .division-card,
+  .service-card {
+    min-height: 48px;
+  }
+}
+
+/* Landscape mode en móviles */
+@media (max-width: 900px) and (max-height: 500px) and (orientation: landscape) {
+  .logo-main {
+    font-size: 2rem;
+  }
+
+  .logo-sub {
+    font-size: 1rem;
+  }
+
+  .hero {
+    padding: 120px 1.5rem 30px;
+  }
+
+  .hero-title {
+    font-size: 1.75rem;
+  }
+
+  .section {
+    padding: 30px 1.5rem;
+  }
+
+  .nav-content {
+    padding: 0 1rem;
+    flex-direction: row;
+    gap: 1rem;
+  }
+
+  .main-nav {
+    padding: 0.75rem 0;
+  }
+
+  .section-heading-center {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+}
+
+/* Prevenir overflow horizontal */
+html, body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+.landing-container,
+.page-content {
+  overflow-x: hidden;
+  max-width: 100vw;
 }
