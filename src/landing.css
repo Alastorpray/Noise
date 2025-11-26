@@ -2,7 +2,7 @@
   --accent: #19C3A3;
   --text: #fff;
   --muted: rgba(255, 255, 255, 0.6);
-  --bg: #0a0a0a;
+  --bg: #212020;
   --bg-secondary: #121212;
   --border: rgba(255, 255, 255, 0.1);
   --font-heading: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
@@ -28,7 +28,6 @@
   height: 100%;
   pointer-events: none;
   z-index: 100;
-  overflow-y: auto;
 }
 
 /* Logo central */
@@ -219,15 +218,16 @@
 
 /* Página completa */
 .page-content {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  min-height: 100%;
+  height: 100%;
   pointer-events: auto;
   opacity: 0;
   background: var(--bg);
   transition: background 0.3s ease;
+  overflow-y: auto;
 }
 
 .page-content.expanded {
@@ -325,7 +325,7 @@
 
 .nav-logo {
   font-family: var(--font-body);
-  font-size: 1.35rem;
+  font-size: 1.53rem;
   font-weight: 600;
   color: var(--text);
   letter-spacing: -0.02em;
