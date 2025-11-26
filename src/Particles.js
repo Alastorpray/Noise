@@ -68,7 +68,6 @@ export function Particles({ speed, fov, aperture, focus, curl, size = 512, windX
 
     const handleTouchMove = (event) => {
       if (event.touches.length > 0) {
-        event.preventDefault()
         updatePosition(event.touches[0].clientX, event.touches[0].clientY)
       }
     }
@@ -85,8 +84,8 @@ export function Particles({ speed, fov, aperture, focus, curl, size = 512, windX
 
     window.addEventListener('mousemove', handleMouseMove)
     window.addEventListener('mouseleave', handleEnd)
-    window.addEventListener('touchstart', handleTouchStart, { passive: false })
-    window.addEventListener('touchmove', handleTouchMove, { passive: false })
+    window.addEventListener('touchstart', handleTouchStart, { passive: true })
+    window.addEventListener('touchmove', handleTouchMove, { passive: true })
     window.addEventListener('touchend', handleEnd)
     window.addEventListener('touchcancel', handleEnd)
 

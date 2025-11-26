@@ -119,7 +119,6 @@ export function LandingPage() {
   }
 
   const handleLogoTouchStart = (e) => {
-    e.preventDefault()
     isTouchActive.current = true
     if (e.touches.length > 0) {
       const touch = e.touches[0]
@@ -212,8 +211,20 @@ export function LandingPage() {
               '--glitch-intensity': glitchIntensity
             }}
           >
-            <div className="logo-main" data-text="CORE">CORE</div>
-            <div className="logo-sub" data-text="Research">Research</div>
+            <div
+              className="logo-main"
+              data-text="CORE"
+              style={{ color: isHovering ? '#ff6600' : '#ffffff' }}
+            >
+              CORE
+            </div>
+            <div
+              className="logo-sub"
+              data-text="Research"
+              style={{ color: isHovering ? '#ffffff' : '#ffffff' }}
+            >
+              Research
+            </div>
           </div>
         </div>
       )}
