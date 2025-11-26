@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import './landing.css'
+import { audioManager } from './audioManager'
 
 export function LandingPage() {
   const [isExpanded, setIsExpanded] = useState(false)
@@ -14,6 +15,11 @@ export function LandingPage() {
   const glitchInterval = useRef(null)
   const logoTextRef = useRef(null)
   const isTouchActive = useRef(false)
+  const [audioData, setAudioData] = useState({ amplitude: 0, bass: 0, mid: 0, treble: 0 })
+  const [hoverDuration, setHoverDuration] = useState(0)
+  const audioAnimationFrame = useRef(null)
+  const hoverStartTime = useRef(0)
+  const audioInitialized = useRef(false)
 
   const toggleTheme = () => {
     setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'))
@@ -160,6 +166,76 @@ export function LandingPage() {
     const event = new CustomEvent('glitchIntensityChange', { detail: glitchIntensity })
     window.dispatchEvent(event)
   }, [glitchIntensity])
+
+  // Inicializar audio manager
+  useEffect(() => {
+    const initAudio = async () => {
+      const success = await audioManager.init('/sfx/medusa.mp3')
+      if (success) {
+        audioInitialized.current = true
+      }
+    }
+    initAudio()
+
+    return () => {
+      audioManager.dispose()
+    }
+  }, [])
+
+  // Manejar reproducción de audio y captura de datos
+  useEffect(() => {
+    if (!audioInitialized.current) return
+
+    if (isHovering) {
+      // Iniciar audio
+      audioManager.play()
+      hoverStartTime.current = Date.now()
+
+      // Loop de captura de audio data
+      const captureAudioData = () => {
+        const data = audioManager.getAudioData()
+        setAudioData(data)
+
+        // Calcular duración del hover (0-1, max 5 segundos)
+        const duration = Math.min((Date.now() - hoverStartTime.current) / 5000, 1)
+        setHoverDuration(duration)
+
+        audioAnimationFrame.current = requestAnimationFrame(captureAudioData)
+      }
+
+      captureAudioData()
+    } else {
+      // Detener audio
+      audioManager.stop()
+      setHoverDuration(0)
+
+      // Cancelar RAF
+      if (audioAnimationFrame.current) {
+        cancelAnimationFrame(audioAnimationFrame.current)
+        audioAnimationFrame.current = null
+      }
+    }
+
+    return () => {
+      if (audioAnimationFrame.current) {
+        cancelAnimationFrame(audioAnimationFrame.current)
+      }
+    }
+  }, [isHovering])
+
+  // Emitir evento cuando cambien los datos de audio
+  useEffect(() => {
+    const event = new CustomEvent('audioDataChange', {
+      detail: {
+        amplitude: audioData.amplitude,
+        bass: audioData.bass,
+        mid: audioData.mid,
+        treble: audioData.treble,
+        hoverDuration: hoverDuration
+      }
+    })
+    window.dispatchEvent(event)
+  }, [audioData, hoverDuration])
 
   // Detectar cuando el dedo se mueve sobre el logo mientras está presionado
   useEffect(() => {

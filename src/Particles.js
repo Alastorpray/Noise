@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import { useMemo, useState, useRef } from 'react'
+import { useMemo, useState, useRef, useEffect } from 'react'
 import { createPortal, useFrame, useThree } from '@react-three/fiber'
 import { useFBO } from '@react-three/drei'
 import './shaders/simulationMaterial'
@@ -16,6 +16,8 @@ export function Particles({ speed, fov, aperture, focus, curl, size = 512, windX
   const { viewport, camera: mainCamera } = useThree()
   const mousePos = useRef(new THREE.Vector3(0, 0, 0))
   const [mouseActive, setMouseActive] = useState(false)
+  const [audioAmplitude, setAudioAmplitude] = useState(0)
+  const [hoverDuration, setHoverDuration] = useState(0)
 
   // Convertir color hex a RGB normalizado
   const vortexColorRGB = useMemo(() => {
@@ -98,6 +100,22 @@ export function Particles({ speed, fov, aperture, focus, curl, size = 512, windX
       window.removeEventListener('touchcancel', handleEnd)
     }
   }, [mainCamera])
+
+  // Listen to audio data changes
+  useEffect(() => {
+    const handleAudioDataChange = (event) => {
+      const { amplitude, hoverDuration } = event.detail
+      setAudioAmplitude(amplitude || 0)
+      setHoverDuration(hoverDuration || 0)
+    }
+
+    window.addEventListener('audioDataChange', handleAudioDataChange)
+
+    return () => {
+      window.removeEventListener('audioDataChange', handleAudioDataChange)
+    }
+  }, [])
+
   // Update FBO and pointcloud every frame
   useFrame((state, delta) => {
     if (!renderRef.current || !simRef.current) return
@@ -142,6 +160,8 @@ export function Particles({ speed, fov, aperture, focus, curl, size = 512, windX
     renderRef.current.uniforms.uSizeFixed.value = sizeFixed
     renderRef.current.uniforms.uSizeMin.value = sizeMin
     renderRef.current.uniforms.uSizeMax.value = sizeMax
+    simRef.current.uniforms.uAudioAmplitude.value = audioAmplitude
+    simRef.current.uniforms.uHoverDuration.value = hoverDuration
   })
   return (
     <>

@@ -33,6 +33,8 @@ class SimulationMaterial extends THREE.ShaderMaterial {
       uniform float uAttractionStrength;
       uniform float uVortexStrength;
       uniform float uVortexSpeed;
+      uniform float uAudioAmplitude;
+      uniform float uHoverDuration;
       varying vec2 vUv;
       float hash(vec2 p){
         return fract(sin(dot(p, vec2(12.9898,78.233))) * 43758.5453);
@@ -78,6 +80,36 @@ class SimulationMaterial extends THREE.ShaderMaterial {
           }
         }
 
+        // Audio-reactive vibration (only for particles outside vortex)
+        if (uMouseActive > 0.5 && uAudioAmplitude > 0.01) {
+          vec3 toMouse = uMousePos - pos;
+          float dist = length(toMouse);
+
+          // Solo vibrar si está FUERA del rango del vortex
+          float isOutsideVortex = step(uAttractionRadius, dist);
+
+          if (isOutsideVortex > 0.5) {
+            // Intensidad de vibración aumenta con hover duration y audio amplitude
+            float vibrationIntensity = uAudioAmplitude * uHoverDuration;
+
+            // Crear vibración orgánica usando múltiples frecuencias de seno
+            // Cada partícula vibra de forma única basada en su posición
+            float seed = hash(vUv);
+            float freq1 = 10.0 + seed * 5.0;
+            float freq2 = 15.0 + seed * 7.0;
+            float freq3 = 8.0 + seed * 3.0;
+
+            vec3 vibration = vec3(
+              sin(uTime * freq1 + pos.x * 2.0) * 0.3,
+              cos(uTime * freq2 + pos.y * 2.0) * 0.3,
+              sin(uTime * freq3 + pos.z * 1.5) * 0.2
+            );
+
+            // Aplicar vibración escalada por intensidad
+            pos += vibration * vibrationIntensity * 0.5;
+          }
+        }
+
         gl_FragColor = vec4(pos, 1.0);
       }`,
       uniforms: {
@@ -91,7 +123,9 @@ class SimulationMaterial extends THREE.ShaderMaterial {
         uAttractionRadius: { value: 1.0 },
         uAttractionStrength: { value: 0.8 },
         uVortexStrength: { value: 1.5 },
-        uVortexSpeed: { value: 1.0 }
+        uVortexSpeed: { value: 1.0 },
+        uAudioAmplitude: { value: 0.0 },
+        uHoverDuration: { value: 0.0 }
       }
     })
   }
