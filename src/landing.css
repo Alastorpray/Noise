@@ -765,6 +765,16 @@
     box-sizing: border-box;
   }
 
+  .divisions-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .division-card {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
   .footer {
     padding: 50px 1.5rem;
   }
@@ -1245,8 +1255,15 @@
     max-width: 100%;
   }
 
+  .divisions-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
   .division-card {
     padding: 1.25rem;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .division-title {
@@ -1255,6 +1272,22 @@
 
   .division-desc {
     font-size: 0.875rem;
+  }
+
+  .flow-panel {
+    padding: 0 0.875rem;
+  }
+
+  .flow-panel.flow-visible {
+    padding: 0.875rem;
+  }
+
+  .flow-content h4 {
+    font-size: 0.9rem;
+  }
+
+  .flow-content p {
+    font-size: 0.85rem;
   }
 
   .footer {
@@ -1340,6 +1373,50 @@
   .contact-submit {
     font-size: 0.875rem;
     padding: 0.8rem 1rem;
+  }
+
+  .divisions-grid {
+    grid-template-columns: 1fr;
+    gap: 0.875rem;
+  }
+
+  .division-card {
+    padding: 1rem;
+    width: 100%;
+  }
+
+  .division-title {
+    font-size: 0.95rem;
+  }
+
+  .division-desc {
+    font-size: 0.825rem;
+  }
+
+  .flow-panel {
+    padding: 0 0.75rem;
+  }
+
+  .flow-panel.flow-visible {
+    padding: 0.75rem;
+  }
+
+  .flow-item {
+    grid-template-columns: 12px 1fr;
+    gap: 0.5rem;
+  }
+
+  .flow-bullet {
+    width: 8px;
+    height: 8px;
+  }
+
+  .flow-content h4 {
+    font-size: 0.85rem;
+  }
+
+  .flow-content p {
+    font-size: 0.8rem;
   }
 }
 
