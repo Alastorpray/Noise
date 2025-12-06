@@ -111,10 +111,45 @@ class AudioManager {
     console.log('✅ Audio playing! Volume fading in...')
   }
 
+  pause() {
+    if (!this.isPlaying || !this.audioContext) return
+
+    console.log('⏸️ Pausing audio...')
+
+    // Fade out rápido
+    const currentTime = this.audioContext.currentTime
+    this.gainNode.gain.setValueAtTime(this.gainNode.gain.value, currentTime)
+    this.gainNode.gain.linearRampToValueAtTime(0, currentTime + 0.3)
+
+    // Suspender contexto después del fade
+    setTimeout(() => {
+      if (this.audioContext && this.audioContext.state === 'running') {
+        this.audioContext.suspend()
+        console.log('⏸️ Audio paused (context suspended)')
+      }
+    }, 300)
+  }
+
+  async resume() {
+    if (!this.audioContext || this.audioContext.state !== 'suspended') return
+
+    console.log('▶️ Resuming audio...')
+
+    // Reanudar contexto
+    await this.audioContext.resume()
+
+    // Fade in
+    const currentTime = this.audioContext.currentTime
+    this.gainNode.gain.setValueAtTime(0, currentTime)
+    this.gainNode.gain.linearRampToValueAtTime(0.3, currentTime + 0.3)
+
+    console.log('▶️ Audio resumed')
+  }
+
   stop() {
     if (!this.isPlaying || !this.source) return
 
-    console.log('⏸️ Stopping audio... Fading out...')
+    console.log('⏹️ Stopping audio... Fading out...')
 
     // Fade out
     const currentTime = this.audioContext.currentTime

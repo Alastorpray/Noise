@@ -77,6 +77,10 @@ export function LandingPage() {
   }, [isExpanded])
 
   const handleImageClick = () => {
+    // Detener el audio completamente (no solo pausar)
+    audioManager.stop()
+    setIsHovering(false)
+    setGlitchIntensity(0)
     setIsExpanded(true)
   }
 
@@ -198,9 +202,16 @@ export function LandingPage() {
     if (!audioInitialized.current) return
 
     if (isHovering) {
-      // Iniciar audio
-      audioManager.play()
-      hoverStartTime.current = Date.now()
+      // Si el audio está pausado, resumir. Si no, iniciar desde el principio
+      if (audioManager.audioContext && audioManager.audioContext.state === 'suspended') {
+        audioManager.resume()
+      } else if (!audioManager.isPlaying) {
+        audioManager.play()
+      }
+
+      if (!hoverStartTime.current) {
+        hoverStartTime.current = Date.now()
+      }
 
       // Loop de captura de audio data
       const captureAudioData = () => {
@@ -216,8 +227,8 @@ export function LandingPage() {
 
       captureAudioData()
     } else {
-      // Detener audio
-      audioManager.stop()
+      // Solo pausar el audio (mantiene la posición)
+      audioManager.pause()
       setHoverDuration(0)
 
       // Cancelar RAF
