@@ -19,6 +19,7 @@ export function LandingPage() {
   const audioAnimationFrame = useRef(null)
   const hoverStartTime = useRef(0)
   const audioInitialized = useRef(false)
+  const audioUnlocked = useRef(false)
 
   const toggleTheme = () => {
     setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'))
@@ -172,6 +173,30 @@ export function LandingPage() {
 
     return () => {
       audioManager.dispose()
+    }
+  }, [])
+
+  // Detectar primer click/tap para desbloquear audio silenciosamente
+  useEffect(() => {
+    const unlockAudio = () => {
+      if (!audioUnlocked.current && audioInitialized.current) {
+        audioManager.resumeContext()
+        audioUnlocked.current = true
+        // Remover listeners después de desbloquear
+        window.removeEventListener('click', unlockAudio)
+        window.removeEventListener('touchstart', unlockAudio)
+        window.removeEventListener('keydown', unlockAudio)
+      }
+    }
+
+    window.addEventListener('click', unlockAudio)
+    window.addEventListener('touchstart', unlockAudio)
+    window.addEventListener('keydown', unlockAudio)
+
+    return () => {
+      window.removeEventListener('click', unlockAudio)
+      window.removeEventListener('touchstart', unlockAudio)
+      window.removeEventListener('keydown', unlockAudio)
     }
   }, [])
 
