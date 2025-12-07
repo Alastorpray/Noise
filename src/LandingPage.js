@@ -302,7 +302,8 @@ export function LandingPage() {
             onTouchStart={handleLogoTouchStart}
             onTouchEnd={handleLogoTouchEnd}
             style={{
-              '--glitch-intensity': glitchIntensity
+              '--glitch-intensity': glitchIntensity,
+              '--mid-intensity': audioData.mid
             }}
           >
             <div
