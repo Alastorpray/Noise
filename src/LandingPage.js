@@ -12,7 +12,6 @@ export function LandingPage() {
   const [theme, setTheme] = useState('dark')
   const [glitchIntensity, setGlitchIntensity] = useState(0)
   const [isHovering, setIsHovering] = useState(false)
-  const glitchInterval = useRef(null)
   const logoTextRef = useRef(null)
   const isTouchActive = useRef(false)
   const [audioData, setAudioData] = useState({ amplitude: 0, bass: 0, mid: 0, treble: 0 })
@@ -153,28 +152,7 @@ export function LandingPage() {
     setIsHovering(false)
   }
 
-  useEffect(() => {
-    if (isHovering) {
-      // Incremento granular cuando está hovering (6 segundos para llegar a 1)
-      glitchInterval.current = setInterval(() => {
-        setGlitchIntensity((prev) => Math.min(prev + 0.021, 1))
-      }, 126)
-    } else {
-      // Decrecimiento suave cuando se quita el hover (1.5 segundos para llegar a 0)
-      glitchInterval.current = setInterval(() => {
-        setGlitchIntensity((prev) => {
-          const newValue = prev - 0.04
-          return newValue <= 0 ? 0 : newValue
-        })
-      }, 60)
-    }
-
-    return () => {
-      if (glitchInterval.current) {
-        clearInterval(glitchInterval.current)
-      }
-    }
-  }, [isHovering])
+  // Glitch controlado por audio (en el loop de captura de audio)
 
   // Emitir evento cuando cambie glitchIntensity
   useEffect(() => {
@@ -218,6 +196,19 @@ export function LandingPage() {
         const data = audioManager.getAudioData()
         setAudioData(data)
 
+        // Calcular glitch intensity basado en audio
+        const bassWeight = 1.0
+        const midWeight = 0.6
+        const trebleWeight = 0.4
+        const audioIntensity = (data.bass * bassWeight) + (data.mid * midWeight) + (data.treble * trebleWeight)
+
+        // Aplicar suavizado para evitar cambios bruscos
+        setGlitchIntensity(prev => {
+          const target = Math.min(audioIntensity * 1.2, 1)
+          const smoothing = 0.15
+          return prev + (target - prev) * smoothing
+        })
+
         // Calcular duración del hover (0-1, max 5 segundos)
         const duration = Math.min((Date.now() - hoverStartTime.current) / 5000, 1)
         setHoverDuration(duration)
@@ -231,11 +222,16 @@ export function LandingPage() {
       audioManager.pause()
       setHoverDuration(0)
 
-      // Cancelar RAF
-      if (audioAnimationFrame.current) {
-        cancelAnimationFrame(audioAnimationFrame.current)
-        audioAnimationFrame.current = null
+      // Decay suave del glitch cuando se quita el hover
+      const decayGlitch = () => {
+        setGlitchIntensity(prev => {
+          const newValue = prev * 0.92
+          if (newValue < 0.01) return 0
+          audioAnimationFrame.current = requestAnimationFrame(decayGlitch)
+          return newValue
+        })
       }
+      decayGlitch()
     }
 
     return () => {
