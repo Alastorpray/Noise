@@ -332,12 +332,24 @@ export function LandingPage() {
           onClick={handleAudioToggle}
           aria-label={audioEnabled ? 'Disable sound' : 'Enable sound'}
         >
-          <div className="audio-bars">
-            <span className="bar"></span>
-            <span className="bar"></span>
-            <span className="bar"></span>
-            <span className="bar"></span>
-          </div>
+          <svg className="audio-waves" viewBox="0 0 32 16" fill="none">
+            {/* Líneas verticales que forman una onda sinusoidal */}
+            <line className="wave-line" x1="2" y1="8" x2="2" y2="10" />
+            <line className="wave-line" x1="4" y1="6" x2="4" y2="12" />
+            <line className="wave-line" x1="6" y1="4" x2="6" y2="14" />
+            <line className="wave-line" x1="8" y1="3" x2="8" y2="15" />
+            <line className="wave-line" x1="10" y1="4" x2="10" y2="14" />
+            <line className="wave-line" x1="12" y1="6" x2="12" y2="12" />
+            <line className="wave-line" x1="14" y1="7" x2="14" y2="11" />
+            <line className="wave-line" x1="16" y1="5" x2="16" y2="13" />
+            <line className="wave-line" x1="18" y1="3" x2="18" y2="15" />
+            <line className="wave-line" x1="20" y1="2" x2="20" y2="16" />
+            <line className="wave-line" x1="22" y1="3" x2="22" y2="15" />
+            <line className="wave-line" x1="24" y1="5" x2="24" y2="13" />
+            <line className="wave-line" x1="26" y1="6" x2="26" y2="12" />
+            <line className="wave-line" x1="28" y1="7" x2="28" y2="11" />
+            <line className="wave-line" x1="30" y1="7" x2="30" y2="11" />
+          </svg>
         </button>
       )}
 

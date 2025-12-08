@@ -62,25 +62,18 @@
   background: rgba(255, 102, 0, 0.1);
 }
 
-.audio-bars {
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  gap: 2px;
-  height: 14px;
+.audio-waves {
+  width: 22px;
+  height: 12px;
 }
 
-.audio-toggle .bar {
-  width: 2px;
-  background: rgba(255, 255, 255, 0.3);
-  border-radius: 1px;
+.audio-toggle .wave-line {
+  stroke: rgba(255, 255, 255, 0.5);
+  stroke-width: 1.2;
+  stroke-linecap: round;
   transition: all 0.3s ease;
+  transform-origin: center;
 }
-
-.audio-toggle .bar:nth-child(1) { height: 5px; }
-.audio-toggle .bar:nth-child(2) { height: 10px; }
-.audio-toggle .bar:nth-child(3) { height: 7px; }
-.audio-toggle .bar:nth-child(4) { height: 4px; }
 
 /* Ripple waves for inactive state */
 .audio-toggle:not(.active)::before,
@@ -114,48 +107,72 @@
   }
 }
 
-/* Inactive state - subtle breathing animation */
-.audio-toggle:not(.active) .bar {
-  animation: breathe 2s ease-in-out infinite;
+/* Inactive state - subtle wave breathing animation */
+.audio-toggle:not(.active) .wave-line {
+  animation: wave-breathe 2.5s ease-in-out infinite;
 }
 
-.audio-toggle:not(.active) .bar:nth-child(1) { animation-delay: 0s; }
-.audio-toggle:not(.active) .bar:nth-child(2) { animation-delay: 0.2s; }
-.audio-toggle:not(.active) .bar:nth-child(3) { animation-delay: 0.4s; }
-.audio-toggle:not(.active) .bar:nth-child(4) { animation-delay: 0.6s; }
+.audio-toggle:not(.active) .wave-line:nth-child(1) { animation-delay: 0s; }
+.audio-toggle:not(.active) .wave-line:nth-child(2) { animation-delay: 0.08s; }
+.audio-toggle:not(.active) .wave-line:nth-child(3) { animation-delay: 0.16s; }
+.audio-toggle:not(.active) .wave-line:nth-child(4) { animation-delay: 0.24s; }
+.audio-toggle:not(.active) .wave-line:nth-child(5) { animation-delay: 0.32s; }
+.audio-toggle:not(.active) .wave-line:nth-child(6) { animation-delay: 0.4s; }
+.audio-toggle:not(.active) .wave-line:nth-child(7) { animation-delay: 0.48s; }
+.audio-toggle:not(.active) .wave-line:nth-child(8) { animation-delay: 0.56s; }
+.audio-toggle:not(.active) .wave-line:nth-child(9) { animation-delay: 0.64s; }
+.audio-toggle:not(.active) .wave-line:nth-child(10) { animation-delay: 0.72s; }
+.audio-toggle:not(.active) .wave-line:nth-child(11) { animation-delay: 0.8s; }
+.audio-toggle:not(.active) .wave-line:nth-child(12) { animation-delay: 0.88s; }
+.audio-toggle:not(.active) .wave-line:nth-child(13) { animation-delay: 0.96s; }
+.audio-toggle:not(.active) .wave-line:nth-child(14) { animation-delay: 1.04s; }
+.audio-toggle:not(.active) .wave-line:nth-child(15) { animation-delay: 1.12s; }
 
-@keyframes breathe {
+@keyframes wave-breathe {
   0%, 100% {
     opacity: 0.3;
-    transform: scaleY(1);
+    transform: scaleY(0.7);
   }
   50% {
-    opacity: 0.6;
+    opacity: 0.7;
     transform: scaleY(1.2);
   }
 }
 
-/* Active state - bars turn orange */
-.audio-toggle.active .bar {
-  background: #ff6600;
+/* Active state - waves turn orange */
+.audio-toggle.active .wave-line {
+  stroke: #ff6600;
 }
 
-/* Playing state - equalizer animation */
-.audio-toggle.playing .bar {
-  animation: equalizer 0.5s ease-in-out infinite alternate;
+/* Playing state - wave animation */
+.audio-toggle.playing .wave-line {
+  animation: wave-pulse 0.4s ease-in-out infinite alternate;
 }
 
-.audio-toggle.playing .bar:nth-child(1) { animation-delay: 0s; animation-duration: 0.4s; }
-.audio-toggle.playing .bar:nth-child(2) { animation-delay: 0.1s; animation-duration: 0.35s; }
-.audio-toggle.playing .bar:nth-child(3) { animation-delay: 0.15s; animation-duration: 0.45s; }
-.audio-toggle.playing .bar:nth-child(4) { animation-delay: 0.05s; animation-duration: 0.38s; }
+.audio-toggle.playing .wave-line:nth-child(1) { animation-delay: 0s; animation-duration: 0.3s; }
+.audio-toggle.playing .wave-line:nth-child(2) { animation-delay: 0.03s; animation-duration: 0.35s; }
+.audio-toggle.playing .wave-line:nth-child(3) { animation-delay: 0.06s; animation-duration: 0.28s; }
+.audio-toggle.playing .wave-line:nth-child(4) { animation-delay: 0.09s; animation-duration: 0.4s; }
+.audio-toggle.playing .wave-line:nth-child(5) { animation-delay: 0.12s; animation-duration: 0.32s; }
+.audio-toggle.playing .wave-line:nth-child(6) { animation-delay: 0.15s; animation-duration: 0.38s; }
+.audio-toggle.playing .wave-line:nth-child(7) { animation-delay: 0.18s; animation-duration: 0.3s; }
+.audio-toggle.playing .wave-line:nth-child(8) { animation-delay: 0.21s; animation-duration: 0.42s; }
+.audio-toggle.playing .wave-line:nth-child(9) { animation-delay: 0.24s; animation-duration: 0.35s; }
+.audio-toggle.playing .wave-line:nth-child(10) { animation-delay: 0.27s; animation-duration: 0.28s; }
+.audio-toggle.playing .wave-line:nth-child(11) { animation-delay: 0.3s; animation-duration: 0.4s; }
+.audio-toggle.playing .wave-line:nth-child(12) { animation-delay: 0.33s; animation-duration: 0.32s; }
+.audio-toggle.playing .wave-line:nth-child(13) { animation-delay: 0.36s; animation-duration: 0.36s; }
+.audio-toggle.playing .wave-line:nth-child(14) { animation-delay: 0.39s; animation-duration: 0.3s; }
+.audio-toggle.playing .wave-line:nth-child(15) { animation-delay: 0.42s; animation-duration: 0.34s; }
 
-@keyframes equalizer {
+@keyframes wave-pulse {
   0% {
-    height: 3px;
+    transform: scaleY(0.3);
+    opacity: 0.5;
   }
   100% {
-    height: 12px;
+    transform: scaleY(1.4);
+    opacity: 1;
   }
 }
 
