@@ -30,6 +30,103 @@
   z-index: 100;
 }
 
+/* Audio Toggle Button */
+.audio-toggle {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 48px;
+  height: 48px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  cursor: pointer;
+  pointer-events: auto;
+  z-index: 102;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.audio-toggle:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: scale(1.05);
+}
+
+.audio-toggle.active {
+  border-color: rgba(255, 102, 0, 0.4);
+  background: rgba(255, 102, 0, 0.1);
+}
+
+.audio-bars {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 3px;
+  height: 20px;
+}
+
+.audio-toggle .bar {
+  width: 3px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+
+.audio-toggle .bar:nth-child(1) { height: 8px; }
+.audio-toggle .bar:nth-child(2) { height: 14px; }
+.audio-toggle .bar:nth-child(3) { height: 10px; }
+.audio-toggle .bar:nth-child(4) { height: 6px; }
+
+/* Inactive state - subtle breathing animation */
+.audio-toggle:not(.active) .bar {
+  animation: breathe 2s ease-in-out infinite;
+}
+
+.audio-toggle:not(.active) .bar:nth-child(1) { animation-delay: 0s; }
+.audio-toggle:not(.active) .bar:nth-child(2) { animation-delay: 0.2s; }
+.audio-toggle:not(.active) .bar:nth-child(3) { animation-delay: 0.4s; }
+.audio-toggle:not(.active) .bar:nth-child(4) { animation-delay: 0.6s; }
+
+@keyframes breathe {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scaleY(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scaleY(1.1);
+  }
+}
+
+/* Active state - bars turn orange */
+.audio-toggle.active .bar {
+  background: #ff6600;
+}
+
+/* Playing state - equalizer animation */
+.audio-toggle.playing .bar {
+  animation: equalizer 0.5s ease-in-out infinite alternate;
+}
+
+.audio-toggle.playing .bar:nth-child(1) { animation-delay: 0s; animation-duration: 0.4s; }
+.audio-toggle.playing .bar:nth-child(2) { animation-delay: 0.1s; animation-duration: 0.35s; }
+.audio-toggle.playing .bar:nth-child(3) { animation-delay: 0.15s; animation-duration: 0.45s; }
+.audio-toggle.playing .bar:nth-child(4) { animation-delay: 0.05s; animation-duration: 0.38s; }
+
+@keyframes equalizer {
+  0% {
+    height: 4px;
+  }
+  100% {
+    height: 18px;
+  }
+}
+
 /* Logo central */
 .logo-container {
   position: absolute;

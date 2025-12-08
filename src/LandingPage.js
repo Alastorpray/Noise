@@ -20,9 +20,18 @@ export function LandingPage() {
   const hoverStartTime = useRef(0)
   const audioInitialized = useRef(false)
   const audioUnlocked = useRef(false)
+  const [audioEnabled, setAudioEnabled] = useState(false)
 
   const toggleTheme = () => {
     setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'))
+  }
+
+  const handleAudioToggle = () => {
+    if (!audioEnabled && audioInitialized.current) {
+      audioManager.resumeContext()
+      audioUnlocked.current = true
+    }
+    setAudioEnabled(prev => !prev)
   }
 
   const handleCollapse = () => {
@@ -204,7 +213,7 @@ export function LandingPage() {
   useEffect(() => {
     if (!audioInitialized.current) return
 
-    if (isHovering) {
+    if (isHovering && audioEnabled) {
       // Si el audio está pausado, resumir. Si no, iniciar desde el principio
       if (audioManager.audioContext && audioManager.audioContext.state === 'suspended') {
         audioManager.resume()
@@ -242,7 +251,7 @@ export function LandingPage() {
       }
 
       captureAudioData()
-    } else {
+    } else if (!audioEnabled || !isHovering) {
       // Solo pausar el audio (mantiene la posición)
       audioManager.pause()
       setHoverDuration(0)
@@ -264,7 +273,7 @@ export function LandingPage() {
         cancelAnimationFrame(audioAnimationFrame.current)
       }
     }
-  }, [isHovering])
+  }, [isHovering, audioEnabled])
 
   // Emitir evento cuando cambien los datos de audio
   useEffect(() => {
@@ -316,6 +325,22 @@ export function LandingPage() {
 
   return (
     <div className="landing-container">
+      {/* Audio Toggle Icon */}
+      {!isExpanded && !isClosing && (
+        <button
+          className={`audio-toggle ${audioEnabled ? 'active' : ''} ${isHovering && audioEnabled ? 'playing' : ''}`}
+          onClick={handleAudioToggle}
+          aria-label={audioEnabled ? 'Disable sound' : 'Enable sound'}
+        >
+          <div className="audio-bars">
+            <span className="bar"></span>
+            <span className="bar"></span>
+            <span className="bar"></span>
+            <span className="bar"></span>
+          </div>
+        </button>
+      )}
+
       {/* Texto central */}
       {!isExpanded && !isClosing && (
         <div className="logo-container" onClick={handleImageClick}>
