@@ -232,7 +232,7 @@
   color: #ffffff;
 }
 
-/* Enhanced TV Glitch effect on hover */
+/* Enhanced TV Glitch effect on hover - Beat Reactive */
 .logo-text[style*="--glitch-intensity"] {
   position: relative;
 }
@@ -240,15 +240,43 @@
 .logo-text[style*="--glitch-intensity"] .logo-main,
 .logo-text[style*="--glitch-intensity"] .logo-sub {
   position: relative;
-  animation: glitch-skew 0.5s infinite linear alternate-reverse;
+  /* Bass-driven horizontal glitch + Mid-driven vertical + Treble flicker */
   text-shadow:
-    calc(var(--glitch-intensity) * 2px) 0 0 rgba(255, 0, 0, calc(var(--glitch-intensity) * 0.7)),
-    calc(var(--glitch-intensity) * -2px) 0 0 rgba(0, 255, 255, calc(var(--glitch-intensity) * 0.7));
+    calc(var(--glitch-intensity) * 6px) 0 0 rgba(255, 0, 0, calc(var(--glitch-intensity) * 0.9)),
+    calc(var(--glitch-intensity) * -6px) 0 0 rgba(0, 255, 255, calc(var(--glitch-intensity) * 0.9)),
+    0 calc(var(--mid-intensity) * 15px) 0 rgba(0, 255, 0, calc(var(--mid-intensity) * 0.7)),
+    0 calc(var(--mid-intensity) * -15px) 0 rgba(255, 255, 0, calc(var(--mid-intensity) * 0.7));
+  /* Scale pulse on bass hits */
+  transform:
+    scale(calc(1 + var(--glitch-intensity) * 0.03))
+    translateX(calc(var(--glitch-intensity) * 2px - var(--glitch-intensity) * 4px * var(--glitch-intensity)));
+  /* Flicker opacity on treble */
+  opacity: calc(1 - var(--flicker-intensity, 0) * 0.15);
+  transition: opacity 0.05s;
 }
 
+/* Skew animation driven by intensity */
+.logo-text[style*="--glitch-intensity"] .logo-main {
+  animation: glitch-skew-bass 0.15s infinite steps(2);
+}
 
+.logo-text[style*="--glitch-intensity"] .logo-sub {
+  animation: glitch-skew-bass 0.18s infinite steps(3);
+}
 
-/* Red channel (::before) */
+@keyframes glitch-skew-bass {
+  0%, 100% {
+    transform: skewX(0deg);
+  }
+  25% {
+    transform: skewX(calc(var(--glitch-intensity, 0) * 3deg));
+  }
+  75% {
+    transform: skewX(calc(var(--glitch-intensity, 0) * -2deg));
+  }
+}
+
+/* Red channel (::before) - follows bass beats */
 .logo-text[style*="--glitch-intensity"] .logo-main::before,
 .logo-text[style*="--glitch-intensity"] .logo-sub::before {
   content: attr(data-text);
@@ -258,13 +286,14 @@
   width: 100%;
   height: 100%;
   color: #ff0044;
-  opacity: calc(var(--glitch-intensity) * 0.9);
+  opacity: calc(var(--glitch-intensity) * 0.95);
   mix-blend-mode: screen;
-  animation: glitch-red 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite;
-  clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%);
+  transform: translateX(calc(var(--glitch-intensity) * 8px));
+  clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
+  animation: glitch-red-beat 0.1s infinite steps(2);
 }
 
-/* Cyan channel (::after) */
+/* Cyan channel (::after) - follows bass beats */
 .logo-text[style*="--glitch-intensity"] .logo-main::after,
 .logo-text[style*="--glitch-intensity"] .logo-sub::after {
   content: attr(data-text);
@@ -274,158 +303,55 @@
   width: 100%;
   height: 100%;
   color: #00ffff;
-  opacity: calc(var(--glitch-intensity) * 0.9);
+  opacity: calc(var(--glitch-intensity) * 0.95);
   mix-blend-mode: screen;
-  animation: glitch-cyan 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite;
-  clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
+  transform: translateX(calc(var(--glitch-intensity) * -8px));
+  clip-path: polygon(0 55%, 100% 55%, 100% 100%, 0 100%);
+  animation: glitch-cyan-beat 0.12s infinite steps(2);
 }
 
-/* Green/Yellow channel for mid tones - VERTICAL glitch */
+@keyframes glitch-red-beat {
+  0%, 100% {
+    transform: translateX(calc(var(--glitch-intensity, 0) * 6px));
+  }
+  50% {
+    transform: translateX(calc(var(--glitch-intensity, 0) * 10px));
+  }
+}
+
+@keyframes glitch-cyan-beat {
+  0%, 100% {
+    transform: translateX(calc(var(--glitch-intensity, 0) * -6px));
+  }
+  50% {
+    transform: translateX(calc(var(--glitch-intensity, 0) * -10px));
+  }
+}
+
+/* Vertical glitch on mid beats (snares) */
 .logo-text[style*="--mid-intensity"] .logo-main,
 .logo-text[style*="--mid-intensity"] .logo-sub {
-  text-shadow:
-    calc(var(--glitch-intensity) * 2px) 0 0 rgba(255, 0, 0, calc(var(--glitch-intensity) * 0.7)),
-    calc(var(--glitch-intensity) * -2px) 0 0 rgba(0, 255, 255, calc(var(--glitch-intensity) * 0.7)),
-    0 calc(var(--mid-intensity) * 8px) 0 rgba(0, 255, 0, calc(var(--mid-intensity) * 0.5)),
-    0 calc(var(--mid-intensity) * -8px) 0 rgba(255, 255, 0, calc(var(--mid-intensity) * 0.5));
+  animation: glitch-vertical-beat 0.08s infinite steps(2);
 }
 
-
-/* Main text animation */
-.logo-text[style*="--glitch-intensity"] .logo-main {
-  animation:
-    glitch-base 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite,
-    glitch-flicker 0.15s steps(2) infinite;
-}
-
-.logo-text[style*="--glitch-intensity"] .logo-sub {
-  animation:
-    glitch-base 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite,
-    glitch-flicker 0.18s steps(2) infinite;
-  animation-delay: 0.05s;
-}
-
-/* Red channel animation - more aggressive */
-@keyframes glitch-red {
+@keyframes glitch-vertical-beat {
   0%, 100% {
-    transform: translateX(calc(var(--glitch-intensity) * -4px)) skewX(0deg);
-    clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%);
-  }
-  10% {
-    transform: translateX(calc(var(--glitch-intensity) * 15px)) skewX(calc(var(--glitch-intensity) * -2deg));
-    clip-path: polygon(0 10%, 100% 10%, 100% 40%, 0 40%);
-  }
-  20% {
-    transform: translateX(calc(var(--glitch-intensity) * -10px)) skewX(calc(var(--glitch-intensity) * 1deg));
-    clip-path: polygon(0 5%, 100% 5%, 100% 30%, 0 30%);
-  }
-  35% {
-    transform: translateX(calc(var(--glitch-intensity) * 8px)) skewX(0deg);
-    clip-path: polygon(0 20%, 100% 20%, 100% 50%, 0 50%);
+    transform: translateY(0) skewX(calc(var(--glitch-intensity, 0) * 2deg));
   }
   50% {
-    transform: translateX(calc(var(--glitch-intensity) * -12px)) skewX(calc(var(--glitch-intensity) * 3deg));
-    clip-path: polygon(0 15%, 100% 15%, 100% 45%, 0 45%);
-  }
-  65% {
-    transform: translateX(calc(var(--glitch-intensity) * 6px)) skewX(calc(var(--glitch-intensity) * -1deg));
-    clip-path: polygon(0 25%, 100% 25%, 100% 55%, 0 55%);
-  }
-  80% {
-    transform: translateX(calc(var(--glitch-intensity) * -8px)) skewX(calc(var(--glitch-intensity) * 2deg));
-    clip-path: polygon(0 8%, 100% 8%, 100% 38%, 0 38%);
+    transform: translateY(calc(var(--mid-intensity, 0) * 4px)) skewX(calc(var(--glitch-intensity, 0) * -1deg));
   }
 }
 
-/* Cyan channel animation - offset timing */
-@keyframes glitch-cyan {
-  0%, 100% {
-    transform: translateX(calc(var(--glitch-intensity) * 4px)) skewX(0deg);
-    clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
-  }
-  15% {
-    transform: translateX(calc(var(--glitch-intensity) * -14px)) skewX(calc(var(--glitch-intensity) * 2deg));
-    clip-path: polygon(0 55%, 100% 55%, 100% 90%, 0 90%);
-  }
-  30% {
-    transform: translateX(calc(var(--glitch-intensity) * 10px)) skewX(calc(var(--glitch-intensity) * -1deg));
-    clip-path: polygon(0 60%, 100% 60%, 100% 95%, 0 95%);
-  }
-  45% {
-    transform: translateX(calc(var(--glitch-intensity) * -6px)) skewX(0deg);
-    clip-path: polygon(0 70%, 100% 70%, 100% 100%, 0 100%);
-  }
-  60% {
-    transform: translateX(calc(var(--glitch-intensity) * 12px)) skewX(calc(var(--glitch-intensity) * -2deg));
-    clip-path: polygon(0 50%, 100% 50%, 100% 85%, 0 85%);
-  }
-  75% {
-    transform: translateX(calc(var(--glitch-intensity) * -9px)) skewX(calc(var(--glitch-intensity) * 1deg));
-    clip-path: polygon(0 58%, 100% 58%, 100% 92%, 0 92%);
-  }
-  90% {
-    transform: translateX(calc(var(--glitch-intensity) * 5px)) skewX(calc(var(--glitch-intensity) * -1deg));
-    clip-path: polygon(0 62%, 100% 62%, 100% 98%, 0 98%);
-  }
-}
 
-/* Base text shake */
-@keyframes glitch-base {
-  0%, 100% {
-    transform: translateX(0) translateY(0);
-  }
-  10% {
-    transform: translateX(calc(var(--glitch-intensity) * -3px)) translateY(calc(var(--glitch-intensity) * 1px));
-  }
-  20% {
-    transform: translateX(calc(var(--glitch-intensity) * 4px)) translateY(calc(var(--glitch-intensity) * -1px));
-  }
-  30% {
-    transform: translateX(calc(var(--glitch-intensity) * -2px)) translateY(0);
-  }
-  40% {
-    transform: translateX(calc(var(--glitch-intensity) * 3px)) translateY(calc(var(--glitch-intensity) * 2px));
-  }
-  50% {
-    transform: translateX(calc(var(--glitch-intensity) * -4px)) translateY(calc(var(--glitch-intensity) * -1px));
-  }
-  60% {
-    transform: translateX(calc(var(--glitch-intensity) * 2px)) translateY(0);
-  }
-  70% {
-    transform: translateX(calc(var(--glitch-intensity) * -3px)) translateY(calc(var(--glitch-intensity) * 1px));
-  }
-  80% {
-    transform: translateX(calc(var(--glitch-intensity) * 4px)) translateY(calc(var(--glitch-intensity) * -2px));
-  }
-  90% {
-    transform: translateX(calc(var(--glitch-intensity) * -1px)) translateY(0);
-  }
-}
 
-/* Skew distortion */
-@keyframes glitch-skew {
-  0%, 100% {
-    transform: skewX(0deg);
-  }
-  25% {
-    transform: skewX(calc(var(--glitch-intensity) * 0.8deg));
-  }
-  50% {
-    transform: skewX(calc(var(--glitch-intensity) * -0.5deg));
-  }
-  75% {
-    transform: skewX(calc(var(--glitch-intensity) * 0.3deg));
-  }
-}
-
-/* Flicker effect */
+/* Flicker animation for treble hits */
 @keyframes glitch-flicker {
   0%, 100% {
     opacity: 1;
   }
   50% {
-    opacity: calc(1 - (var(--glitch-intensity) * 0.15));
+    opacity: calc(1 - var(--flicker-intensity, 0) * 0.3);
   }
 }
 

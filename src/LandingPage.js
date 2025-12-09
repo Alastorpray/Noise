@@ -22,6 +22,13 @@ export function LandingPage() {
   const audioUnlocked = useRef(false)
   const [audioEnabled, setAudioEnabled] = useState(false)
 
+  // Beat detection refs
+  const prevBass = useRef(0)
+  const prevMid = useRef(0)
+  const beatHold = useRef(0)
+  const midBeatHold = useRef(0)
+  const [flickerIntensity, setFlickerIntensity] = useState(0)
+
   const toggleTheme = () => {
     setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'))
   }
@@ -225,21 +232,48 @@ export function LandingPage() {
         hoverStartTime.current = Date.now()
       }
 
-      // Loop de captura de audio data
+      // Loop de captura de audio data con beat detection
       const captureAudioData = () => {
         const data = audioManager.getAudioData()
         setAudioData(data)
 
-        // Calcular glitch intensity basado en audio
-        const bassWeight = 1.0
-        const midWeight = 0.6
-        const trebleWeight = 0.4
-        const audioIntensity = (data.bass * bassWeight) + (data.mid * midWeight) + (data.treble * trebleWeight)
+        // === BEAT DETECTION para BASS (kicks/bombo) ===
+        const bassThreshold = 0.15  // Sensibilidad al cambio
+        const bassDelta = data.bass - prevBass.current
+        const isBassHit = bassDelta > bassThreshold && data.bass > 0.3
 
-        // Aplicar suavizado para evitar cambios bruscos
+        if (isBassHit) {
+          // Beat detectado! Disparo instantáneo
+          beatHold.current = Math.min(data.bass * 1.5, 1)
+        } else {
+          // Decay rápido con release suave
+          beatHold.current *= 0.85
+        }
+        prevBass.current = data.bass
+
+        // === BEAT DETECTION para MID (snares/claps) ===
+        const midThreshold = 0.12
+        const midDelta = data.mid - prevMid.current
+        const isMidHit = midDelta > midThreshold && data.mid > 0.25
+
+        if (isMidHit) {
+          midBeatHold.current = Math.min(data.mid * 1.4, 1)
+        } else {
+          midBeatHold.current *= 0.88
+        }
+        prevMid.current = data.mid
+
+        // === FLICKER para TREBLE (hi-hats) ===
+        const trebleFlicker = data.treble > 0.3 ? (data.treble - 0.3) * 2 : 0
+        setFlickerIntensity(trebleFlicker)
+
+        // === Combinar para glitch horizontal (bass-driven) ===
+        // Attack rápido, release lento
         setGlitchIntensity(prev => {
-          const target = Math.min(audioIntensity * 1.2, 1)
-          const smoothing = 0.15
+          const target = Math.max(beatHold.current, data.bass * 0.5)
+          const attack = 0.7   // Rápido hacia arriba
+          const release = 0.15  // Lento hacia abajo
+          const smoothing = target > prev ? attack : release
           return prev + (target - prev) * smoothing
         })
 
@@ -365,7 +399,8 @@ export function LandingPage() {
             onTouchEnd={handleLogoTouchEnd}
             style={{
               '--glitch-intensity': glitchIntensity,
-              '--mid-intensity': audioData.mid
+              '--mid-intensity': midBeatHold.current,
+              '--flicker-intensity': flickerIntensity
             }}
           >
             <div
