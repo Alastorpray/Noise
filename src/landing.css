@@ -557,7 +557,19 @@
 
 .nav-brand {
   display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.nav-brand-text {
+  display: flex;
   flex-direction: column;
+}
+
+.nav-logo-img {
+  height: 36px;
+  width: auto;
+  transition: filter 0.3s ease;
 }
 
 .nav-logo {
@@ -567,6 +579,7 @@
   color: var(--text);
   letter-spacing: -0.02em;
   text-transform: uppercase;
+  line-height: 1;
 }
 
 .nav-tagline {
@@ -574,7 +587,12 @@
   font-size: 0.95rem;
   color: var(--muted);
   letter-spacing: -0.01em;
-  margin-top: 0.25rem;
+  margin-top: 0.15rem;
+  line-height: 1;
+}
+
+.theme-light .nav-logo-img {
+  filter: invert(1);
 }
 
 .nav-links {
