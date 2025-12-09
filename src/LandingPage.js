@@ -180,7 +180,7 @@ export function LandingPage() {
   // Inicializar audio manager
   useEffect(() => {
     const initAudio = async () => {
-      const success = await audioManager.init('/sfx/tigerblood.mp3')
+      const success = await audioManager.init('/sfx/medusa.mp3')
       if (success) {
         audioInitialized.current = true
       }
@@ -428,11 +428,8 @@ export function LandingPage() {
           <nav className="main-nav">
             <div className="nav-content">
               <div className="nav-brand">
-                <img src="/Coresearchlogo.svg" alt="Coresearch" className="nav-logo-img" />
-                <div className="nav-brand-text">
-                  <div className="nav-logo">CORE</div>
-                  <div className="nav-tagline">Research</div>
-                </div>
+                <div className="nav-logo">CORE</div>
+                <div className="nav-tagline">Research</div>
               </div>
               <div className="nav-links">
                 <a href="#about" className="nav-link" onClick={(e) => onNavClick(e, '#about')}>About</a>
