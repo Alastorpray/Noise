@@ -743,6 +743,7 @@
   z-index: 100;
   background: var(--bg); /* Usar variable de tema para coincidir */
   backdrop-filter: blur(12px);
+  padding: 1.25rem 0; /* Restaurado el padding vertical */
   /* border-bottom: 1px solid rgba(255, 255, 255, 0.05);  <- ELIMINADO */
 }
 
