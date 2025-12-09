@@ -18,6 +18,11 @@ export function LandingPage() {
   const [hoverDuration, setHoverDuration] = useState(0)
   const audioAnimationFrame = useRef(null)
   const hoverStartTime = useRef(0)
+  // Beat detection refs
+  const prevBass = useRef(0)
+  const prevMid = useRef(0)
+  const beatHold = useRef(0)
+  const midBeatHold = useRef(0)
   const audioInitialized = useRef(false)
   const audioUnlocked = useRef(false)
   const [audioEnabled, setAudioEnabled] = useState(false)
@@ -230,16 +235,40 @@ export function LandingPage() {
         const data = audioManager.getAudioData()
         setAudioData(data)
 
-        // Calcular glitch intensity basado en audio
-        const bassWeight = 1.0
-        const midWeight = 0.6
-        const trebleWeight = 0.4
-        const audioIntensity = (data.bass * bassWeight) + (data.mid * midWeight) + (data.treble * trebleWeight)
+        // === BEAT DETECTION para BASS (kicks) ===
+        const bassThreshold = 0.08
+        const bassDelta = data.bass - prevBass.current
+        const isBassHit = bassDelta > bassThreshold && data.bass > 0.15
 
-        // Aplicar suavizado para evitar cambios bruscos
+        if (isBassHit) {
+          beatHold.current = Math.min(data.bass * 2.0, 1)
+        } else {
+          beatHold.current *= 0.88  // Decay rápido
+        }
+        prevBass.current = data.bass * 0.6 + prevBass.current * 0.4
+
+        // === BEAT DETECTION para MIDS (snares) ===
+        const midThreshold = 0.06
+        const midDelta = data.mid - prevMid.current
+        const isMidHit = midDelta > midThreshold && data.mid > 0.12
+
+        if (isMidHit) {
+          midBeatHold.current = Math.min(data.mid * 1.5, 0.8)
+        } else {
+          midBeatHold.current *= 0.9
+        }
+        prevMid.current = data.mid * 0.6 + prevMid.current * 0.4
+
+        // === COMBINAR: beats + energía base ===
+        const beatComponent = Math.max(beatHold.current, midBeatHold.current)
+        const energyComponent = (data.bass * 0.5 + data.mid * 0.3 + data.treble * 0.2)
+        const target = Math.max(beatComponent, energyComponent * 0.8)
+
+        // Aplicar suavizado: attack rápido, release moderado
         setGlitchIntensity(prev => {
-          const target = Math.min(audioIntensity * 1.2, 1)
-          const smoothing = 0.15
+          const attack = 0.7   // Respuesta rápida a beats
+          const release = 0.12  // Decay más lento
+          const smoothing = target > prev ? attack : release
           return prev + (target - prev) * smoothing
         })
 
