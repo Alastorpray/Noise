@@ -1,0 +1,75 @@
+{
+  "nav": {
+    "about": "Über uns",
+    "portfolio": "Portfolio",
+    "contact": "Kontakt"
+  },
+  "hero": {
+    "title": "Welten verbinden",
+    "subtitle": "Wir verwandeln Ideen in innovative digitale Erlebnisse, die Menschen, Technologien und neue Möglichkeiten verbinden."
+  },
+  "about": {
+    "title": "Wer wir sind",
+    "description1": "Multidisziplinäres Team, spezialisiert auf angewandte Forschung und Entwicklung digitaler Lösungen. Wir entwerfen und validieren Technologien mit echtem Geschäftsimpact.",
+    "description2": "Wir kombinieren schnelles Prototyping, kontrollierte Experimente und Produktionsüberführung, um den Weg von der Idee zu Ergebnissen zu verkürzen."
+  },
+  "divisions": {
+    "title": "Abteilungen",
+    "educational": {
+      "title": "Bildung",
+      "desc": "Schulung und Beratung in 3D-Entwicklung und XR-Erfahrungen.",
+      "sessions": "Schulungen",
+      "sessionsDesc": "Maßgeschneiderte Lehrpläne für Teams und Universitäten.",
+      "xrAdvisory": "XR-Beratung",
+      "xrAdvisoryDesc": "Design-Reviews, Interaktionsmodelle und Prototyping.",
+      "partnerships": "Partnerschaften",
+      "partnershipsDesc": "Akademische und industrielle Kooperationen."
+    },
+    "3dprint": {
+      "title": "3D-Druck-Entwicklung",
+      "desc": "Entwicklung für additive Fertigung, Prototyping und 3D-Druck-Workflows.",
+      "prototypes": "Prototypen",
+      "prototypesDesc": "Funktionale Iterationen und zweckmäßige Teile.",
+      "materials": "Materialien",
+      "materialsDesc": "PLA, PETG, ABS, Harze und Verbundstoff-Workflows.",
+      "integration": "Integration",
+      "integrationDesc": "Drucker, Slicer und QC-Pipelines."
+    },
+    "xr": {
+      "title": "XR-Entwicklung",
+      "desc": "XR-Simulatoren und Anwendungen mit Unity und Meta Quest 2/3.",
+      "simulators": "Simulatoren",
+      "simulatorsDesc": "Aufgabentraining und prozedurale Umgebungen.",
+      "platforms": "Plattformen",
+      "platformsDesc": "Meta Quest 2/3 und Desktop-XR-Ziele.",
+      "performance": "Leistung",
+      "performanceDesc": "Frame-Rate-Ziele und Interaktionstreue."
+    }
+  },
+  "contact": {
+    "title": "Lass uns reden.",
+    "tagline": "Arbeite mit Coresearch zusammen, um dein nächstes XR-Projekt zu bauen.",
+    "features": {
+      "delivery": "End-to-End-Lieferung",
+      "speed": "Startup-Geschwindigkeit",
+      "team": "Weltklasse-Team"
+    },
+    "form": {
+      "title": "Bereit für XR?",
+      "name": "Name",
+      "email": "E-Mail",
+      "company": "Unternehmen (optional)",
+      "message": "Nachricht",
+      "send": "Senden",
+      "sending": "Wird gesendet...",
+      "success": "Danke, wir melden uns bald."
+    }
+  },
+  "footer": {
+    "copyright": "Coresearch. Welten verbinden."
+  },
+  "audio": {
+    "enable": "Ton aktivieren",
+    "disable": "Ton deaktivieren"
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "nav": {
+    "about": "Nosotros",
+    "portfolio": "Portafolio",
+    "contact": "Contacto"
+  },
+  "hero": {
+    "title": "Conectando mundos",
+    "subtitle": "Transformamos ideas en experiencias digitales innovadoras que conectan personas, tecnologías y nuevas posibilidades."
+  },
+  "about": {
+    "title": "Quiénes Somos",
+    "desc1": "Equipo multidisciplinar especializado en investigación aplicada y desarrollo de soluciones digitales. Diseñamos y validamos tecnologías con impacto real en el negocio.",
+    "desc2": "Combinamos prototipado rápido, experimentación controlada y transferencia a producción para acortar el camino de la idea a los resultados."
+  },
+  "divisions": {
+    "title": "Divisiones",
+    "educational": {
+      "title": "Educación",
+      "desc": "Formación y consultoría en desarrollo 3D y experiencias XR.",
+      "sessions": { "title": "Sesiones", "text": "Planes de estudio adaptados para equipos y universidades." },
+      "advisory": { "title": "Consultoría XR", "text": "Revisiones de diseño, modelos de interacción y prototipado." },
+      "partnerships": { "title": "Alianzas", "text": "Colaboraciones académicas e industriales." }
+    },
+    "print3d": {
+      "title": "Desarrollo Impresión 3D",
+      "desc": "Desarrollo para fabricación aditiva, prototipado y flujos de trabajo 3D.",
+      "prototypes": { "title": "Prototipos", "text": "Iteraciones funcionales y piezas a medida." },
+      "materials": { "title": "Materiales", "text": "Flujos de trabajo con PLA, PETG, ABS, resinas y compuestos." },
+      "integration": { "title": "Integración", "text": "Impresoras, slicers y pipelines de control de calidad." }
+    },
+    "xr": {
+      "title": "Desarrollo XR",
+      "desc": "Simuladores y aplicaciones XR con Unity y Meta Quest 2/3.",
+      "simulators": { "title": "Simuladores", "text": "Entrenamiento de tareas y entornos procedimentales." },
+      "interaction": { "title": "Interacción", "text": "Seguimiento de manos, controladores y lógica multiusuario." },
+      "optimization": { "title": "Optimización", "text": "Perfilado de rendimiento para visores VR autónomos." }
+    }
+  },
+  "contact": {
+    "title": "Contáctanos",
+    "desc": "¿Tienes un proyecto en mente? Nos encantaría escucharte.",
+    "email": "Escríbenos",
+    "location": "Con base en Madrid, trabajando globalmente."
+  },
+  "footer": {
+    "rights": "Todos los derechos reservados."
+  }
+}

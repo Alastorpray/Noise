@@ -1,0 +1,75 @@
+{
+  "nav": {
+    "about": "About",
+    "portfolio": "Portfolio",
+    "contact": "Contact"
+  },
+  "hero": {
+    "title": "Connecting worlds",
+    "subtitle": "We transform ideas into innovative digital experiences that connect people, technologies and new possibilities."
+  },
+  "about": {
+    "title": "Who We Are",
+    "description1": "Multidisciplinary team specialized in applied research and digital solution development. We design and validate technologies with real business impact.",
+    "description2": "We combine rapid prototyping, controlled experimentation and transfer to production to shorten the path from idea to results."
+  },
+  "divisions": {
+    "title": "Divisions",
+    "educational": {
+      "title": "Educational",
+      "desc": "Training and advisory in 3D development and XR experiences.",
+      "sessions": "Sessions",
+      "sessionsDesc": "Curricula tailored for teams and universities.",
+      "xrAdvisory": "XR Advisory",
+      "xrAdvisoryDesc": "Design reviews, interaction models and prototyping.",
+      "partnerships": "Partnerships",
+      "partnershipsDesc": "Academic and industry collaborations."
+    },
+    "3dprint": {
+      "title": "3D print development",
+      "desc": "Development for additive manufacturing, prototyping and 3D print workflows.",
+      "prototypes": "Prototypes",
+      "prototypesDesc": "Functional iterations and fit-for-purpose parts.",
+      "materials": "Materials",
+      "materialsDesc": "PLA, PETG, ABS, resins and composites workflows.",
+      "integration": "Integration",
+      "integrationDesc": "Printers, slicers and QC pipelines."
+    },
+    "xr": {
+      "title": "XR development",
+      "desc": "XR simulators and applications with Unity and Meta Quest 2/3.",
+      "simulators": "Simulators",
+      "simulatorsDesc": "Task training and procedural environments.",
+      "platforms": "Platforms",
+      "platformsDesc": "Meta Quest 2/3 and desktop XR targets.",
+      "performance": "Performance",
+      "performanceDesc": "Frame-rate goals and interaction fidelity."
+    }
+  },
+  "contact": {
+    "title": "Let's talk.",
+    "tagline": "Partner with Coresearch to build your next XR project.",
+    "features": {
+      "delivery": "End-to-End Delivery",
+      "speed": "Startup Speed",
+      "team": "World-Class Team"
+    },
+    "form": {
+      "title": "Ready to build XR?",
+      "name": "Name",
+      "email": "Email",
+      "company": "Company (optional)",
+      "message": "Message",
+      "send": "Send",
+      "sending": "Sending...",
+      "success": "Thanks, we'll contact you soon."
+    }
+  },
+  "footer": {
+    "copyright": "Coresearch. Connecting worlds."
+  },
+  "audio": {
+    "enable": "Enable sound",
+    "disable": "Disable sound"
+  }
+}

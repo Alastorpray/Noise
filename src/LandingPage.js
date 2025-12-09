@@ -1,9 +1,37 @@
 import React, { useState, useEffect, useRef } from 'react'
+import { useTranslation } from 'react-i18next'
 import './landing.css'
 import { audioManager } from './audioManager'
 
 export function LandingPage() {
+  const { t, i18n } = useTranslation()
   const [isExpanded, setIsExpanded] = useState(false)
+  const [isLangMenuOpen, setIsLangMenuOpen] = useState(false)
+  const langMenuRef = useRef(null)
+
+  // Cerrar menú de idioma al hacer click fuera
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (langMenuRef.current && !langMenuRef.current.contains(event.target)) {
+        setIsLangMenuOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
+  const changeLanguage = (lng) => {
+    i18n.changeLanguage(lng)
+    setIsLangMenuOpen(false)
+  }
+
+  const languages = [
+    { code: 'en', label: 'English', flag: '🇬🇧' },
+    { code: 'es', label: 'Español', flag: '🇪🇸' },
+    { code: 'de', label: 'Deutsch', flag: '🇩🇪' }
+  ]
+
+  const currentLang = languages.find(l => l.code === i18n.language) || languages[0]
   const [isClosing, setIsClosing] = useState(false)
   const inactivityTimer = useRef(null)
   const [form, setForm] = useState({ nombre: '', email: '', empresa: '', mensaje: '' })
@@ -429,9 +457,37 @@ export function LandingPage() {
                 </div>
               </div>
               <div className="nav-links">
-                <a href="#about" className="nav-link" onClick={(e) => onNavClick(e, '#about')}>About</a>
-                <a href="#portfolio" className="nav-link" onClick={(e) => onNavClick(e, '#portfolio')}>Portfolio</a>
-                <a href="#contact" className="nav-link" onClick={(e) => onNavClick(e, '#contact')}>Contact</a>
+                <a href="#about" className="nav-link" onClick={(e) => onNavClick(e, '#about')}>{t('nav.about')}</a>
+                <a href="#portfolio" className="nav-link" onClick={(e) => onNavClick(e, '#portfolio')}>{t('nav.portfolio')}</a>
+                <a href="#contact" className="nav-link" onClick={(e) => onNavClick(e, '#contact')}>{t('nav.contact')}</a>
+                
+                <div className="lang-dropdown" ref={langMenuRef}>
+                  <button 
+                    className="lang-toggle" 
+                    onClick={() => setIsLangMenuOpen(!isLangMenuOpen)}
+                    aria-label="Select language"
+                  >
+                    <span className="lang-flag">{currentLang.flag}</span>
+                    <span className="lang-code">{currentLang.code.toUpperCase()}</span>
+                    <span className="lang-arrow">▼</span>
+                  </button>
+                  
+                  {isLangMenuOpen && (
+                    <div className="lang-menu">
+                      {languages.map((lang) => (
+                        <button
+                          key={lang.code}
+                          className={`lang-option ${i18n.language === lang.code ? 'active' : ''}`}
+                          onClick={() => changeLanguage(lang.code)}
+                        >
+                          <span className="lang-flag">{lang.flag}</span>
+                          <span className="lang-label">{lang.label}</span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
                 <button className="theme-toggle" onClick={toggleTheme} aria-label="Toggle theme">
                   {theme === 'dark' ? '☀' : '☾'}
                 </button>
@@ -442,10 +498,9 @@ export function LandingPage() {
           {/* Hero Section */}
           <section className="hero">
             <div className="hero-content">
-              <h1 className="hero-title">Connecting worlds</h1>
+              <h1 className="hero-title">{t('hero.title')}</h1>
               <p className="hero-subtitle">
-                We transform ideas into innovative digital experiences that connect people,
-                technologies and new possibilities.
+                {t('hero.subtitle')}
               </p>
             </div>
           </section>
@@ -455,16 +510,14 @@ export function LandingPage() {
             <div className="section-wrapper">
               <div className="grid-2">
                 <div className="grid-item">
-                  <h2 className="section-heading">Who We Are</h2>
+                  <h2 className="section-heading">{t('about.title')}</h2>
                 </div>
                 <div className="grid-item">
                   <p className="body-text">
-                    Multidisciplinary team specialized in applied research and digital solution development.
-                    We design and validate technologies with real business impact.
+                    {t('about.desc1')}
                   </p>
                   <p className="body-text">
-                    We combine rapid prototyping, controlled experimentation and transfer to production
-                    to shorten the path from idea to results.
+                    {t('about.desc2')}
                   </p>
                 </div>
               </div>
@@ -474,64 +527,64 @@ export function LandingPage() {
 
           <section className="section" id="divisions">
             <div className="section-wrapper">
-              <h2 className="section-heading-center">Divisions</h2>
+              <h2 className="section-heading-center">{t('divisions.title')}</h2>
               <div className="divisions-grid">
                 <div className="division-card" onClick={() => toggleDivision('educational')}>
-                  <h3 className="division-title">Educational</h3>
-                  <p className="division-desc">Training and advisory in 3D development and XR experiences.</p>
+                  <h3 className="division-title">{t('divisions.educational.title')}</h3>
+                  <p className="division-desc">{t('divisions.educational.desc')}</p>
                   {expandedDivision === 'educational' && (
                     <div className="flow flow-panel flow-visible">
                       <div className="flow-item">
                         <div className="flow-bullet" />
-                        <div className="flow-content"><h4>Sessions</h4><p>Curricula tailored for teams and universities.</p></div>
+                        <div className="flow-content"><h4>{t('divisions.educational.sessions.title')}</h4><p>{t('divisions.educational.sessions.text')}</p></div>
                       </div>
                       <div className="flow-item">
                         <div className="flow-bullet" />
-                        <div className="flow-content"><h4>XR Advisory</h4><p>Design reviews, interaction models and prototyping.</p></div>
+                        <div className="flow-content"><h4>{t('divisions.educational.advisory.title')}</h4><p>{t('divisions.educational.advisory.text')}</p></div>
                       </div>
                       <div className="flow-item">
                         <div className="flow-bullet" />
-                        <div className="flow-content"><h4>Partnerships</h4><p>Academic and industry collaborations.</p></div>
+                        <div className="flow-content"><h4>{t('divisions.educational.partnerships.title')}</h4><p>{t('divisions.educational.partnerships.text')}</p></div>
                       </div>
                     </div>
                   )}
                 </div>
                 <div className="division-card" onClick={() => toggleDivision('3dprint')}>
-                  <h3 className="division-title">3D print development</h3>
-                  <p className="division-desc">Development for additive manufacturing, prototyping and 3D print workflows.</p>
+                  <h3 className="division-title">{t('divisions.print3d.title')}</h3>
+                  <p className="division-desc">{t('divisions.print3d.desc')}</p>
                   {expandedDivision === '3dprint' && (
                     <div className="flow flow-panel flow-visible">
                       <div className="flow-item">
                         <div className="flow-bullet" />
-                        <div className="flow-content"><h4>Prototypes</h4><p>Functional iterations and fit‑for‑purpose parts.</p></div>
+                        <div className="flow-content"><h4>{t('divisions.print3d.prototypes.title')}</h4><p>{t('divisions.print3d.prototypes.text')}</p></div>
                       </div>
                       <div className="flow-item">
                         <div className="flow-bullet" />
-                        <div className="flow-content"><h4>Materials</h4><p>PLA, PETG, ABS, resins and composites workflows.</p></div>
+                        <div className="flow-content"><h4>{t('divisions.print3d.materials.title')}</h4><p>{t('divisions.print3d.materials.text')}</p></div>
                       </div>
                       <div className="flow-item">
                         <div className="flow-bullet" />
-                        <div className="flow-content"><h4>Integration</h4><p>Printers, slicers and QC pipelines.</p></div>
+                        <div className="flow-content"><h4>{t('divisions.print3d.integration.title')}</h4><p>{t('divisions.print3d.integration.text')}</p></div>
                       </div>
                     </div>
                   )}
                 </div>
                 <div className="division-card" onClick={() => toggleDivision('xr')}>
-                  <h3 className="division-title">XR development</h3>
-                  <p className="division-desc">XR simulators and applications with Unity and Meta Quest 2/3.</p>
+                  <h3 className="division-title">{t('divisions.xr.title')}</h3>
+                  <p className="division-desc">{t('divisions.xr.desc')}</p>
                   {expandedDivision === 'xr' && (
                     <div className="flow flow-panel flow-visible">
                       <div className="flow-item">
                         <div className="flow-bullet" />
-                        <div className="flow-content"><h4>Simulators</h4><p>Task training and procedural environments.</p></div>
+                        <div className="flow-content"><h4>{t('divisions.xr.simulators.title')}</h4><p>{t('divisions.xr.simulators.text')}</p></div>
                       </div>
                       <div className="flow-item">
                         <div className="flow-bullet" />
-                        <div className="flow-content"><h4>Platforms</h4><p>Meta Quest 2/3 and desktop XR targets.</p></div>
+                        <div className="flow-content"><h4>{t('divisions.xr.interaction.title')}</h4><p>{t('divisions.xr.interaction.text')}</p></div>
                       </div>
                       <div className="flow-item">
                         <div className="flow-bullet" />
-                        <div className="flow-content"><h4>Performance</h4><p>Frame‑rate goals and interaction fidelity.</p></div>
+                        <div className="flow-content"><h4>{t('divisions.xr.optimization.title')}</h4><p>{t('divisions.xr.optimization.text')}</p></div>
                       </div>
                     </div>
                   )}
@@ -548,17 +601,16 @@ export function LandingPage() {
             <div className="section-wrapper">
               <div className="grid-2">
                 <div className="grid-item contact-side">
-                  <h2 className="contact-heading">Let's talk.</h2>
-                  <p className="contact-tagline">Partner with Coresearch to build your next XR project.</p>
+                  <h2 className="contact-heading">{t('contact.title')}</h2>
+                  <p className="contact-tagline">{t('contact.desc')}</p>
                   <ul className="contact-feature-list">
-                    <li className="feature-item">End‑to‑End Delivery</li>
-                    <li className="feature-item">Startup Speed</li>
-                    <li className="feature-item">World‑Class Team</li>
+                    <li className="feature-item">{t('contact.email')}</li>
+                    <li className="feature-item">{t('contact.location')}</li>
                   </ul>
                 </div>
                 <div className="grid-item">
                   <div className="contact-card">
-                    <h3 className="contact-title">Ready to build XR?</h3>
+                    <h3 className="contact-title">{t('contact.title')}</h3>
                     <form className="contact-form" onSubmit={handleSubmit}>
                     <div className="input-row">
                       <div className="input-group">
@@ -594,7 +646,7 @@ export function LandingPage() {
           {/* Footer */}
           <footer className="footer">
             <div className="footer-content">
-              <p className="footer-text">© 2024 Coresearch. Connecting worlds.</p>
+              <p className="footer-text">© 2024 Coresearch. {t('footer.rights')}</p>
             </div>
           </footer>
         </div>

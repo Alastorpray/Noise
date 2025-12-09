@@ -1,0 +1,49 @@
+{
+  "nav": {
+    "about": "Über uns",
+    "portfolio": "Portfolio",
+    "contact": "Kontakt"
+  },
+  "hero": {
+    "title": "Welten verbinden",
+    "subtitle": "Wir verwandeln Ideen in innovative digitale Erlebnisse, die Menschen, Technologien und neue Möglichkeiten verbinden."
+  },
+  "about": {
+    "title": "Wer wir sind",
+    "desc1": "Ein multidisziplinäres Team, spezialisiert auf angewandte Forschung und die Entwicklung digitaler Lösungen. Wir entwerfen und validieren Technologien mit echtem Geschäftsnutzen.",
+    "desc2": "Wir kombinieren schnelles Prototyping, kontrollierte Experimente und den Transfer in die Produktion, um den Weg von der Idee zum Ergebnis zu verkürzen."
+  },
+  "divisions": {
+    "title": "Bereiche",
+    "educational": {
+      "title": "Bildung",
+      "desc": "Schulung und Beratung für 3D-Entwicklung und XR-Erlebnisse.",
+      "sessions": { "title": "Sitzungen", "text": "Maßgeschneiderte Lehrpläne für Teams und Universitäten." },
+      "advisory": { "title": "XR-Beratung", "text": "Design-Reviews, Interaktionsmodelle und Prototyping." },
+      "partnerships": { "title": "Partnerschaften", "text": "Akademische und industrielle Kooperationen." }
+    },
+    "print3d": {
+      "title": "3D-Druck Entwicklung",
+      "desc": "Entwicklung für additive Fertigung, Prototyping und 3D-Druck-Workflows.",
+      "prototypes": { "title": "Prototypen", "text": "Funktionale Iterationen und zweckmäßige Teile." },
+      "materials": { "title": "Materialien", "text": "Workflows für PLA, PETG, ABS, Harze und Verbundwerkstoffe." },
+      "integration": { "title": "Integration", "text": "Drucker, Slicer und Qualitätskontroll-Pipelines." }
+    },
+    "xr": {
+      "title": "XR-Entwicklung",
+      "desc": "XR-Simulatoren und Anwendungen mit Unity und Meta Quest 2/3.",
+      "simulators": { "title": "Simulatoren", "text": "Aufgabentraining und prozedurale Umgebungen." },
+      "interaction": { "title": "Interaktion", "text": "Hand-Tracking, Controller und Multi-User-Logik." },
+      "optimization": { "title": "Optimierung", "text": "Leistungsprofilierung für eigenständige VR-Headsets." }
+    }
+  },
+  "contact": {
+    "title": "Kontaktieren Sie uns",
+    "desc": "Haben Sie ein Projekt im Sinn? Wir würden uns freuen, von Ihnen zu hören.",
+    "email": "Schreiben Sie uns",
+    "location": "Sitz in Madrid, weltweit tätig."
+  },
+  "footer": {
+    "rights": "Alle Rechte vorbehalten."
+  }
+}

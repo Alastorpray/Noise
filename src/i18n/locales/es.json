@@ -1,0 +1,75 @@
+{
+  "nav": {
+    "about": "Nosotros",
+    "portfolio": "Portfolio",
+    "contact": "Contacto"
+  },
+  "hero": {
+    "title": "Conectando mundos",
+    "subtitle": "Transformamos ideas en experiencias digitales innovadoras que conectan personas, tecnologías y nuevas posibilidades."
+  },
+  "about": {
+    "title": "Quiénes Somos",
+    "description1": "Equipo multidisciplinar especializado en investigación aplicada y desarrollo de soluciones digitales. Diseñamos y validamos tecnologías con impacto real en el negocio.",
+    "description2": "Combinamos prototipado rápido, experimentación controlada y transferencia a producción para acortar el camino desde la idea hasta los resultados."
+  },
+  "divisions": {
+    "title": "Divisiones",
+    "educational": {
+      "title": "Educación",
+      "desc": "Formación y asesoría en desarrollo 3D y experiencias XR.",
+      "sessions": "Sesiones",
+      "sessionsDesc": "Planes de estudio adaptados para equipos y universidades.",
+      "xrAdvisory": "Asesoría XR",
+      "xrAdvisoryDesc": "Revisión de diseño, modelos de interacción y prototipado.",
+      "partnerships": "Colaboraciones",
+      "partnershipsDesc": "Colaboraciones académicas e industriales."
+    },
+    "3dprint": {
+      "title": "Desarrollo de impresión 3D",
+      "desc": "Desarrollo para manufactura aditiva, prototipado y flujos de trabajo de impresión 3D.",
+      "prototypes": "Prototipos",
+      "prototypesDesc": "Iteraciones funcionales y piezas a medida.",
+      "materials": "Materiales",
+      "materialsDesc": "Flujos de trabajo con PLA, PETG, ABS, resinas y compuestos.",
+      "integration": "Integración",
+      "integrationDesc": "Impresoras, laminadores y pipelines de control de calidad."
+    },
+    "xr": {
+      "title": "Desarrollo XR",
+      "desc": "Simuladores y aplicaciones XR con Unity y Meta Quest 2/3.",
+      "simulators": "Simuladores",
+      "simulatorsDesc": "Entrenamiento de tareas y entornos procedurales.",
+      "platforms": "Plataformas",
+      "platformsDesc": "Meta Quest 2/3 y objetivos XR de escritorio.",
+      "performance": "Rendimiento",
+      "performanceDesc": "Objetivos de frame-rate y fidelidad de interacción."
+    }
+  },
+  "contact": {
+    "title": "Hablemos.",
+    "tagline": "Colabora con Coresearch para construir tu próximo proyecto XR.",
+    "features": {
+      "delivery": "Entrega de principio a fin",
+      "speed": "Velocidad de startup",
+      "team": "Equipo de clase mundial"
+    },
+    "form": {
+      "title": "¿Listo para construir XR?",
+      "name": "Nombre",
+      "email": "Email",
+      "company": "Empresa (opcional)",
+      "message": "Mensaje",
+      "send": "Enviar",
+      "sending": "Enviando...",
+      "success": "Gracias, te contactaremos pronto."
+    }
+  },
+  "footer": {
+    "copyright": "Coresearch. Conectando mundos."
+  },
+  "audio": {
+    "enable": "Activar sonido",
+    "disable": "Desactivar sonido"
+  }
+}

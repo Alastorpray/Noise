@@ -580,6 +580,85 @@
   }
 }
 
+/* Selector de Idioma (Dropdown) */
+.lang-dropdown {
+  position: relative;
+  margin-left: auto;
+  margin-right: 1rem;
+}
+
+.lang-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: none;
+  border: 1px solid transparent;
+  color: var(--text);
+  padding: 0.5rem 0.75rem;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+}
+
+.lang-toggle:hover {
+  background: var(--bg-card);
+  border-color: var(--border);
+}
+
+.lang-flag {
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.lang-arrow {
+  font-size: 0.7rem;
+  opacity: 0.7;
+}
+
+.lang-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 0.5rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  z-index: 1000;
+  min-width: 140px;
+  animation: slideInUp 0.2s ease-out;
+}
+
+.lang-option {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: none;
+  border: none;
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+}
+
+.lang-option:hover {
+  background: var(--primary-bg, rgba(255, 102, 0, 0.1));
+  color: var(--primary);
+}
+
+.lang-option.active {
+  background: var(--primary-bg, rgba(255, 102, 0, 0.15));
+  font-weight: 600;
+  color: var(--primary);
+}
+
 /* Página completa */
 .page-content {
   position: fixed;
@@ -658,19 +737,13 @@
 
 /* Navigation */
 .main-nav {
-  position: fixed;
+  position: sticky;
   top: 0;
-  left: 0;
   width: 100%;
-  z-index: 1000;
-  padding: 1.25rem 0;
-  backdrop-filter: blur(6px);
-  background: var(--bg);
-  border-bottom: 1px solid var(--border);
-  opacity: 0;
-  animation: slideInUp 0.4s ease-out forwards;
-  animation-delay: 0.15s;
-  transition: background 0.3s ease, border-color 0.3s ease;
+  z-index: 100;
+  background: var(--bg); /* Usar variable de tema para coincidir */
+  backdrop-filter: blur(12px);
+  /* border-bottom: 1px solid rgba(255, 255, 255, 0.05);  <- ELIMINADO */
 }
 
 .nav-content {

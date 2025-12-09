@@ -4,6 +4,7 @@ import { createRoot } from 'react-dom/client'
 import './styles.css'
 import App from './App'
 import { LandingPage } from './LandingPage'
+import './i18n' // Importar configuración de i18n
 
 extend(THREE)
 
