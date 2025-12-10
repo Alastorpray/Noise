@@ -605,14 +605,17 @@
   border-color: var(--border);
 }
 
-.lang-flag {
-  font-size: 1.2rem;
-  line-height: 1;
+.lang-icon {
+  width: 18px;
+  height: 18px;
+  opacity: 0.8;
 }
 
-.lang-arrow {
-  font-size: 0.7rem;
+.lang-code-option {
+  font-weight: 600;
+  font-size: 0.85rem;
   opacity: 0.7;
+  min-width: 24px;
 }
 
 .lang-menu {
@@ -620,7 +623,7 @@
   top: 100%;
   right: 0;
   margin-top: 0.5rem;
-  background: var(--bg-card);
+  background: var(--bg);
   border: 1px solid var(--border);
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -647,14 +650,14 @@
 }
 
 .lang-option:hover {
-  background: var(--primary-bg, rgba(255, 102, 0, 0.1));
-  color: var(--primary);
+  background: rgba(25, 195, 163, 0.1);
+  color: var(--accent);
 }
 
 .lang-option.active {
-  background: var(--primary-bg, rgba(255, 102, 0, 0.15));
+  background: rgba(25, 195, 163, 0.15);
   font-weight: 600;
-  color: var(--primary);
+  color: var(--accent);
 }
 
 /* Página completa */
