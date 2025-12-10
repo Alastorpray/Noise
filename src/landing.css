@@ -240,6 +240,10 @@
 .logo-text .logo-main,
 .logo-text .logo-sub {
   position: relative;
+  /* Reset explícito cuando no hay glitch */
+  text-shadow: none;
+  animation: none;
+  transform: none;
 }
 
 /* Solo aplicar efectos cuando glitch está activo */
@@ -302,9 +306,9 @@
   clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
 }
 
-/* Green/Yellow channel for mid tones - VERTICAL glitch */
-.logo-text[style*="--mid-intensity"] .logo-main,
-.logo-text[style*="--mid-intensity"] .logo-sub {
+/* Green/Yellow channel for mid tones - VERTICAL glitch - solo cuando activo */
+.logo-text.glitch-active .logo-main,
+.logo-text.glitch-active .logo-sub {
   text-shadow:
     calc(var(--glitch-intensity) * 2px) 0 0 rgba(255, 0, 0, calc(var(--glitch-intensity) * 0.7)),
     calc(var(--glitch-intensity) * -2px) 0 0 rgba(0, 255, 255, calc(var(--glitch-intensity) * 0.7)),
@@ -313,15 +317,15 @@
 }
 
 
-/* Main text animation - CORE moves right-left */
-.logo-text[style*="--glitch-intensity"] .logo-main {
+/* Main text animation - CORE moves right-left - solo cuando activo */
+.logo-text.glitch-active .logo-main {
   animation:
     glitch-base 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite,
     glitch-flicker 0.15s steps(2) infinite;
 }
 
-/* Research moves left-right (inverted) */
-.logo-text[style*="--glitch-intensity"] .logo-sub {
+/* Research moves left-right (inverted) - solo cuando activo */
+.logo-text.glitch-active .logo-sub {
   animation:
     glitch-base-inverted 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite,
     glitch-flicker 0.18s steps(2) infinite;
