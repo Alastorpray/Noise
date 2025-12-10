@@ -457,7 +457,7 @@ export function LandingPage() {
         <div className="logo-container" onClick={handleImageClick}>
           <div
             ref={logoTextRef}
-            className="logo-text"
+            className={`logo-text ${glitchIntensity > 0.01 ? 'glitch-active' : ''}`}
             onMouseEnter={handleLogoMouseEnter}
             onMouseLeave={handleLogoMouseLeave}
             onTouchStart={handleLogoTouchStart}
