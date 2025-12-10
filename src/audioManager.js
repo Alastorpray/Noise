@@ -9,7 +9,26 @@ class AudioManager {
     this.bufferLength = 0
     this.isPlaying = false
     this.fadeInterval = null
-    this.isTransitioning = false // Nuevo: prevenir llamadas concurrentes
+    this.isTransitioning = false
+
+    // === Normalización dinámica ===
+    // Valores históricos para calcular min/max del audio actual
+    this.bassHistory = []
+    this.midHistory = []
+    this.trebleHistory = []
+    this.historySize = 120 // ~2 segundos a 60fps
+
+    // Rangos dinámicos - null hasta que se calibren con el audio real
+    this.bassMin = null
+    this.bassMax = null
+    this.midMin = null
+    this.midMax = null
+    this.trebleMin = null
+    this.trebleMax = null
+
+    // Parámetros de adaptación
+    this.adaptationSpeed = 0.02 // Qué tan rápido se adaptan los rangos
+    this.minRange = 0.05 // Rango mínimo para evitar división por cero
   }
 
   async init(audioPath) {
@@ -42,6 +61,10 @@ class AudioManager {
       this.audioBuffer = await this.audioContext.decodeAudioData(arrayBuffer)
 
       console.log('✅ Audio initialized successfully! Duration:', this.audioBuffer.duration, 'seconds')
+
+      // Resetear normalización para el nuevo audio
+      this.resetNormalization()
+
       return true
     } catch (error) {
       console.error('❌ Error initializing audio:', error)
@@ -201,6 +224,78 @@ class AudioManager {
     }, 500)
   }
 
+  // Normalizar un valor al rango 0-1 basado en min/max dinámicos
+  normalize(value, min, max) {
+    // Si aún no hay calibración, usar el valor raw amplificado
+    if (min === null || max === null) {
+      return Math.min(value * 3, 1) // Amplificar temporalmente
+    }
+    const range = Math.max(max - min, this.minRange)
+    const normalized = (value - min) / range
+    // Clamp entre 0 y 1
+    return Math.max(0, Math.min(1, normalized))
+  }
+
+  // Actualizar rangos dinámicos basados en el historial
+  updateDynamicRanges() {
+    if (this.bassHistory.length < 20) return // Esperar datos suficientes
+
+    // Calcular percentiles para evitar outliers
+    const getPercentile = (arr, p) => {
+      const sorted = [...arr].sort((a, b) => a - b)
+      const idx = Math.floor(sorted.length * p)
+      return sorted[idx]
+    }
+
+    // Usar percentil 5 para min y 95 para max (evita outliers)
+    const newBassMin = getPercentile(this.bassHistory, 0.05)
+    const newBassMax = getPercentile(this.bassHistory, 0.95)
+    const newMidMin = getPercentile(this.midHistory, 0.05)
+    const newMidMax = getPercentile(this.midHistory, 0.95)
+    const newTrebleMin = getPercentile(this.trebleHistory, 0.05)
+    const newTrebleMax = getPercentile(this.trebleHistory, 0.95)
+
+    // Si es la primera calibración, usar valores directamente
+    if (this.bassMin === null) {
+      this.bassMin = newBassMin
+      this.bassMax = newBassMax
+      this.midMin = newMidMin
+      this.midMax = newMidMax
+      this.trebleMin = newTrebleMin
+      this.trebleMax = newTrebleMax
+      console.log('🎚️ Initial calibration:', {
+        bass: [this.bassMin.toFixed(3), this.bassMax.toFixed(3)],
+        mid: [this.midMin.toFixed(3), this.midMax.toFixed(3)],
+        treble: [this.trebleMin.toFixed(3), this.trebleMax.toFixed(3)]
+      })
+      return
+    }
+
+    // Suavizar la adaptación (exponential moving average)
+    const speed = this.adaptationSpeed
+    this.bassMin += (newBassMin - this.bassMin) * speed
+    this.bassMax += (newBassMax - this.bassMax) * speed
+    this.midMin += (newMidMin - this.midMin) * speed
+    this.midMax += (newMidMax - this.midMax) * speed
+    this.trebleMin += (newTrebleMin - this.trebleMin) * speed
+    this.trebleMax += (newTrebleMax - this.trebleMax) * speed
+  }
+
+  // Resetear historial cuando cambia el audio
+  resetNormalization() {
+    this.bassHistory = []
+    this.midHistory = []
+    this.trebleHistory = []
+    // Empezar con null para forzar calibración desde los datos reales
+    this.bassMin = null
+    this.bassMax = null
+    this.midMin = null
+    this.midMax = null
+    this.trebleMin = null
+    this.trebleMax = null
+    console.log('🔄 Normalization reset - will calibrate to new audio')
+  }
+
   getAudioData() {
     if (!this.analyser || !this.isPlaying) {
       return {
@@ -208,7 +303,11 @@ class AudioManager {
         frequencies: new Uint8Array(0),
         bass: 0,
         mid: 0,
-        treble: 0
+        treble: 0,
+        // También devolver valores raw para debug
+        rawBass: 0,
+        rawMid: 0,
+        rawTreble: 0
       }
     }
 
@@ -223,20 +322,44 @@ class AudioManager {
     const third = Math.floor(this.bufferLength / 3)
 
     const bassSum = this.dataArray.slice(0, third).reduce((a, b) => a + b, 0)
-    const bass = bassSum / (third * 255)
+    const rawBass = bassSum / (third * 255)
 
     const midSum = this.dataArray.slice(third, third * 2).reduce((a, b) => a + b, 0)
-    const mid = midSum / (third * 255)
+    const rawMid = midSum / (third * 255)
 
     const trebleSum = this.dataArray.slice(third * 2).reduce((a, b) => a + b, 0)
-    const treble = trebleSum / (third * 255)
+    const rawTreble = trebleSum / (third * 255)
+
+    // === Agregar al historial ===
+    this.bassHistory.push(rawBass)
+    this.midHistory.push(rawMid)
+    this.trebleHistory.push(rawTreble)
+
+    // Mantener tamaño del historial
+    if (this.bassHistory.length > this.historySize) {
+      this.bassHistory.shift()
+      this.midHistory.shift()
+      this.trebleHistory.shift()
+    }
+
+    // Actualizar rangos dinámicos
+    this.updateDynamicRanges()
+
+    // === Normalizar valores ===
+    const bass = this.normalize(rawBass, this.bassMin, this.bassMax)
+    const mid = this.normalize(rawMid, this.midMin, this.midMax)
+    const treble = this.normalize(rawTreble, this.trebleMin, this.trebleMax)
 
     return {
       amplitude,
       frequencies: this.dataArray,
       bass,
       mid,
-      treble
+      treble,
+      // Valores raw para debug
+      rawBass,
+      rawMid,
+      rawTreble
     }
   }
 
