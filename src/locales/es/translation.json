@@ -41,7 +41,9 @@
     "title": "Contáctanos",
     "desc": "¿Tienes un proyecto en mente? Nos encantaría escucharte.",
     "email": "Escríbenos",
-    "location": "Con base en Madrid, trabajando globalmente."
+    "location": "Trabajando globalmente.",
+    "e2e": "E2E delivery",
+    "speed": "Startup Speed"
   },
   "footer": {
     "rights": "Todos los derechos reservados."
