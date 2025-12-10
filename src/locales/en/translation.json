@@ -41,7 +41,9 @@
     "title": "Get in Touch",
     "desc": "Have a project in mind? We'd love to hear from you.",
     "email": "Email us",
-    "location": "Based in Madrid, working globally."
+    "location": "Working globally.",
+    "e2e": "E2E delivery",
+    "speed": "Startup Speed"
   },
   "footer": {
     "rights": "All rights reserved."

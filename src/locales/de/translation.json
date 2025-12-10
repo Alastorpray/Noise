@@ -41,7 +41,9 @@
     "title": "Kontaktieren Sie uns",
     "desc": "Haben Sie ein Projekt im Sinn? Wir würden uns freuen, von Ihnen zu hören.",
     "email": "Schreiben Sie uns",
-    "location": "Sitz in Madrid, weltweit tätig."
+    "location": "Weltweit tätig.",
+    "e2e": "E2E delivery",
+    "speed": "Startup Speed"
   },
   "footer": {
     "rights": "Alle Rechte vorbehalten."
