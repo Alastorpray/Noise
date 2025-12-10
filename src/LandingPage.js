@@ -54,6 +54,8 @@ export function LandingPage() {
   const audioInitialized = useRef(false)
   const audioUnlocked = useRef(false)
   const [audioEnabled, setAudioEnabled] = useState(false)
+  const isStartingAudio = useRef(false)
+  const hoverTimeoutRef = useRef(null)
 
   const toggleTheme = () => {
     setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'))
@@ -152,6 +154,12 @@ export function LandingPage() {
   }
 
   const handleLogoMouseEnter = () => {
+    // Limpiar timeout previo si existe
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current)
+      hoverTimeoutRef.current = null
+    }
+
     // Activar hover INMEDIATAMENTE (no esperar al audio)
     setIsHovering(true)
 
@@ -162,7 +170,16 @@ export function LandingPage() {
   }
 
   const handleLogoMouseLeave = () => {
-    setIsHovering(false)
+    // Limpiar timeout previo si existe
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current)
+    }
+
+    // Pequeño delay para evitar disparos rápidos
+    hoverTimeoutRef.current = setTimeout(() => {
+      setIsHovering(false)
+      hoverTimeoutRef.current = null
+    }, 50)
   }
 
   const checkTouchOverLogo = (clientX, clientY) => {
@@ -247,12 +264,33 @@ export function LandingPage() {
     if (!audioInitialized.current) return
 
     if (isHovering && audioEnabled) {
-      // Si el audio está pausado, resumir. Si no, iniciar desde el principio
-      if (audioManager.audioContext && audioManager.audioContext.state === 'suspended') {
-        audioManager.resume()
-      } else if (!audioManager.isPlaying) {
-        audioManager.play()
+      // Prevenir múltiples intentos simultáneos de iniciar audio
+      if (isStartingAudio.current) {
+        console.log('⏭️ Audio start already in progress, skipping...')
+        return
       }
+
+      // Iniciar o reanudar audio
+      const startAudio = async () => {
+        isStartingAudio.current = true
+
+        try {
+          if (audioManager.audioContext && audioManager.audioContext.state === 'suspended') {
+            await audioManager.resume()
+          } else if (!audioManager.isPlaying && !audioManager.isTransitioning) {
+            await audioManager.play()
+          }
+        } catch (err) {
+          console.error('❌ Error starting audio:', err)
+        } finally {
+          // Delay para evitar re-entradas rápidas
+          setTimeout(() => {
+            isStartingAudio.current = false
+          }, 100)
+        }
+      }
+
+      startAudio()
 
       if (!hoverStartTime.current) {
         hoverStartTime.current = Date.now()
@@ -309,9 +347,13 @@ export function LandingPage() {
 
       captureAudioData()
     } else if (!audioEnabled || !isHovering) {
+      // Cancelar cualquier intento de inicio de audio pendiente
+      isStartingAudio.current = false
+
       // Solo pausar el audio (mantiene la posición)
       audioManager.pause()
       setHoverDuration(0)
+      hoverStartTime.current = 0
 
       // Decay suave del glitch cuando se quita el hover
       const decayGlitch = () => {
