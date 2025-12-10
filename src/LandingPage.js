@@ -57,6 +57,13 @@ export function LandingPage() {
   const isStartingAudio = useRef(false)
   const hoverTimeoutRef = useRef(null)
 
+  // Beat detection refs
+  const prevBass = useRef(0)
+  const prevMid = useRef(0)
+  const beatHold = useRef(0)
+  const midBeatHold = useRef(0)
+  const [flickerIntensity, setFlickerIntensity] = useState(0)
+
   const toggleTheme = () => {
     setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'))
   }
@@ -296,7 +303,7 @@ export function LandingPage() {
         hoverStartTime.current = Date.now()
       }
 
-      // Loop de captura de audio data
+      // Loop de captura de audio data con beat detection
       const captureAudioData = () => {
         const data = audioManager.getAudioData()
         setAudioData(data)
@@ -464,7 +471,8 @@ export function LandingPage() {
             onTouchEnd={handleLogoTouchEnd}
             style={{
               '--glitch-intensity': glitchIntensity,
-              '--mid-intensity': audioData.mid
+              '--mid-intensity': midBeatHold.current,
+              '--flicker-intensity': flickerIntensity
             }}
           >
             <div
