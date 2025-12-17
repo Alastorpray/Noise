@@ -160,7 +160,9 @@ export function Particles({ speed, fov, aperture, focus, curl, size = 512, windX
     renderRef.current.uniforms.uSizeFixed.value = sizeFixed
     renderRef.current.uniforms.uSizeMin.value = sizeMin
     renderRef.current.uniforms.uSizeMax.value = sizeMax
-    renderRef.current.uniforms.uShape.value = shape === 'square' ? 1 : shape === 'triangle' ? 2 : 0
+    // 0 = círculo, 1 = cuadrado, 2 = triángulo, 3 = línea, 4 = mixed
+    const shapeMap = { circle: 0, square: 1, triangle: 2, line: 3, mixed: 4 }
+    renderRef.current.uniforms.uShape.value = shapeMap[shape] ?? 0
     simRef.current.uniforms.uAudioAmplitude.value = audioAmplitude
     simRef.current.uniforms.uHoverDuration.value = hoverDuration
   })

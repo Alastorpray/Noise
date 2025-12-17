@@ -39,7 +39,7 @@ export default function App() {
     fallSpeed: { value: 0.97, min: 0, max: 2, step: 0.01 },
 
     // Controles de tamaño y forma
-    shape: { value: 'triangle', options: ['circle', 'square', 'triangle'] },
+    shape: { value: 'mixed', options: ['circle', 'square', 'triangle', 'line', 'mixed'] },
     sizeMode: { value: 'random', options: ['fixed', 'random'] },
     sizeFixed: { value: 2.6, min: 0.1, max: 10, step: 0.1 },
     sizeMin: { value: 4, min: 0.1, max: 10, step: 0.1 },

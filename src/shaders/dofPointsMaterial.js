@@ -88,32 +88,59 @@ class DofPointsMaterial extends THREE.ShaderMaterial {
         return length(max(d, 0.0)) + min(max(d.x, d.y), 0.0);
       }
 
+      // SDF para línea (arista) - reducida 30%
+      float sdLine(vec2 p) {
+        return abs(p.y) - 0.035;
+      }
+
+      // SDF para círculo (wireframe)
+      float sdCircle(vec2 p) {
+        return length(p) - 0.6;
+      }
+
       void main() {
         vec2 cxy = 2.0 * gl_PointCoord - 1.0;
 
         // Aplicar rotación aleatoria para formas no circulares
-        vec2 rotatedCxy = (uShape != 0) ? rotate2D(cxy, vRotation) : cxy;
+        vec2 rotatedCxy = rotate2D(cxy, vRotation);
+
+        // Determinar forma: si uShape == 4 (mixed), elegir aleatoriamente
+        // 0 = círculo, 1 = cuadrado, 2 = triángulo, 3 = línea, 4 = mixed
+        int shapeToUse = uShape;
+        if (uShape == 4) {
+          // Usar vRotation para determinar la forma (ya es aleatorio por partícula)
+          // Triángulo 35%, resto ~21.67% cada uno
+          float shapeRand = fract(vRotation * 10.0);
+          if (shapeRand < 0.217) {
+            shapeToUse = 0; // Círculo ~22%
+          } else if (shapeRand < 0.434) {
+            shapeToUse = 1; // Cuadrado ~22%
+          } else if (shapeRand < 0.784) {
+            shapeToUse = 2; // Triángulo 35%
+          } else {
+            shapeToUse = 3; // Línea ~22%
+          }
+        }
 
         // Calcular distancia según la forma seleccionada
-        float dist;
         float sdfDist; // Distancia SDF real para wireframe
         float strokeWidth = 0.15; // Grosor de la línea
 
-        if (uShape == 1) {
+        if (shapeToUse == 1) {
           // Cuadrado
           sdfDist = sdSquare(rotatedCxy);
-          dist = sdfDist + 0.5;
-        } else if (uShape == 2) {
-          // Triángulo
-          sdfDist = sdTriangle(rotatedCxy * 1.2);
-          dist = sdfDist + 0.5;
+        } else if (shapeToUse == 2) {
+          // Triángulo - 35% más grande
+          sdfDist = sdTriangle(rotatedCxy * 0.89);
+        } else if (shapeToUse == 3) {
+          // Línea (arista) - reducida 30% en longitud
+          sdfDist = sdLine(rotatedCxy * 1.43);
         } else {
-          // Círculo (default)
-          sdfDist = length(cxy) - 0.8;
-          dist = length(cxy);
+          // Círculo
+          sdfDist = sdCircle(cxy);
         }
 
-        // Para formas no-círculo, usar wireframe (solo el contorno)
+        // Todas las formas son wireframe
         float wireframe = 1.0 - smoothstep(0.0, strokeWidth, abs(sdfDist));
 
         vec3 color = vec3(1.0);
@@ -125,18 +152,7 @@ class DofPointsMaterial extends THREE.ShaderMaterial {
           float centerMixFactor = 1.0 - (vCenterDist / uCenterGlowRadius);
           centerMixFactor = pow(centerMixFactor, 0.5);
 
-          if (uShape == 0) {
-            // Círculo: comportamiento original
-            float glow = 1.0 - smoothstep(0.0, 1.0, dist);
-            glow = pow(glow, 0.8);
-            alpha *= glow;
-            float core = 1.0 - smoothstep(0.0, 0.3, dist);
-            color += vec3(1.0) * core * centerMixFactor;
-          } else {
-            // Wireframe: usar el contorno
-            alpha *= wireframe;
-          }
-
+          alpha *= wireframe;
           color *= mix(1.0, uCenterGlowIntensity, centerMixFactor);
           isGlowing = true;
         }
@@ -147,35 +163,15 @@ class DofPointsMaterial extends THREE.ShaderMaterial {
           mixFactor = pow(mixFactor, 0.5);
 
           color = mix(color, uVortexColor, mixFactor * 0.8);
-
-          if (uShape == 0) {
-            // Círculo: comportamiento original
-            float glow = 1.0 - smoothstep(0.0, 1.0, dist);
-            glow = pow(glow, 0.8);
-            alpha *= glow;
-            float core = 1.0 - smoothstep(0.0, 0.3, dist);
-            color += uVortexColor * core * mixFactor * 2.0;
-          } else {
-            // Wireframe
-            alpha *= wireframe;
-            color += uVortexColor * wireframe * mixFactor;
-          }
-
+          alpha *= wireframe;
+          color += uVortexColor * wireframe * mixFactor;
           color *= mix(1.0, uVortexIntensity, mixFactor);
           isGlowing = true;
         }
 
         if (!isGlowing) {
-          if (uShape == 0) {
-            // Círculo: comportamiento original
-            if (dist > 1.0) discard;
-            float edge = 1.0 - smoothstep(0.7, 1.0, dist);
-            alpha *= edge;
-          } else {
-            // Wireframe: descartar si no está en el contorno
-            if (wireframe < 0.01) discard;
-            alpha *= wireframe;
-          }
+          if (wireframe < 0.01) discard;
+          alpha *= wireframe;
           color *= 0.3;
         }
 
