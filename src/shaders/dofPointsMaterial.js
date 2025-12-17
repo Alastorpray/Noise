@@ -21,8 +21,11 @@ class DofPointsMaterial extends THREE.ShaderMaterial {
       varying float vDistance;
       varying float vMouseDist;
       varying float vCenterDist;
+      varying float vRotation;
       void main() {
         vec3 pos = texture2D(positions, position.xy).xyz;
+        // Rotación aleatoria por partícula
+        vRotation = fract(sin(dot(position.xy, vec2(45.233, 97.113))) * 43758.5453) * 6.28318;
         vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
         gl_Position = projectionMatrix * mvPosition;
         vDistance = abs(uFocus - -mvPosition.z);
@@ -56,12 +59,62 @@ class DofPointsMaterial extends THREE.ShaderMaterial {
       uniform float uVortexIntensity;
       uniform float uCenterGlowRadius;
       uniform float uCenterGlowIntensity;
+      uniform int uShape;
       varying float vDistance;
       varying float vMouseDist;
       varying float vCenterDist;
+      varying float vRotation;
+
+      // Función para rotar un punto 2D
+      vec2 rotate2D(vec2 p, float angle) {
+        float c = cos(angle);
+        float s = sin(angle);
+        return vec2(p.x * c - p.y * s, p.x * s + p.y * c);
+      }
+
+      // SDF para triángulo equilátero
+      float sdTriangle(vec2 p) {
+        const float k = sqrt(3.0);
+        p.x = abs(p.x) - 0.5;
+        p.y = p.y + 0.5 / k;
+        if (p.x + k * p.y > 0.0) p = vec2(p.x - k * p.y, -k * p.x - p.y) / 2.0;
+        p.x -= clamp(p.x, -1.0, 0.0);
+        return -length(p) * sign(p.y);
+      }
+
+      // SDF para cuadrado
+      float sdSquare(vec2 p) {
+        vec2 d = abs(p) - vec2(0.5);
+        return length(max(d, 0.0)) + min(max(d.x, d.y), 0.0);
+      }
+
       void main() {
         vec2 cxy = 2.0 * gl_PointCoord - 1.0;
-        float dist = length(cxy);
+
+        // Aplicar rotación aleatoria para formas no circulares
+        vec2 rotatedCxy = (uShape != 0) ? rotate2D(cxy, vRotation) : cxy;
+
+        // Calcular distancia según la forma seleccionada
+        float dist;
+        float sdfDist; // Distancia SDF real para wireframe
+        float strokeWidth = 0.15; // Grosor de la línea
+
+        if (uShape == 1) {
+          // Cuadrado
+          sdfDist = sdSquare(rotatedCxy);
+          dist = sdfDist + 0.5;
+        } else if (uShape == 2) {
+          // Triángulo
+          sdfDist = sdTriangle(rotatedCxy * 1.2);
+          dist = sdfDist + 0.5;
+        } else {
+          // Círculo (default)
+          sdfDist = length(cxy) - 0.8;
+          dist = length(cxy);
+        }
+
+        // Para formas no-círculo, usar wireframe (solo el contorno)
+        float wireframe = 1.0 - smoothstep(0.0, strokeWidth, abs(sdfDist));
 
         vec3 color = vec3(1.0);
         float alpha = (1.04 - clamp(vDistance * 1.5, 0.0, 1.0));
@@ -72,17 +125,19 @@ class DofPointsMaterial extends THREE.ShaderMaterial {
           float centerMixFactor = 1.0 - (vCenterDist / uCenterGlowRadius);
           centerMixFactor = pow(centerMixFactor, 0.5);
 
-          // Glow con gradiente radial suave
-          float glow = 1.0 - smoothstep(0.0, 1.0, dist);
-          glow = pow(glow, 0.8);
+          if (uShape == 0) {
+            // Círculo: comportamiento original
+            float glow = 1.0 - smoothstep(0.0, 1.0, dist);
+            glow = pow(glow, 0.8);
+            alpha *= glow;
+            float core = 1.0 - smoothstep(0.0, 0.3, dist);
+            color += vec3(1.0) * core * centerMixFactor;
+          } else {
+            // Wireframe: usar el contorno
+            alpha *= wireframe;
+          }
 
-          // Intensificar el brillo del centro
           color *= mix(1.0, uCenterGlowIntensity, centerMixFactor);
-          alpha *= glow;
-
-          // Añadir brillo extra en el centro de cada partícula
-          float core = 1.0 - smoothstep(0.0, 0.3, dist);
-          color += vec3(1.0) * core * centerMixFactor;
           isGlowing = true;
         }
 
@@ -91,29 +146,37 @@ class DofPointsMaterial extends THREE.ShaderMaterial {
           float mixFactor = 1.0 - (vMouseDist / uAttractionRadius);
           mixFactor = pow(mixFactor, 0.5);
 
-          // Color del vórtex personalizable
           color = mix(color, uVortexColor, mixFactor * 0.8);
 
-          // Glow con gradiente radial suave
-          float glow = 1.0 - smoothstep(0.0, 1.0, dist);
-          glow = pow(glow, 0.8);
+          if (uShape == 0) {
+            // Círculo: comportamiento original
+            float glow = 1.0 - smoothstep(0.0, 1.0, dist);
+            glow = pow(glow, 0.8);
+            alpha *= glow;
+            float core = 1.0 - smoothstep(0.0, 0.3, dist);
+            color += uVortexColor * core * mixFactor * 2.0;
+          } else {
+            // Wireframe
+            alpha *= wireframe;
+            color += uVortexColor * wireframe * mixFactor;
+          }
 
-          // Intensificar el brillo con intensidad personalizada
           color *= mix(1.0, uVortexIntensity, mixFactor);
-          alpha *= glow;
-
-          // Añadir brillo extra en el centro con el color del vórtex
-          float core = 1.0 - smoothstep(0.0, 0.3, dist);
-          color += uVortexColor * core * mixFactor * 2.0;
           isGlowing = true;
         }
 
         if (!isGlowing) {
-          // Partículas normales con bordes suaves
-          if (dist > 1.0) discard;
-          float edge = 1.0 - smoothstep(0.7, 1.0, dist);
-          alpha *= edge;
-          color *= 0.3; // Partículas normales más tenues para que el glow destaque
+          if (uShape == 0) {
+            // Círculo: comportamiento original
+            if (dist > 1.0) discard;
+            float edge = 1.0 - smoothstep(0.7, 1.0, dist);
+            alpha *= edge;
+          } else {
+            // Wireframe: descartar si no está en el contorno
+            if (wireframe < 0.01) discard;
+            alpha *= wireframe;
+          }
+          color *= 0.3;
         }
 
         gl_FragColor = vec4(color, alpha);
@@ -136,7 +199,8 @@ class DofPointsMaterial extends THREE.ShaderMaterial {
         uGlowIntensity: { value: 2.0 },
         uGlowSize: { value: 1.5 },
         uCenterGlowRadius: { value: 3.0 },
-        uCenterGlowIntensity: { value: 2.0 }
+        uCenterGlowIntensity: { value: 2.0 },
+        uShape: { value: 0 }
       },
       transparent: true,
       blending: THREE.AdditiveBlending,

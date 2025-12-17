@@ -38,11 +38,12 @@ export default function App() {
     // Controles de caída
     fallSpeed: { value: 0.97, min: 0, max: 2, step: 0.01 },
 
-    // Controles de tamaño
+    // Controles de tamaño y forma
+    shape: { value: 'triangle', options: ['circle', 'square', 'triangle'] },
     sizeMode: { value: 'random', options: ['fixed', 'random'] },
     sizeFixed: { value: 2.6, min: 0.1, max: 10, step: 0.1 },
-    sizeMin: { value: 1.9, min: 0.1, max: 10, step: 0.1 },
-    sizeMax: { value: 1.0, min: 0.1, max: 10, step: 0.1 },
+    sizeMin: { value: 4, min: 0.1, max: 10, step: 0.1 },
+    sizeMax: { value: 4, min: 0.1, max: 10, step: 0.1 },
 
     // Controles de atracción del mouse
     attractionRadius: { value: 1.0, min: 0.1, max: 5, step: 0.1 },

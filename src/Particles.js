@@ -5,7 +5,7 @@ import { useFBO } from '@react-three/drei'
 import './shaders/simulationMaterial'
 import './shaders/dofPointsMaterial'
 
-export function Particles({ speed, fov, aperture, focus, curl, size = 512, windX = -1, windY = 0, windSpeed = 1.0, fallSpeed = 0.4, windOsc = 1.0, sizeMode = 'fixed', sizeFixed = 3, sizeMin = 1, sizeMax = 5, attractionRadius = 1.0, attractionStrength = 0.8, vortexStrength = 1.5, vortexSpeed = 1.0, vortexColor = '#ff6600', vortexIntensity = 3.0, glowIntensity = 2.0, glowSize = 1.5, centerGlowRadius = 3.0, centerGlowIntensity = 2.0, ...props }) {
+export function Particles({ speed, fov, aperture, focus, curl, size = 512, windX = -1, windY = 0, windSpeed = 1.0, fallSpeed = 0.4, windOsc = 1.0, sizeMode = 'fixed', sizeFixed = 3, sizeMin = 1, sizeMax = 5, attractionRadius = 1.0, attractionStrength = 0.8, vortexStrength = 1.5, vortexSpeed = 1.0, vortexColor = '#ff6600', vortexIntensity = 3.0, glowIntensity = 2.0, glowSize = 1.5, centerGlowRadius = 3.0, centerGlowIntensity = 2.0, shape = 'circle', ...props }) {
   const simRef = useRef()
   const renderRef = useRef()
   // Ref for smooth speed transition
@@ -160,6 +160,7 @@ export function Particles({ speed, fov, aperture, focus, curl, size = 512, windX
     renderRef.current.uniforms.uSizeFixed.value = sizeFixed
     renderRef.current.uniforms.uSizeMin.value = sizeMin
     renderRef.current.uniforms.uSizeMax.value = sizeMax
+    renderRef.current.uniforms.uShape.value = shape === 'square' ? 1 : shape === 'triangle' ? 2 : 0
     simRef.current.uniforms.uAudioAmplitude.value = audioAmplitude
     simRef.current.uniforms.uHoverDuration.value = hoverDuration
   })
