@@ -43,7 +43,16 @@
     "email": "Schreiben Sie uns",
     "location": "Weltweit tätig.",
     "e2e": "E2E delivery",
-    "speed": "Startup Speed"
+    "speed": "Startup Speed",
+    "form": {
+      "name": "Name",
+      "email": "E-Mail",
+      "company": "Unternehmen (optional)",
+      "message": "Nachricht",
+      "send": "Senden",
+      "sending": "Wird gesendet…",
+      "success": "Danke, wir melden uns bald."
+    }
   },
   "footer": {
     "rights": "Alle Rechte vorbehalten."

@@ -43,7 +43,16 @@
     "email": "Escríbenos",
     "location": "Trabajando globalmente.",
     "e2e": "E2E delivery",
-    "speed": "Startup Speed"
+    "speed": "Startup Speed",
+    "form": {
+      "name": "Nombre",
+      "email": "Email",
+      "company": "Empresa (opcional)",
+      "message": "Mensaje",
+      "send": "Enviar",
+      "sending": "Enviando…",
+      "success": "Gracias, te contactaremos pronto."
+    }
   },
   "footer": {
     "rights": "Todos los derechos reservados."
