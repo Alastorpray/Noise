@@ -470,7 +470,7 @@ export function LandingPage() {
             <div
               className="logo-main"
               data-text="CORE"
-              style={{ color: isHovering ? 'var(--accent)' : 'var(--text-display)' }}
+              style={{ color: isHovering ? '#ff6600' : 'var(--text-display)' }}
             >
               CORE
             </div>
