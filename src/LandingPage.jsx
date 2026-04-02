@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
+import emailjs from '@emailjs/browser'
 import './landing.css'
 import { audioManager } from './audioManager'
 
@@ -137,10 +138,26 @@ export function LandingPage() {
     e.preventDefault()
     if (!form.nombre || !form.email || !form.mensaje) return
     setFormStatus('sending')
-    setTimeout(() => {
-      setFormStatus('success')
-      setForm({ nombre: '', email: '', empresa: '', mensaje: '' })
-    }, 600)
+
+    emailjs.send(
+      'service_2wg37bc',
+      'template_fs99k9g',
+      {
+        name: form.nombre,
+        email: form.email,
+        title: form.empresa,
+        message: form.mensaje,
+        time: new Date().toLocaleString()
+      },
+      'MMELmUYXH6HQs18_s'
+    )
+      .then(() => {
+        setFormStatus('success')
+        setForm({ nombre: '', email: '', empresa: '', mensaje: '' })
+      })
+      .catch(() => {
+        setFormStatus('error')
+      })
   }
 
   const onNavClick = (e, selector) => {
@@ -703,6 +720,7 @@ export function LandingPage() {
                         {formStatus === 'sending' ? t('contact.form.sending') : t('contact.form.send')}
                       </button>
                       {formStatus === 'success' && <span className="form-success">{t('contact.form.success')}</span>}
+                      {formStatus === 'error' && <span className="form-error">{t('contact.form.error')}</span>}
                     </div>
                     </form>
                   </div>

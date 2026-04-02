@@ -51,7 +51,8 @@
       "message": "Nachricht",
       "send": "Senden",
       "sending": "Wird gesendet…",
-      "success": "Danke, wir melden uns bald."
+      "success": "Danke, wir melden uns bald.",
+      "error": "Etwas ist schiefgelaufen. Bitte versuche es erneut."
     }
   },
   "footer": {

@@ -983,7 +983,15 @@
 .form-success {
   font-family: var(--font-data);
   font-size: var(--caption);
-  color: var(--text-secondary);
+  color: var(--accent);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.form-error {
+  font-family: var(--font-data);
+  font-size: var(--caption);
+  color: #D71921;
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
