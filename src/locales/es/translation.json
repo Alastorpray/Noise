@@ -51,7 +51,8 @@
       "message": "Mensaje",
       "send": "Enviar",
       "sending": "Enviando…",
-      "success": "Gracias, te contactaremos pronto."
+      "success": "Gracias, te contactaremos pronto.",
+      "error": "Algo salio mal. Intentalo de nuevo."
     }
   },
   "footer": {

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
+import emailjs from '@emailjs/browser'
 import './landing.css'
 import { audioManager } from './audioManager'
 
@@ -36,6 +37,8 @@ export function LandingPage() {
   const inactivityTimer = useRef(null)
   const [form, setForm] = useState({ nombre: '', email: '', empresa: '', mensaje: '' })
   const [formStatus, setFormStatus] = useState('idle')
+  const [planePos, setPlanePos] = useState(null)
+  const submitBtnRef = useRef(null)
   const [expandedDivision, setExpandedDivision] = useState(null)
   const [theme, setTheme] = useState('dark')
   const [glitchIntensity, setGlitchIntensity] = useState(0)
@@ -133,14 +136,38 @@ export function LandingPage() {
     setForm((f) => ({ ...f, [name]: value }))
   }
 
+  const launchPlane = () => {
+    if (!submitBtnRef.current) return
+    const rect = submitBtnRef.current.getBoundingClientRect()
+    setPlanePos({ x: rect.right, y: rect.top + rect.height / 2 })
+    setTimeout(() => setPlanePos(null), 900)
+  }
+
   const handleSubmit = (e) => {
     e.preventDefault()
     if (!form.nombre || !form.email || !form.mensaje) return
     setFormStatus('sending')
-    setTimeout(() => {
-      setFormStatus('success')
-      setForm({ nombre: '', email: '', empresa: '', mensaje: '' })
-    }, 600)
+    launchPlane()
+
+    emailjs.send(
+      'service_2wg37bc',
+      'template_fs99k9g',
+      {
+        name: form.nombre,
+        email: form.email,
+        title: form.empresa,
+        message: form.mensaje,
+        time: new Date().toLocaleString()
+      },
+      'MMELmUYXH6HQs18_s'
+    )
+      .then(() => {
+        setFormStatus('success')
+        setForm({ nombre: '', email: '', empresa: '', mensaje: '' })
+      })
+      .catch(() => {
+        setFormStatus('error')
+      })
   }
 
   const onNavClick = (e, selector) => {
@@ -424,6 +451,16 @@ export function LandingPage() {
 
   return (
     <div className="landing-container">
+      {/* Paper plane animation */}
+      {planePos && (
+        <div className="paper-plane-container" style={{ left: planePos.x, top: planePos.y }}>
+          <svg className="paper-plane" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M22 2L11 13" />
+            <path d="M22 2L15 22L11 13L2 9L22 2Z" />
+          </svg>
+        </div>
+      )}
+
       {/* Audio Toggle Icon */}
       {!isExpanded && !isClosing && (
         <button
@@ -699,10 +736,11 @@ export function LandingPage() {
                       <textarea id="mensaje" name="mensaje" rows="4" value={form.mensaje} onChange={handleChange} required />
                     </div>
                     <div className="form-actions">
-                      <button className="contact-submit" type="submit" disabled={formStatus === 'sending'}>
+                      <button ref={submitBtnRef} className="contact-submit" type="submit" disabled={formStatus === 'sending'}>
                         {formStatus === 'sending' ? t('contact.form.sending') : t('contact.form.send')}
                       </button>
                       {formStatus === 'success' && <span className="form-success">{t('contact.form.success')}</span>}
+                      {formStatus === 'error' && <span className="form-error">{t('contact.form.error')}</span>}
                     </div>
                     </form>
                   </div>

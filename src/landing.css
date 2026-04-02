@@ -983,9 +983,47 @@
 .form-success {
   font-family: var(--font-data);
   font-size: var(--caption);
-  color: var(--text-secondary);
+  color: var(--accent);
   letter-spacing: 0.04em;
   text-transform: uppercase;
+}
+
+.form-error {
+  font-family: var(--font-data);
+  font-size: var(--caption);
+  color: #D71921;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* Paper airplane animation */
+.paper-plane-container {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+.paper-plane {
+  width: 28px;
+  height: 28px;
+  stroke: var(--accent);
+  fill: none;
+  stroke-width: 1.5;
+  animation: plane-fly 0.8s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+}
+
+@keyframes plane-fly {
+  0% {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+  }
+  60% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(300px) scale(0.6);
+    opacity: 0;
+  }
 }
 
 /* ============================================================

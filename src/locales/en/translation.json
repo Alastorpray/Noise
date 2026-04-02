@@ -51,7 +51,8 @@
       "message": "Message",
       "send": "Send",
       "sending": "Sending…",
-      "success": "Thanks, we'll contact you soon."
+      "success": "Thanks, we'll contact you soon.",
+      "error": "Something went wrong. Please try again."
     }
   },
   "footer": {
