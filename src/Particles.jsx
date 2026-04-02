@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import { useMemo, useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useMemo } from 'react'
 import { createPortal, useFrame, useThree } from '@react-three/fiber'
 import { useFBO } from '@react-three/drei'
 import './shaders/simulationMaterial'
@@ -51,7 +51,7 @@ export function Particles({ speed, fov, aperture, focus, curl, size = 512, windX
   }, [size])
 
   // Track mouse and touch movement
-  useMemo(() => {
+  useEffect(() => {
     const updatePosition = (clientX, clientY) => {
       const x = (clientX / window.innerWidth) * 2 - 1
       const y = -(clientY / window.innerHeight) * 2 + 1

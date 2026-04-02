@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import './landing.css'
 import { audioManager } from './audioManager'
@@ -69,7 +69,7 @@ export function LandingPage() {
     setAudioEnabled(prev => !prev)
   }
 
-  const handleCollapse = () => {
+  const handleCollapse = useCallback(() => {
     setIsClosing(true)
     // Resetear el glitch inmediatamente
     setIsHovering(false)
@@ -78,9 +78,9 @@ export function LandingPage() {
       setIsExpanded(false)
       setIsClosing(false)
     }, 800) // Duración de la animación de colapso
-  }
+  }, [])
 
-  const resetTimer = () => {
+  const resetTimer = useCallback(() => {
     if (inactivityTimer.current) {
       clearTimeout(inactivityTimer.current)
     }
@@ -90,7 +90,7 @@ export function LandingPage() {
         handleCollapse()
       }, 30000) // 30 segundos
     }
-  }
+  }, [isExpanded, isClosing, handleCollapse])
 
   useEffect(() => {
     const handleActivity = () => {
@@ -114,11 +114,11 @@ export function LandingPage() {
         clearTimeout(inactivityTimer.current)
       }
     }
-  }, [isExpanded, isClosing])
+  }, [isExpanded, isClosing, resetTimer])
 
   useEffect(() => {
     resetTimer()
-  }, [isExpanded])
+  }, [isExpanded, resetTimer])
 
   const handleImageClick = () => {
     // Detener el audio completamente (no solo pausar)
@@ -470,14 +470,14 @@ export function LandingPage() {
             <div
               className="logo-main"
               data-text="CORE"
-              style={{ color: isHovering ? '#ff6600' : '#ffffff' }}
+              style={{ color: isHovering ? '#ff6600' : 'var(--text-display)' }}
             >
               CORE
             </div>
             <div
               className="logo-sub"
               data-text="Research"
-              style={{ color: isHovering ? '#ffffff' : '#ffffff' }}
+              style={{ color: isHovering ? 'var(--text-primary)' : 'var(--text-secondary)' }}
             >
               Research
             </div>
@@ -682,27 +682,27 @@ export function LandingPage() {
                     <form className="contact-form" onSubmit={handleSubmit}>
                     <div className="input-row">
                       <div className="input-group">
-                        <label htmlFor="nombre">Name</label>
+                        <label htmlFor="nombre">{t('contact.form.name')}</label>
                         <input id="nombre" name="nombre" type="text" value={form.nombre} onChange={handleChange} required />
                       </div>
                       <div className="input-group">
-                        <label htmlFor="email">Email</label>
+                        <label htmlFor="email">{t('contact.form.email')}</label>
                         <input id="email" name="email" type="email" value={form.email} onChange={handleChange} required />
                       </div>
                     </div>
                     <div className="input-group">
-                      <label htmlFor="empresa">Company (optional)</label>
+                      <label htmlFor="empresa">{t('contact.form.company')}</label>
                       <input id="empresa" name="empresa" type="text" value={form.empresa} onChange={handleChange} />
                     </div>
                     <div className="input-group">
-                      <label htmlFor="mensaje">Message</label>
+                      <label htmlFor="mensaje">{t('contact.form.message')}</label>
                       <textarea id="mensaje" name="mensaje" rows="4" value={form.mensaje} onChange={handleChange} required />
                     </div>
                     <div className="form-actions">
                       <button className="contact-submit" type="submit" disabled={formStatus === 'sending'}>
-                        {formStatus === 'sending' ? 'Sending…' : 'Send'}
+                        {formStatus === 'sending' ? t('contact.form.sending') : t('contact.form.send')}
                       </button>
-                      {formStatus === 'success' && <span className="form-success">Thanks, we’ll contact you soon.</span>}
+                      {formStatus === 'success' && <span className="form-success">{t('contact.form.success')}</span>}
                     </div>
                     </form>
                   </div>
