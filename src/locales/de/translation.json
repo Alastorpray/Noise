@@ -37,6 +37,14 @@
       "optimization": { "title": "Optimierung", "text": "Leistungsprofilierung für eigenständige VR-Headsets." }
     }
   },
+  "portfolio": {
+    "title": "Unsere Arbeit",
+    "all": "Alle",
+    "xr": "XR",
+    "print3d": "3D-Druck",
+    "educational": "Bildung",
+    "empty": "Noch keine Projekte."
+  },
   "contact": {
     "title": "Kontaktieren Sie uns",
     "desc": "Haben Sie ein Projekt im Sinn? Wir würden uns freuen, von Ihnen zu hören.",

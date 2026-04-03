@@ -37,6 +37,14 @@
       "optimization": { "title": "Optimización", "text": "Perfilado de rendimiento para visores VR autónomos." }
     }
   },
+  "portfolio": {
+    "title": "Nuestro Trabajo",
+    "all": "Todos",
+    "xr": "XR",
+    "print3d": "Impresión 3D",
+    "educational": "Educación",
+    "empty": "Aún no hay proyectos."
+  },
   "contact": {
     "title": "Contáctanos",
     "desc": "¿Tienes un proyecto en mente? Nos encantaría escucharte.",

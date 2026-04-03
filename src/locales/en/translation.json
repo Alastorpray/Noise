@@ -37,6 +37,14 @@
       "optimization": { "title": "Optimization", "text": "Performance profiling for standalone VR headsets." }
     }
   },
+  "portfolio": {
+    "title": "Our Work",
+    "all": "All",
+    "xr": "XR",
+    "print3d": "3D Print",
+    "educational": "Educational",
+    "empty": "No projects yet."
+  },
   "contact": {
     "title": "Get in Touch",
     "desc": "Have a project in mind? We'd love to hear from you.",
