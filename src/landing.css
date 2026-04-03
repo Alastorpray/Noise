@@ -1616,6 +1616,23 @@ html, body {
 }
 
 /* ============================================================
+   THEME TRANSITION — Circle expand from center
+   ============================================================ */
+
+@keyframes theme-circle-reveal {
+  from { clip-path: circle(0% at 50% 50%); }
+  to   { clip-path: circle(150% at 50% 50%); }
+}
+
+::view-transition-old(root) {
+  animation: none;
+}
+
+::view-transition-new(root) {
+  animation: theme-circle-reveal 700ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* ============================================================
    BLOG POST COMPONENT STYLES
 ============================================================ */
 

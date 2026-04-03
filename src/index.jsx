@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 import { render, events, extend } from '@react-three/fiber'
 import { createRoot } from 'react-dom/client'
+import { flushSync } from 'react-dom'
 import { useState, useEffect, useRef } from 'react'
 import { BrowserRouter, Routes, Route, useLocation, useNavigate, useParams } from 'react-router-dom'
 import './styles.css'
@@ -148,7 +149,17 @@ function BlogPostWrapper({ onNavigate }) {
 function MainApp() {
   const [theme, setTheme] = useState('dark')
   
-  const toggleTheme = () => setTheme(prev => (prev === 'dark' ? 'light' : 'dark'))
+  const toggleTheme = () => {
+    if (!document.startViewTransition) {
+      setTheme(prev => prev === 'dark' ? 'light' : 'dark')
+      return
+    }
+    document.startViewTransition(() => {
+      flushSync(() => {
+        setTheme(prev => prev === 'dark' ? 'light' : 'dark')
+      })
+    })
+  }
 
   return (
     <BrowserRouter>
