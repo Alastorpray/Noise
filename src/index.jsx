@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import { render, events, extend } from '@react-three/fiber'
 import { createRoot } from 'react-dom/client'
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import './styles.css'
 import App from './App'
 import { LandingPage } from './LandingPage'
@@ -28,19 +28,44 @@ window.addEventListener('resize', () =>
 
 window.dispatchEvent(new Event('resize'))
 
+const COVER_DURATION = 480   // ms — overlay slides in (covers screen)
+const REVEAL_DURATION = 700  // ms — overlay slides out (reveals new page)
+
 function LandingRouter() {
   const [route, setRoute] = useState(window.location.pathname)
+  const [displayRoute, setDisplayRoute] = useState(window.location.pathname)
   const [landingSection, setLandingSection] = useState(null)
   const [landingExpanded, setLandingExpanded] = useState(false)
   const [theme, setTheme] = useState('dark')
   const [showNav, setShowNav] = useState(false)
+  const [transition, setTransition] = useState(null) // null | 'covering' | 'revealing'
+  const pendingNav = useRef(null)
 
   const toggleTheme = () => setTheme(prev => (prev === 'dark' ? 'light' : 'dark'))
 
   const navigate = useCallback((path) => {
+    // If already on the same route, skip transition
+    if (path === window.location.pathname) return
+
     window.history.pushState({}, '', path)
     setRoute(path)
-    window.scrollTo(0, 0)
+    pendingNav.current = path
+
+    // Phase 1: overlay slides in and covers the screen
+    setTransition('covering')
+
+    setTimeout(() => {
+      // Phase 2: swap the rendered page while screen is covered
+      setDisplayRoute(path)
+      window.scrollTo(0, 0)
+
+      // Phase 3: overlay slides out to reveal the new page
+      setTransition('revealing')
+
+      setTimeout(() => {
+        setTransition(null)
+      }, REVEAL_DURATION)
+    }, COVER_DURATION)
   }, [])
 
   const handleNavigate = useCallback((path, section) => {
@@ -67,6 +92,7 @@ function LandingRouter() {
     const onPop = () => {
       const path = window.location.pathname
       setRoute(path)
+      setDisplayRoute(path)
       if (path === '/') {
         setLandingSection(null)
         setLandingExpanded(false)
@@ -102,7 +128,7 @@ function LandingRouter() {
         />
       )}
 
-      {route === '/portfolio' ? (
+      {displayRoute === '/portfolio' ? (
         <PortfolioPage theme={theme} />
       ) : (
         <LandingPage
@@ -111,6 +137,10 @@ function LandingRouter() {
           initialSection={landingSection}
           theme={theme}
         />
+      )}
+
+      {transition && (
+        <div className={`page-blackout page-blackout--${transition}`} />
       )}
     </div>
   )
