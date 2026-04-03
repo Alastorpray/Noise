@@ -44,11 +44,10 @@ function AnimatedRoutes({ theme }) {
   // Custom navigation state for landing page sections
   const [landingSection, setLandingSection] = useState(null)
   const [landingExpanded, setLandingExpanded] = useState(location.pathname !== '/')
-  const [isLandingManuallyExpanded, setIsLandingManuallyExpanded] = useState(false)
   
-  // To avoid any flicker during route transitions, the NavBar should always be visible
-  // UNLESS we are explicitly on the unexpanded home page ('/') and not transitioning.
-  const showNav = location.pathname !== '/' || displayLocation.pathname !== '/' || isLandingManuallyExpanded || transition !== null
+  // We ALWAYS render the NavBar, but we control its visibility via CSS classes.
+  // This completely eliminates any React unmounting flicker during route transitions.
+  const [isNavVisible, setIsNavVisible] = useState(location.pathname !== '/')
 
   useEffect(() => {
     // If the path changed, trigger the transition
@@ -81,10 +80,10 @@ function AnimatedRoutes({ theme }) {
     if (path === '/') {
       setLandingSection(section)
       setLandingExpanded(!!section)
-      if (section) setIsLandingManuallyExpanded(true)
+      if (!section) setIsNavVisible(false) // Hide only if going to pure home
       navigate('/')
     } else {
-      setIsLandingManuallyExpanded(false)
+      setIsNavVisible(true) // Always show nav when going to other pages
       navigate(path)
     }
   }
@@ -98,8 +97,8 @@ function AnimatedRoutes({ theme }) {
 
   // Show nav when LandingPage expands from clicking the logo
   useEffect(() => {
-    const onExpand = () => setIsLandingManuallyExpanded(true)
-    const onCollapse = () => setIsLandingManuallyExpanded(false)
+    const onExpand = () => setIsNavVisible(true)
+    const onCollapse = () => setIsNavVisible(false)
     window.addEventListener('landing-expanded', onExpand)
     window.addEventListener('landing-collapsed', onCollapse)
     return () => {
@@ -109,13 +108,14 @@ function AnimatedRoutes({ theme }) {
   }, [])
 
   return (
-    <div className={`theme-${theme} ${showNav ? 'app-content-visible' : ''}`}>
-      {showNav && (
+    <div className={`theme-${theme} ${isNavVisible ? 'app-content-visible' : ''}`}>
+      {/* We always render NavBar, visibility is handled by CSS to prevent unmounting flicker */}
+      <div style={{ opacity: isNavVisible ? 1 : 0, pointerEvents: isNavVisible ? 'auto' : 'none', transition: 'opacity 0.3s ease' }}>
         <NavBar
           onNavigate={handleNavigate}
           theme={theme}
         />
-      )}
+      </div>
 
       <Routes location={displayLocation}>
         <Route path="/" element={
