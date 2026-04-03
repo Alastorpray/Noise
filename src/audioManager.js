@@ -33,11 +33,8 @@ class AudioManager {
 
   async init(audioPath) {
     try {
-      console.log('🎵 Initializing audio from:', audioPath)
-
       // Crear AudioContext
       this.audioContext = new (window.AudioContext || window.webkitAudioContext)()
-      console.log('✅ AudioContext created:', this.audioContext.state)
 
       // Crear nodos
       this.analyser = this.audioContext.createAnalyser()
@@ -49,73 +46,59 @@ class AudioManager {
       this.dataArray = new Uint8Array(this.bufferLength)
 
       // Cargar audio
-      console.log('📥 Fetching audio file...')
       const response = await fetch(audioPath)
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
       }
 
-      console.log('✅ Audio file fetched, decoding...')
       const arrayBuffer = await response.arrayBuffer()
       this.audioBuffer = await this.audioContext.decodeAudioData(arrayBuffer)
-
-      console.log('✅ Audio initialized successfully! Duration:', this.audioBuffer.duration, 'seconds')
 
       // Resetear normalización para el nuevo audio
       this.resetNormalization()
 
       return true
     } catch (error) {
-      console.error('❌ Error initializing audio:', error)
+      console.error('Error initializing audio:', error)
       return false
     }
   }
 
   async resumeContext() {
     if (!this.audioContext) {
-      console.warn('⚠️ AudioContext not initialized')
       return false
     }
 
     if (this.audioContext.state === 'suspended') {
-      console.log('🔓 Resuming AudioContext...')
       try {
         await this.audioContext.resume()
-        console.log('✅ AudioContext resumed:', this.audioContext.state)
         return true
       } catch (error) {
-        console.error('❌ Error resuming AudioContext:', error)
+        console.error('Error resuming AudioContext:', error)
         return false
       }
     }
 
-    console.log('✅ AudioContext already running:', this.audioContext.state)
     return true
   }
 
   async play() {
     if (!this.audioContext || !this.audioBuffer) {
-      console.warn('⚠️ Audio not initialized')
       return
     }
 
     // Si ya está reproduciendo o en transición, no hacer nada
     if (this.isPlaying || this.isTransitioning) {
-      console.log('🎵 Audio already playing or transitioning')
       return
     }
 
     this.isTransitioning = true
 
     try {
-      console.log('▶️ Starting audio playback...')
-
       // Esperar a que el contexto se reanude (IMPORTANTE: await)
       if (this.audioContext.state === 'suspended') {
-        console.log('🔄 Resuming suspended AudioContext...')
         await this.audioContext.resume()
-        console.log('✅ AudioContext resumed:', this.audioContext.state)
       }
 
       // Crear nueva fuente (las fuentes solo se pueden usar una vez)
@@ -135,9 +118,8 @@ class AudioManager {
       // Iniciar reproducción
       this.source.start(0)
       this.isPlaying = true
-      console.log('✅ Audio playing! Volume fading in...')
     } catch (error) {
-      console.error('❌ Error playing audio:', error)
+      console.error('Error playing audio:', error)
       this.isPlaying = false
     } finally {
       this.isTransitioning = false
@@ -146,8 +128,6 @@ class AudioManager {
 
   pause() {
     if (!this.isPlaying || !this.audioContext) return
-
-    console.log('⏸️ Pausing audio...')
 
     // Fade out rápido
     const currentTime = this.audioContext.currentTime
@@ -158,7 +138,6 @@ class AudioManager {
     setTimeout(() => {
       if (this.audioContext && this.audioContext.state === 'running') {
         this.audioContext.suspend()
-        console.log('⏸️ Audio paused (context suspended)')
       }
     }, 300)
 
@@ -171,11 +150,8 @@ class AudioManager {
 
     // Si no está en estado suspended, no hacer nada
     if (this.audioContext.state !== 'suspended') {
-      console.log('⏭️ AudioContext not suspended, state:', this.audioContext.state)
       return
     }
-
-    console.log('▶️ Resuming audio...')
 
     try {
       // Reanudar contexto
@@ -187,17 +163,13 @@ class AudioManager {
         this.gainNode.gain.setValueAtTime(0, currentTime)
         this.gainNode.gain.linearRampToValueAtTime(0.3, currentTime + 0.3)
       }
-
-      console.log('▶️ Audio resumed')
     } catch (error) {
-      console.error('❌ Error resuming audio:', error)
+      console.error('Error resuming audio:', error)
     }
   }
 
   stop() {
     if (!this.isPlaying) return
-
-    console.log('⏹️ Stopping audio... Fading out...')
 
     // Actualizar estado inmediatamente
     this.isPlaying = false
@@ -216,11 +188,10 @@ class AudioManager {
           this.source.stop()
           this.source.disconnect()
         } catch (e) {
-          console.warn('⚠️ Error stopping source:', e.message)
+          console.warn('Error stopping source:', e.message)
         }
         this.source = null
       }
-      console.log('⏹️ Audio stopped')
     }, 500)
   }
 

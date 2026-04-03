@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { client, urlFor } from './sanityClient'
+import { Footer } from './Footer'
 import './landing.css'
 
 const BLOG_QUERY = `*[_type == "post"] | order(publishedAt desc) {
@@ -29,7 +30,7 @@ export function BlogPage({ onNavigate }) {
   }, [])
 
   return (
-    <div className="page-content expanded" style={{ opacity: 1 }}>
+    <div className="page-content expanded">
       <div style={{ paddingTop: 'var(--space-xl)' }}>
         <section className="section portfolio-section">
           <div className="section-wrapper">
@@ -97,11 +98,7 @@ export function BlogPage({ onNavigate }) {
         </section>
       </div>
 
-      <footer className="footer">
-        <div className="footer-content">
-          <p className="footer-text">© 2024 Coresearch. {t('footer.rights')}</p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   )
 }

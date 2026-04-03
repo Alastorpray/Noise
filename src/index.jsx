@@ -2,7 +2,7 @@ import * as THREE from 'three'
 import { render, events, extend } from '@react-three/fiber'
 import { createRoot } from 'react-dom/client'
 import { useState, useEffect, useRef } from 'react'
-import { BrowserRouter, Routes, Route, useLocation, useNavigate } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, useLocation, useNavigate, useParams } from 'react-router-dom'
 import './styles.css'
 import App from './App'
 import { LandingPage } from './LandingPage'
@@ -31,10 +31,10 @@ window.addEventListener('resize', () =>
 
 window.dispatchEvent(new Event('resize'))
 
-const COVER_DURATION = 480   // ms — overlay slides in (covers screen)
-const REVEAL_DURATION = 700  // ms — overlay slides out (reveals new page)
+const COVER_DURATION = 500   // ms — overlay fades in (covers screen)
+const REVEAL_DURATION = 500  // ms — overlay fades out (reveals new page)
 
-function AnimatedRoutes({ theme }) {
+function AnimatedRoutes({ theme, onToggleTheme }) {
   const location = useLocation()
   const navigate = useNavigate()
   
@@ -114,6 +114,7 @@ function AnimatedRoutes({ theme }) {
         <NavBar
           onNavigate={handleNavigate}
           theme={theme}
+          onToggleTheme={onToggleTheme}
         />
       </div>
 
@@ -139,7 +140,6 @@ function AnimatedRoutes({ theme }) {
 }
 
 // Wrapper for BlogPost to extract params from React Router
-import { useParams } from 'react-router-dom'
 function BlogPostWrapper({ onNavigate }) {
   const { slug } = useParams()
   return <BlogPost slug={slug} onNavigate={onNavigate} />
@@ -148,16 +148,11 @@ function BlogPostWrapper({ onNavigate }) {
 function MainApp() {
   const [theme, setTheme] = useState('dark')
   
-  // Toggle theme listener for NavBar
-  useEffect(() => {
-    const onToggleTheme = () => setTheme(prev => (prev === 'dark' ? 'light' : 'dark'))
-    window.addEventListener('toggleTheme', onToggleTheme)
-    return () => window.removeEventListener('toggleTheme', onToggleTheme)
-  }, [])
+  const toggleTheme = () => setTheme(prev => (prev === 'dark' ? 'light' : 'dark'))
 
   return (
     <BrowserRouter>
-      <AnimatedRoutes theme={theme} />
+      <AnimatedRoutes theme={theme} onToggleTheme={toggleTheme} />
     </BrowserRouter>
   )
 }

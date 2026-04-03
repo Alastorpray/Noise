@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 
-export function NavBar({ onNavigate, theme }) {
+export function NavBar({ onNavigate, theme, onToggleTheme }) {
   const { t, i18n } = useTranslation()
   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false)
   const langMenuRef = useRef(null)
@@ -66,7 +66,7 @@ export function NavBar({ onNavigate, theme }) {
         <div className="nav-links">
           <a
             href="/#about"
-            className={`nav-link ${route === '/' ? '' : ''}`}
+            className="nav-link"
             onClick={(e) => handleNavClick(e, 'about')}
           >
             {t('nav.about')}
@@ -123,7 +123,7 @@ export function NavBar({ onNavigate, theme }) {
             )}
           </div>
 
-          <button className="theme-toggle" onClick={() => window.dispatchEvent(new Event('toggleTheme'))} aria-label="Toggle theme">
+          <button className="theme-toggle" onClick={onToggleTheme} aria-label="Toggle theme">
             {theme === 'dark' ? '☀' : '☾'}
           </button>
         </div>
