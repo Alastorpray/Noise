@@ -45,7 +45,8 @@
     "print3d": "3D-Druck",
     "educational": "Bildung",
     "gameAsset": "Game Asset",
-    "empty": "Noch keine Projekte."
+    "empty": "Noch keine Projekte.",
+    "back": "Zurück zum Portfolio"
   },
   "blog": {
     "title": "Unser Blog",

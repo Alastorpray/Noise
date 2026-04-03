@@ -45,7 +45,8 @@
     "print3d": "3D Print",
     "educational": "Educational",
     "gameAsset": "Game Asset",
-    "empty": "No projects yet."
+    "empty": "No projects yet.",
+    "back": "Back to Portfolio"
   },
   "blog": {
     "title": "Our Blog",

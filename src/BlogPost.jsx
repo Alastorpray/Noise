@@ -12,32 +12,115 @@ const POST_QUERY = `*[_type == "post" && slug.current == $slug][0] {
   "categories": categories[]->title
 }`
 
+function getVideoEmbedUrl(url) {
+  if (!url) return null
+  // YouTube
+  const ytMatch = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/)
+  if (ytMatch) return `https://www.youtube.com/embed/${ytMatch[1]}`
+  // Vimeo
+  const vimeoMatch = url.match(/vimeo\.com\/(\d+)/)
+  if (vimeoMatch) return `https://player.vimeo.com/video/${vimeoMatch[1]}`
+  return url
+}
+
+const CALLOUT_ICONS = { tip: '💡', info: 'ℹ️', warning: '⚠️', danger: '🚨' }
+
 const ptComponents = {
   types: {
     image: ({ value }) => {
-      if (!value?.asset?._ref) {
-        return null
-      }
+      if (!value?.asset?._ref) return null
       return (
-        <img
-          alt={value.alt || ' '}
-          loading="lazy"
-          src={urlFor(value).width(800).fit('max').auto('format').url()}
-          className="blog-post-img"
-        />
+        <figure className="blog-figure">
+          <img
+            alt={value.alt || ' '}
+            loading="lazy"
+            src={urlFor(value).width(800).fit('max').auto('format').url()}
+            className="blog-post-img"
+          />
+          {value.caption && <figcaption className="blog-img-caption">{value.caption}</figcaption>}
+        </figure>
       )
-    }
+    },
+
+    codeBlock: ({ value }) => (
+      <div className="blog-code-block">
+        {(value.filename || value.language) && (
+          <div className="blog-code-header">
+            {value.filename && <span className="blog-code-filename">{value.filename}</span>}
+            {value.language && <span className="blog-code-lang">{value.language}</span>}
+          </div>
+        )}
+        <pre className="blog-code-pre"><code>{value.code}</code></pre>
+      </div>
+    ),
+
+    callout: ({ value }) => (
+      <div className={`blog-callout blog-callout--${value.type || 'info'}`}>
+        <span className="blog-callout-icon">{CALLOUT_ICONS[value.type] || 'ℹ️'}</span>
+        <p className="blog-callout-text">{value.text}</p>
+      </div>
+    ),
+
+    videoEmbed: ({ value }) => {
+      const embedUrl = getVideoEmbedUrl(value.url)
+      if (!embedUrl) return null
+      return (
+        <figure className="blog-video-embed">
+          <div className="blog-video-embed-wrapper">
+            <iframe
+              src={embedUrl}
+              title={value.caption || 'Video'}
+              allowFullScreen
+              loading="lazy"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            />
+          </div>
+          {value.caption && <figcaption className="blog-img-caption">{value.caption}</figcaption>}
+        </figure>
+      )
+    },
+
+    divider: ({ value }) => {
+      const style = value.style || 'line'
+      if (style === 'dots') return <div className="blog-divider blog-divider--dots"><span>·</span><span>·</span><span>·</span></div>
+      if (style === 'space') return <div className="blog-divider blog-divider--space" />
+      return <hr className="blog-divider blog-divider--line" />
+    },
   },
+
   block: {
-    h1: ({children}) => <h1 className="blog-post-h1">{children}</h1>,
-    h2: ({children}) => <h2 className="blog-post-h2">{children}</h2>,
-    h3: ({children}) => <h3 className="blog-post-h3">{children}</h3>,
-    normal: ({children}) => <p className="blog-post-p">{children}</p>,
-    blockquote: ({children}) => <blockquote className="blog-post-blockquote">{children}</blockquote>,
+    h2: ({ children }) => <h2 className="blog-post-h2">{children}</h2>,
+    h3: ({ children }) => <h3 className="blog-post-h3">{children}</h3>,
+    h4: ({ children }) => <h4 className="blog-post-h4">{children}</h4>,
+    normal: ({ children }) => <p className="blog-post-p">{children}</p>,
+    blockquote: ({ children }) => <blockquote className="blog-post-blockquote">{children}</blockquote>,
   },
+
   list: {
-    bullet: ({children}) => <ul className="blog-post-ul">{children}</ul>,
-    number: ({children}) => <ol className="blog-post-ol">{children}</ol>,
+    bullet: ({ children }) => <ul className="blog-post-ul">{children}</ul>,
+    number: ({ children }) => <ol className="blog-post-ol">{children}</ol>,
+  },
+
+  marks: {
+    link: ({ value, children }) => (
+      <a
+        href={value.href}
+        target={value.blank ? '_blank' : '_self'}
+        rel={value.blank ? 'noopener noreferrer' : undefined}
+        className="blog-link"
+      >
+        {children}
+      </a>
+    ),
+    highlight: ({ value, children }) => (
+      <mark className={`blog-highlight blog-highlight--${value.color || 'orange'}`}>{children}</mark>
+    ),
+    code: ({ children }) => <code className="blog-inline-code">{children}</code>,
+    strong: ({ children }) => <strong>{children}</strong>,
+    em: ({ children }) => <em>{children}</em>,
+    underline: ({ children }) => <span style={{ textDecoration: 'underline' }}>{children}</span>,
+    'strike-through': ({ children }) => <s>{children}</s>,
   },
 }
 
@@ -66,8 +149,8 @@ export function BlogPost({ slug, onNavigate }) {
       <div style={{ paddingTop: 'var(--space-xl)', paddingBottom: 'var(--space-xl)' }}>
         <section className="section">
           <div className="section-wrapper blog-post-wrapper">
-            
-            <button 
+
+            <button
               onClick={() => onNavigate('/blog')}
               className="blog-post-back-btn"
             >
@@ -104,30 +187,30 @@ export function BlogPost({ slug, onNavigate }) {
                       ))}
                     </div>
                   )}
-                  
+
                   <h1 className="blog-post-title">
                     {post.title}
                   </h1>
-                  
+
                   <div className="blog-post-meta">
                     {post.authorImage && (
-                      <img 
-                        src={urlFor(post.authorImage).width(100).height(100).fit('crop').url()} 
+                      <img
+                        src={urlFor(post.authorImage).width(100).height(100).fit('crop').url()}
                         alt={post.authorName}
                         className="blog-post-author-img"
                       />
                     )}
                     <div>
                       {post.authorName && <div className="blog-post-author-name">{post.authorName}</div>}
-                      {post.publishedAt && <div>{new Date(post.publishedAt).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}</div>}
+                      {post.publishedAt && <div style={{ color: 'var(--text-secondary)' }}>{new Date(post.publishedAt).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}</div>}
                     </div>
                   </div>
                 </header>
 
                 {post.mainImage && (
                   <div className="blog-post-main-img-wrapper">
-                    <img 
-                      src={urlFor(post.mainImage).width(1200).height(600).fit('crop').auto('format').url()} 
+                    <img
+                      src={urlFor(post.mainImage).width(1200).height(600).fit('crop').auto('format').url()}
                       alt={post.title}
                       className="blog-post-main-img"
                     />

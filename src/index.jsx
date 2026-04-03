@@ -8,6 +8,7 @@ import './styles.css'
 import App from './App'
 import { LandingPage } from './LandingPage'
 import { PortfolioPage } from './PortfolioPage'
+import { PortfolioPost } from './PortfolioPost'
 import { BlogPage } from './BlogPage'
 import { BlogPost } from './BlogPost'
 import { NavBar } from './NavBar'
@@ -128,7 +129,8 @@ function AnimatedRoutes({ theme, onToggleTheme }) {
             theme={theme}
           />
         } />
-        <Route path="/portfolio" element={<PortfolioPage theme={theme} />} />
+        <Route path="/portfolio" element={<PortfolioPage theme={theme} onNavigate={handleNavigate} />} />
+        <Route path="/portfolio/:slug" element={<PortfolioPostWrapper onNavigate={handleNavigate} />} />
         <Route path="/blog" element={<BlogPage onNavigate={handleNavigate} />} />
         <Route path="/blog/:slug" element={<BlogPostWrapper onNavigate={handleNavigate} />} />
       </Routes>
@@ -144,6 +146,12 @@ function AnimatedRoutes({ theme, onToggleTheme }) {
 function BlogPostWrapper({ onNavigate }) {
   const { slug } = useParams()
   return <BlogPost slug={slug} onNavigate={onNavigate} />
+}
+
+// Wrapper for PortfolioPost
+function PortfolioPostWrapper({ onNavigate }) {
+  const { slug } = useParams()
+  return <PortfolioPost slug={slug} onNavigate={onNavigate} />
 }
 
 function MainApp() {
