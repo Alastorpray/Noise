@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { client, urlFor } from './sanityClient'
 
-const FILTERS = ['all', 'xr', 'print3d', 'educational']
+const FILTERS = ['all', 'xr', 'print3d', 'educational', 'gameAsset']
 
 const QUERY = `*[_type == "project"] | order(featured desc, date desc) {
   _id, title, division, description, tags, date, featured, mediaType,

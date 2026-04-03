@@ -31,11 +31,11 @@ export function NavBar({ route, onNavigate, theme, onToggleTheme }) {
 
   const handleNavClick = (e, target) => {
     e.preventDefault()
-    if (target === '/portfolio') {
-      onNavigate('/portfolio')
+    if (target === '/portfolio' || target === '/blog') {
+      onNavigate(target)
     } else {
       // target is a section like 'about' or 'contact'
-      if (route === '/portfolio') {
+      if (route === '/portfolio' || route.startsWith('/blog')) {
         onNavigate('/', target)
       } else {
         const el = document.querySelector(`#${target}`)
@@ -46,7 +46,7 @@ export function NavBar({ route, onNavigate, theme, onToggleTheme }) {
 
   const handleLogoClick = (e) => {
     e.preventDefault()
-    if (route === '/portfolio') {
+    if (route === '/portfolio' || route.startsWith('/blog')) {
       onNavigate('/')
     }
   }
@@ -73,6 +73,13 @@ export function NavBar({ route, onNavigate, theme, onToggleTheme }) {
             onClick={(e) => handleNavClick(e, '/portfolio')}
           >
             {t('nav.portfolio')}
+          </a>
+          <a
+            href="/blog"
+            className={`nav-link ${route.startsWith('/blog') ? 'nav-link--active' : ''}`}
+            onClick={(e) => handleNavClick(e, '/blog')}
+          >
+            {t('nav.blog', 'Blog')}
           </a>
           <a
             href="/#contact"

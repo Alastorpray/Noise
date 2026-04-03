@@ -2,6 +2,7 @@
   "nav": {
     "about": "Über uns",
     "portfolio": "Portfolio",
+    "blog": "Blog",
     "contact": "Kontakt"
   },
   "hero": {
@@ -43,7 +44,13 @@
     "xr": "XR",
     "print3d": "3D-Druck",
     "educational": "Bildung",
+    "gameAsset": "Game Asset",
     "empty": "Noch keine Projekte."
+  },
+  "blog": {
+    "title": "Unser Blog",
+    "empty": "Zurzeit sind keine Beiträge verfügbar.",
+    "back": "Zurück zum Blog"
   },
   "contact": {
     "title": "Kontaktieren Sie uns",

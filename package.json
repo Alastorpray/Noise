@@ -11,6 +11,7 @@
   "type": "module",
   "dependencies": {
     "@emailjs/browser": "^4.4.1",
+    "@portabletext/react": "^6.0.3",
     "@react-three/drei": "9.80.0",
     "@react-three/fiber": "8.13.0",
     "@sanity/client": "^7.20.0",

@@ -6,6 +6,8 @@ import './styles.css'
 import App from './App'
 import { LandingPage } from './LandingPage'
 import { PortfolioPage } from './PortfolioPage'
+import { BlogPage } from './BlogPage'
+import { BlogPost } from './BlogPost'
 import { NavBar } from './NavBar'
 import './i18n'
 
@@ -69,8 +71,8 @@ function LandingRouter() {
   }, [])
 
   const handleNavigate = useCallback((path, section) => {
-    if (path === '/portfolio') {
-      navigate('/portfolio')
+    if (path.startsWith('/portfolio') || path.startsWith('/blog')) {
+      navigate(path)
       setShowNav(true)
     } else {
       setLandingSection(section || null)
@@ -97,7 +99,7 @@ function LandingRouter() {
         setLandingSection(null)
         setLandingExpanded(false)
         setShowNav(false)
-      } else if (path === '/portfolio') {
+      } else if (path.startsWith('/portfolio') || path.startsWith('/blog')) {
         setShowNav(true)
       }
     }
@@ -130,6 +132,10 @@ function LandingRouter() {
 
       {displayRoute === '/portfolio' ? (
         <PortfolioPage theme={theme} />
+      ) : displayRoute === '/blog' ? (
+        <BlogPage onNavigate={navigate} />
+      ) : displayRoute.startsWith('/blog/') ? (
+        <BlogPost slug={displayRoute.split('/blog/')[1]} onNavigate={navigate} />
       ) : (
         <LandingPage
           key={landingSection || 'home'}
@@ -145,6 +151,7 @@ function LandingRouter() {
     </div>
   )
 }
+
 
 const landingRoot = document.createElement('div')
 landingRoot.id = 'landing-root'

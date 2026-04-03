@@ -24,7 +24,8 @@ export default {
         list: [
           { title: 'XR', value: 'xr' },
           { title: '3D Print', value: 'print3d' },
-          { title: 'Educational', value: 'educational' }
+          { title: 'Educational', value: 'educational' },
+          { title: 'Game Asset', value: 'gameAsset' }
         ],
         layout: 'radio'
       },
