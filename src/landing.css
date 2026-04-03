@@ -1682,7 +1682,7 @@ html, body {
   display: flex;
   align-items: center;
   gap: 1rem;
-  color: var(--text-tertiary);
+  color: var(--text-primary);
   font-size: 0.9rem;
 }
 
@@ -1759,6 +1759,5 @@ html, body {
   line-height: 1.8;
   color: var(--text-secondary);
 }
-
 
 
