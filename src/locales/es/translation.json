@@ -2,6 +2,7 @@
   "nav": {
     "about": "Nosotros",
     "portfolio": "Portafolio",
+    "blog": "Blog",
     "contact": "Contacto"
   },
   "hero": {
@@ -36,6 +37,20 @@
       "interaction": { "title": "Interacción", "text": "Seguimiento de manos, controladores y lógica multiusuario." },
       "optimization": { "title": "Optimización", "text": "Perfilado de rendimiento para visores VR autónomos." }
     }
+  },
+  "portfolio": {
+    "title": "Nuestro Trabajo",
+    "all": "Todos",
+    "xr": "XR",
+    "print3d": "Impresión 3D",
+    "educational": "Educación",
+    "gameAsset": "Game Asset",
+    "empty": "Aún no hay proyectos."
+  },
+  "blog": {
+    "title": "Nuestro Blog",
+    "empty": "No hay publicaciones disponibles en este momento.",
+    "back": "Volver al Blog"
   },
   "contact": {
     "title": "Contáctanos",

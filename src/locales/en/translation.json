@@ -2,6 +2,7 @@
   "nav": {
     "about": "About",
     "portfolio": "Portfolio",
+    "blog": "Blog",
     "contact": "Contact"
   },
   "hero": {
@@ -36,6 +37,20 @@
       "interaction": { "title": "Interaction", "text": "Hand tracking, controllers and multi-user logic." },
       "optimization": { "title": "Optimization", "text": "Performance profiling for standalone VR headsets." }
     }
+  },
+  "portfolio": {
+    "title": "Our Work",
+    "all": "All",
+    "xr": "XR",
+    "print3d": "3D Print",
+    "educational": "Educational",
+    "gameAsset": "Game Asset",
+    "empty": "No projects yet."
+  },
+  "blog": {
+    "title": "Our Blog",
+    "empty": "No posts available at the moment.",
+    "back": "Back to Blog"
   },
   "contact": {
     "title": "Get in Touch",

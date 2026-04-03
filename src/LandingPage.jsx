@@ -4,35 +4,9 @@ import emailjs from '@emailjs/browser'
 import './landing.css'
 import { audioManager } from './audioManager'
 
-export function LandingPage() {
-  const { t, i18n } = useTranslation()
-  const [isExpanded, setIsExpanded] = useState(false)
-  const [isLangMenuOpen, setIsLangMenuOpen] = useState(false)
-  const langMenuRef = useRef(null)
-
-  // Cerrar menú de idioma al hacer click fuera
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (langMenuRef.current && !langMenuRef.current.contains(event.target)) {
-        setIsLangMenuOpen(false)
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [])
-
-  const changeLanguage = (lng) => {
-    i18n.changeLanguage(lng)
-    setIsLangMenuOpen(false)
-  }
-
-  const languages = [
-    { code: 'en', label: 'English' },
-    { code: 'es', label: 'Español' },
-    { code: 'de', label: 'Deutsch' }
-  ]
-
-  const currentLang = languages.find(l => l.code === i18n.language) || languages[0]
+export function LandingPage({ initialExpanded = false, initialSection = null, theme = 'dark' }) {
+  const { t } = useTranslation()
+  const [isExpanded, setIsExpanded] = useState(initialExpanded)
   const [isClosing, setIsClosing] = useState(false)
   const inactivityTimer = useRef(null)
   const [form, setForm] = useState({ nombre: '', email: '', empresa: '', mensaje: '' })
@@ -40,7 +14,6 @@ export function LandingPage() {
   const [planePos, setPlanePos] = useState(null)
   const submitBtnRef = useRef(null)
   const [expandedDivision, setExpandedDivision] = useState(null)
-  const [theme, setTheme] = useState('dark')
   const [glitchIntensity, setGlitchIntensity] = useState(0)
   const [isHovering, setIsHovering] = useState(false)
   const logoTextRef = useRef(null)
@@ -60,9 +33,6 @@ export function LandingPage() {
   const isStartingAudio = useRef(false)
   const hoverTimeoutRef = useRef(null)
 
-  const toggleTheme = () => {
-    setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'))
-  }
 
   const handleAudioToggle = () => {
     if (!audioEnabled && audioInitialized.current) {
@@ -77,6 +47,7 @@ export function LandingPage() {
     // Resetear el glitch inmediatamente
     setIsHovering(false)
     setGlitchIntensity(0)
+    window.dispatchEvent(new Event('landing-collapsed'))
     setTimeout(() => {
       setIsExpanded(false)
       setIsClosing(false)
@@ -123,12 +94,26 @@ export function LandingPage() {
     resetTimer()
   }, [isExpanded, resetTimer])
 
+  // When starting expanded (coming from another page)
+  useEffect(() => {
+    if (initialExpanded) {
+      window.dispatchEvent(new Event('landing-expanded'))
+      if (initialSection) {
+        setTimeout(() => {
+          const el = document.getElementById(initialSection)
+          if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        }, 200)
+      }
+    }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
   const handleImageClick = () => {
     // Detener el audio completamente (no solo pausar)
     audioManager.stop()
     setIsHovering(false)
     setGlitchIntensity(0)
     setIsExpanded(true)
+    window.dispatchEvent(new Event('landing-expanded'))
   }
 
   const handleChange = (e) => {
@@ -170,11 +155,6 @@ export function LandingPage() {
       })
   }
 
-  const onNavClick = (e, selector) => {
-    e.preventDefault()
-    const el = document.querySelector(selector)
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
-  }
 
   const toggleDivision = (key) => {
     setExpandedDivision((prev) => (prev === key ? null : key))
@@ -525,54 +505,6 @@ export function LandingPage() {
       {/* Contenido expandido */}
       {(isExpanded || isClosing) && (
         <div className={`page-content ${isClosing ? 'collapsed' : 'expanded'} theme-${theme}`}>
-          {/* Navigation */}
-          <nav className="main-nav">
-            <div className="nav-content">
-              <div className="nav-brand">
-                <img src="/Coresearchlogo.svg" alt="Coresearch" className="nav-logo-img" />
-              </div>
-              <div className="nav-links">
-                <a href="#about" className="nav-link" onClick={(e) => onNavClick(e, '#about')}>{t('nav.about')}</a>
-                <a href="#portfolio" className="nav-link" onClick={(e) => onNavClick(e, '#portfolio')}>{t('nav.portfolio')}</a>
-                <a href="#contact" className="nav-link" onClick={(e) => onNavClick(e, '#contact')}>{t('nav.contact')}</a>
-                
-                <div className="lang-dropdown" ref={langMenuRef}>
-                  <button
-                    className="lang-toggle"
-                    onClick={() => setIsLangMenuOpen(!isLangMenuOpen)}
-                    aria-label="Select language"
-                  >
-                    <svg className="lang-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <circle cx="12" cy="12" r="10" />
-                      <line x1="2" y1="12" x2="22" y2="12" />
-                      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
-                    </svg>
-                    <span className="lang-code">{currentLang.code.toUpperCase()}</span>
-                  </button>
-
-                  {isLangMenuOpen && (
-                    <div className="lang-menu">
-                      {languages.map((lang) => (
-                        <button
-                          key={lang.code}
-                          className={`lang-option ${i18n.language === lang.code ? 'active' : ''}`}
-                          onClick={() => changeLanguage(lang.code)}
-                        >
-                          <span className="lang-code-option">{lang.code.toUpperCase()}</span>
-                          <span className="lang-label">{lang.label}</span>
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                <button className="theme-toggle" onClick={toggleTheme} aria-label="Toggle theme">
-                  {theme === 'dark' ? '☀' : '☾'}
-                </button>
-              </div>
-            </div>
-          </nav>
-
           {/* Hero Section */}
           <section className="hero">
             <div className="hero-content">
