@@ -1586,37 +1586,33 @@ html, body {
 }
 
 /* ============================================================
-   PAGE TRANSITION — Blackout slide (treeview-style)
+   PAGE TRANSITION — Fade
    ============================================================ */
 
-/* Full-screen overlay that covers & reveals pages */
 .page-blackout {
   position: fixed;
   inset: 0;
   background: #000;
   z-index: 199;
   pointer-events: none;
-  will-change: transform;
 }
 
-/* Phase 1: slide in from the right to cover the screen */
 @keyframes blackout-cover {
-  from { transform: translateX(100%); }
-  to   { transform: translateX(0%); }
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 
-/* Phase 2: continue sliding left and exit the viewport */
 @keyframes blackout-reveal {
-  from { transform: translateX(0%); }
-  to   { transform: translateX(-100%); }
+  from { opacity: 1; }
+  to   { opacity: 0; }
 }
 
 .page-blackout--covering {
-  animation: blackout-cover 480ms cubic-bezier(0.76, 0, 0.24, 1) forwards;
+  animation: blackout-cover 500ms ease-in forwards;
 }
 
 .page-blackout--revealing {
-  animation: blackout-reveal 700ms cubic-bezier(0.56, 0.22, 0.05, 0.99) forwards;
+  animation: blackout-reveal 500ms ease-out forwards;
 }
 
 /* ============================================================

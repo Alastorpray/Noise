@@ -31,8 +31,8 @@ window.addEventListener('resize', () =>
 
 window.dispatchEvent(new Event('resize'))
 
-const COVER_DURATION = 480   // ms — overlay slides in (covers screen)
-const REVEAL_DURATION = 700  // ms — overlay slides out (reveals new page)
+const COVER_DURATION = 500   // ms — overlay fades in (covers screen)
+const REVEAL_DURATION = 500  // ms — overlay fades out (reveals new page)
 
 function AnimatedRoutes({ theme, onToggleTheme }) {
   const location = useLocation()
