@@ -1300,16 +1300,30 @@
    ============================================================ */
 .lightbox-backdrop {
   position: fixed;
-  inset: 0;
+  top: 73px;
+  left: 0;
+  right: 0;
+  bottom: 0;
   background: rgba(0, 0, 0, 0.85);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  z-index: 9000;
+  z-index: 150;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: var(--space-lg);
   animation: fadeInContent 0.3s var(--ease) forwards;
+}
+
+.lightbox-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem;
+  box-sizing: border-box;
 }
 
 .lightbox-panel {
@@ -1357,6 +1371,7 @@
   overflow: hidden;
   aspect-ratio: 16 / 9;
   background: var(--black);
+  position: relative;
 }
 
 .lightbox-img,
@@ -1434,19 +1449,21 @@
 
 .lightbox-counter {
   position: absolute;
-  bottom: var(--space-md);
+  bottom: 1.5rem;
   left: 50%;
   transform: translateX(-50%);
   font-family: var(--font-body);
   font-size: var(--caption);
   font-weight: 500;
   color: #ffffff;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  padding: 4px 14px;
+  padding: 6px 16px;
   border-radius: 999px;
   letter-spacing: 0.08em;
+  z-index: 10;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .lightbox-date {
@@ -1501,10 +1518,91 @@
   .divisions-grid { grid-template-columns: 1fr; }
 }
 
+/* Mobile Menu Button */
+.mobile-menu-btn {
+  display: none;
+  flex-direction: column;
+  justify-content: space-around;
+  width: 24px;
+  height: 20px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 1001;
+}
+
+.mobile-menu-btn span {
+  width: 24px;
+  height: 2px;
+  background: var(--text-primary);
+  border-radius: 10px;
+  transition: all 0.3s linear;
+  position: relative;
+  transform-origin: 1px;
+}
+
+.mobile-menu-btn.open span:first-child {
+  transform: rotate(45deg);
+}
+
+.mobile-menu-btn.open span:nth-child(2) {
+  opacity: 0;
+  transform: translateX(20px);
+}
+
+.mobile-menu-btn.open span:nth-child(3) {
+  transform: rotate(-45deg);
+}
+
 @media (max-width: 810px) {
-  .nav-content { flex-direction: column; gap: var(--space-md); padding: 0 var(--space-md); }
-  .nav-links { gap: var(--space-lg); }
-  .hero { padding: 140px var(--space-md) var(--space-2xl); width: 100%; box-sizing: border-box; }
+  .nav-content { flex-direction: row; gap: var(--space-md); padding: 0 var(--space-md); align-items: center; justify-content: space-between; }
+  
+  .mobile-menu-btn {
+    display: flex;
+  }
+
+  .nav-links { 
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 73px;
+    right: -100%;
+    width: 100%;
+    height: calc(100vh - 73px);
+    background: var(--page-bg);
+    padding: 2rem;
+    transition: right 0.3s ease-in-out;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 2rem;
+    box-sizing: border-box;
+    backdrop-filter: blur(10px);
+  }
+
+  .nav-links.mobile-open {
+    right: 0;
+  }
+
+  .nav-link {
+    font-size: 1.5rem;
+  }
+  
+  .nav-brand { flex-grow: 1; }
+
+  .lang-dropdown {
+    position: relative;
+    margin: 0;
+  }
+  
+  .lang-menu {
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 1rem;
+  }
+  
+  .hero { padding: 100px var(--space-md) var(--space-2xl); width: 100%; box-sizing: border-box; }
   .hero-content { max-width: 100%; width: 100%; }
   .hero-title { font-size: var(--heading); line-height: 1.15; }
   .hero-subtitle { font-size: var(--body-sm); max-width: 100%; }
@@ -1518,8 +1616,8 @@
 }
 
 @media (max-width: 480px) {
-  .logo-main { font-size: var(--display-md); }
-  .logo-sub { font-size: var(--subheading); letter-spacing: 0.04em; }
+  .logo-main { font-size: 3rem; }
+  .logo-sub { font-size: 1.5rem; letter-spacing: 0.04em; }
   .logo-text { width: 20rem; max-width: 85vw; }
   .nav-links { gap: var(--space-md); flex-wrap: wrap; justify-content: center; }
   .hero { padding: 120px var(--space-md) var(--space-xl); width: 100%; box-sizing: border-box; }

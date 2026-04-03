@@ -5,9 +5,9 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 export function NavBar({ onNavigate, theme, onToggleTheme }) {
   const { t, i18n } = useTranslation()
   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const langMenuRef = useRef(null)
   const location = useLocation()
-  const navigate = useNavigate()
   const route = location.pathname
 
   const languages = [
@@ -35,10 +35,10 @@ export function NavBar({ onNavigate, theme, onToggleTheme }) {
 
   const handleNavClick = (e, target) => {
     e.preventDefault()
+    setIsMobileMenuOpen(false) // Close menu on navigation
     if (target === '/portfolio' || target === '/blog') {
       onNavigate(target)
     } else {
-      // target is a section like 'about' or 'contact'
       if (route === '/portfolio' || route.startsWith('/blog')) {
         onNavigate('/', target)
       } else {
@@ -50,6 +50,7 @@ export function NavBar({ onNavigate, theme, onToggleTheme }) {
 
   const handleLogoClick = (e) => {
     e.preventDefault()
+    setIsMobileMenuOpen(false)
     if (route === '/portfolio' || route.startsWith('/blog')) {
       onNavigate('/')
     }
@@ -63,7 +64,19 @@ export function NavBar({ onNavigate, theme, onToggleTheme }) {
             <img src="/Coresearchlogo.svg" alt="Coresearch" className="nav-logo-img" />
           </Link>
         </div>
-        <div className="nav-links">
+
+        {/* Hamburger Menu Button for Mobile */}
+        <button 
+          className={`mobile-menu-btn ${isMobileMenuOpen ? 'open' : ''}`}
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          aria-label="Toggle menu"
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+
+        <div className={`nav-links ${isMobileMenuOpen ? 'mobile-open' : ''}`}>
           <a
             href="/#about"
             className="nav-link"
