@@ -531,10 +531,10 @@
    ============================================================ */
 .page-content {
   position: fixed;
-  top: 60px;
+  top: 73px;
   left: 0;
   width: 100%;
-  height: calc(100% - 60px);
+  height: calc(100% - 73px);
   pointer-events: auto;
   opacity: 0;
   background-color: var(--page-bg);
