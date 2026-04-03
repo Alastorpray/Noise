@@ -4,10 +4,13 @@ import { visionTool } from '@sanity/vision'
 import { schemaTypes } from './schemas'
 
 export default defineConfig({
-  name: 'coresearch',
+  name: 'default',
   title: 'Coresearch Studio',
   projectId: '2lf16gxk',
   dataset: 'production',
-  plugins: [structureTool(), visionTool()],
+  plugins: [
+    structureTool(), 
+    visionTool()
+  ],
   schema: { types: schemaTypes }
 })
