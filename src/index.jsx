@@ -37,9 +37,12 @@ function LandingRouter() {
   const [route, setRoute] = useState(window.location.pathname)
   const [displayRoute, setDisplayRoute] = useState(window.location.pathname)
   const [landingSection, setLandingSection] = useState(null)
-  const [landingExpanded, setLandingExpanded] = useState(false)
+  
+  // Automatically show the navigation bar if the initial URL is not the root ('/')
+  const [landingExpanded, setLandingExpanded] = useState(window.location.pathname !== '/')
+  const [showNav, setShowNav] = useState(window.location.pathname !== '/')
+  
   const [theme, setTheme] = useState('dark')
-  const [showNav, setShowNav] = useState(false)
   const [transition, setTransition] = useState(null) // null | 'covering' | 'revealing'
   const pendingNav = useRef(null)
 
