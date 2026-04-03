@@ -489,14 +489,14 @@ export function LandingPage({ initialExpanded = false, initialSection = null, th
             <div
               className="logo-main"
               data-text="CORE"
-              style={{ color: isHovering ? '#ff6600' : 'var(--text-display)' }}
+              style={{ color: isHovering ? '#ff6600' : '#FFFFFF' }}
             >
               CORE
             </div>
             <div
               className="logo-sub"
               data-text="Research"
-              style={{ color: isHovering ? 'var(--text-primary)' : 'var(--text-secondary)' }}
+              style={{ color: isHovering ? '#E8E8E8' : '#999999' }}
             >
               Research
             </div>
