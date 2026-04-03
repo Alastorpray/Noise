@@ -4,6 +4,8 @@ import emailjs from '@emailjs/browser'
 import './landing.css'
 import { audioManager } from './audioManager'
 
+import { Footer } from './Footer'
+
 export function LandingPage({ initialExpanded = false, initialSection = null, theme = 'dark' }) {
   const { t } = useTranslation()
   const [isExpanded, setIsExpanded] = useState(initialExpanded)
@@ -682,11 +684,7 @@ export function LandingPage({ initialExpanded = false, initialSection = null, th
           </section>
 
           {/* Footer */}
-          <footer className="footer">
-            <div className="footer-content">
-              <p className="footer-text">© 2024 Coresearch. {t('footer.rights')}</p>
-            </div>
-          </footer>
+          <Footer />
         </div>
       )}
     </div>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { PortableText } from '@portabletext/react'
 import { client, urlFor } from './sanityClient'
+import { Footer } from './Footer'
 import './landing.css'
 
 const POST_QUERY = `*[_type == "post" && slug.current == $slug][0] {
@@ -22,21 +23,21 @@ const ptComponents = {
           alt={value.alt || ' '}
           loading="lazy"
           src={urlFor(value).width(800).fit('max').auto('format').url()}
-          style={{ maxWidth: '100%', borderRadius: '8px', margin: '2rem 0' }}
+          className="blog-post-img"
         />
       )
     }
   },
   block: {
-    h1: ({children}) => <h1 style={{ fontSize: '2.5rem', marginBottom: '1rem', marginTop: '2rem' }}>{children}</h1>,
-    h2: ({children}) => <h2 style={{ fontSize: '2rem', marginBottom: '1rem', marginTop: '2rem' }}>{children}</h2>,
-    h3: ({children}) => <h3 style={{ fontSize: '1.5rem', marginBottom: '1rem', marginTop: '2rem' }}>{children}</h3>,
-    normal: ({children}) => <p style={{ fontSize: '1.1rem', lineHeight: '1.8', marginBottom: '1.5rem', color: 'var(--text-secondary)' }}>{children}</p>,
-    blockquote: ({children}) => <blockquote style={{ borderLeft: '4px solid var(--accent)', paddingLeft: '1rem', fontStyle: 'italic', margin: '1.5rem 0' }}>{children}</blockquote>,
+    h1: ({children}) => <h1 className="blog-post-h1">{children}</h1>,
+    h2: ({children}) => <h2 className="blog-post-h2">{children}</h2>,
+    h3: ({children}) => <h3 className="blog-post-h3">{children}</h3>,
+    normal: ({children}) => <p className="blog-post-p">{children}</p>,
+    blockquote: ({children}) => <blockquote className="blog-post-blockquote">{children}</blockquote>,
   },
   list: {
-    bullet: ({children}) => <ul style={{ paddingLeft: '2rem', marginBottom: '1.5rem', fontSize: '1.1rem', lineHeight: '1.8', color: 'var(--text-secondary)' }}>{children}</ul>,
-    number: ({children}) => <ol style={{ paddingLeft: '2rem', marginBottom: '1.5rem', fontSize: '1.1rem', lineHeight: '1.8', color: 'var(--text-secondary)' }}>{children}</ol>,
+    bullet: ({children}) => <ul className="blog-post-ul">{children}</ul>,
+    number: ({children}) => <ol className="blog-post-ol">{children}</ol>,
   },
 }
 
@@ -61,18 +62,14 @@ export function BlogPost({ slug, onNavigate }) {
   }, [slug])
 
   return (
-    <div className="page-content expanded" style={{ opacity: 1 }}>
+    <div className="page-content expanded">
       <div style={{ paddingTop: 'var(--space-xl)', paddingBottom: 'var(--space-xl)' }}>
         <section className="section">
-          <div className="section-wrapper" style={{ maxWidth: '800px', margin: '0 auto' }}>
+          <div className="section-wrapper blog-post-wrapper">
             
             <button 
               onClick={() => onNavigate('/blog')}
-              style={{
-                background: 'none', border: 'none', color: 'var(--accent)', cursor: 'pointer',
-                marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '0.5rem',
-                fontSize: '1rem', fontWeight: 'bold'
-              }}
+              className="blog-post-back-btn"
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <line x1="19" y1="12" x2="5" y2="12"></line>
@@ -97,47 +94,47 @@ export function BlogPost({ slug, onNavigate }) {
 
             {!loading && post && (
               <article>
-                <header style={{ marginBottom: '3rem' }}>
+                <header className="blog-post-header">
                   {post.categories?.length > 0 && (
-                    <div style={{ marginBottom: '1rem' }}>
+                    <div className="blog-post-categories">
                       {post.categories.map(cat => (
-                        <span key={cat} style={{ color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.05em', fontSize: '0.85rem', fontWeight: 'bold', marginRight: '1rem' }}>
+                        <span key={cat} className="blog-post-category">
                           {cat}
                         </span>
                       ))}
                     </div>
                   )}
                   
-                  <h1 style={{ fontSize: '3.5rem', lineHeight: '1.2', marginBottom: '1.5rem', color: 'var(--text-primary)' }}>
+                  <h1 className="blog-post-title">
                     {post.title}
                   </h1>
                   
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', color: 'var(--text-tertiary)', fontSize: '0.9rem' }}>
+                  <div className="blog-post-meta">
                     {post.authorImage && (
                       <img 
                         src={urlFor(post.authorImage).width(100).height(100).fit('crop').url()} 
                         alt={post.authorName}
-                        style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }}
+                        className="blog-post-author-img"
                       />
                     )}
                     <div>
-                      {post.authorName && <div style={{ fontWeight: 'bold', color: 'var(--text-primary)' }}>{post.authorName}</div>}
+                      {post.authorName && <div className="blog-post-author-name">{post.authorName}</div>}
                       {post.publishedAt && <div>{new Date(post.publishedAt).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}</div>}
                     </div>
                   </div>
                 </header>
 
                 {post.mainImage && (
-                  <div style={{ marginBottom: '3rem', borderRadius: '12px', overflow: 'hidden' }}>
+                  <div className="blog-post-main-img-wrapper">
                     <img 
                       src={urlFor(post.mainImage).width(1200).height(600).fit('crop').auto('format').url()} 
                       alt={post.title}
-                      style={{ width: '100%', height: 'auto', display: 'block' }}
+                      className="blog-post-main-img"
                     />
                   </div>
                 )}
 
-                <div className="blog-content" style={{ color: 'var(--text-primary)' }}>
+                <div className="blog-content blog-post-body">
                   <PortableText value={post.body} components={ptComponents} />
                 </div>
               </article>
@@ -146,11 +143,7 @@ export function BlogPost({ slug, onNavigate }) {
         </section>
       </div>
 
-      <footer className="footer">
-        <div className="footer-content">
-          <p className="footer-text">© 2024 Coresearch. {t('footer.rights')}</p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   )
 }

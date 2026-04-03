@@ -60,7 +60,7 @@ export default function App() {
     // Controles de brillo central
     centerGlowRadius: { value: 1.1, min: 0.5, max: 10, step: 0.1 },
     centerGlowIntensity: { value: 2.0, min: 0, max: 5, step: 0.1 }
-  }, { hidden: true })
+  }, { hidden: process.env.NODE_ENV === 'production' })
 
   return (
     <>
