@@ -47,8 +47,8 @@ export function LandingPage({ initialExpanded = false, initialSection = null, th
     // Resetear el glitch inmediatamente
     setIsHovering(false)
     setGlitchIntensity(0)
-    window.dispatchEvent(new Event('landing-collapsed'))
     setTimeout(() => {
+      window.dispatchEvent(new Event('landing-collapsed'))
       setIsExpanded(false)
       setIsClosing(false)
     }, 800) // Duración de la animación de colapso

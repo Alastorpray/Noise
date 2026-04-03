@@ -1,10 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 
-export function NavBar({ route, onNavigate, theme, onToggleTheme }) {
+export function NavBar({ onNavigate, theme }) {
   const { t, i18n } = useTranslation()
   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false)
   const langMenuRef = useRef(null)
+  const location = useLocation()
+  const navigate = useNavigate()
+  const route = location.pathname
 
   const languages = [
     { code: 'en', label: 'English' },
@@ -55,9 +59,9 @@ export function NavBar({ route, onNavigate, theme, onToggleTheme }) {
     <nav className="main-nav">
       <div className="nav-content">
         <div className="nav-brand">
-          <a href="/" onClick={handleLogoClick} style={{ display: 'flex', alignItems: 'center' }}>
+          <Link to="/" onClick={handleLogoClick} style={{ display: 'flex', alignItems: 'center' }}>
             <img src="/Coresearchlogo.svg" alt="Coresearch" className="nav-logo-img" />
-          </a>
+          </Link>
         </div>
         <div className="nav-links">
           <a
@@ -119,7 +123,7 @@ export function NavBar({ route, onNavigate, theme, onToggleTheme }) {
             )}
           </div>
 
-          <button className="theme-toggle" onClick={onToggleTheme} aria-label="Toggle theme">
+          <button className="theme-toggle" onClick={() => window.dispatchEvent(new Event('toggleTheme'))} aria-label="Toggle theme">
             {theme === 'dark' ? '☀' : '☾'}
           </button>
         </div>
