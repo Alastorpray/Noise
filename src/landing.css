@@ -47,6 +47,7 @@
 
   /* Motion */
   --ease: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --ease-dramatic: cubic-bezier(0.22, 1, 0.36, 1);
   --duration-micro: 150ms;
   --duration-normal: 300ms;
 }
@@ -665,6 +666,7 @@
   margin: 0 0 var(--space-lg) 0;
   line-height: 1.05;
   letter-spacing: -0.02em;
+  text-transform: uppercase;
   opacity: 0;
   animation: fadeIn var(--duration-normal) var(--ease) forwards;
   animation-delay: 0.2s;
@@ -1516,8 +1518,7 @@
   border-top: 1px solid var(--border);
   border-radius: 2px;
   cursor: pointer;
-  transition: background 0.5s var(--ease-dramatic);
-  animation: editorialReveal 0.7s var(--ease-dramatic) both;
+  transition: background 0.5s var(--ease);
 }
 
 .editorial-entry:last-child {
@@ -1526,11 +1527,6 @@
 
 .editorial-entry:hover {
   background: rgba(255, 255, 255, 0.012);
-}
-
-@keyframes editorialReveal {
-  from { opacity: 0; transform: translateY(24px); }
-  to   { opacity: 1; transform: translateY(0); }
 }
 
 .editorial-entry__text {
@@ -1692,35 +1688,25 @@
 
 .animated-word__inner {
   display: inline-block;
-  transform: translateY(105%);
-  opacity: 0;
-  animation: wordReveal 0.95s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-}
-
-@keyframes wordReveal {
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
+  transform: translateY(0);
+  opacity: 1;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
 }
 
 /* ── Generic stagger reveal helper ───────────────────────── */
 .reveal-up {
-  opacity: 0;
-  transform: translateY(20px);
-  animation: revealUp 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  opacity: 1;
+  transform: none;
+  animation: none;
 }
 
-@keyframes revealUp {
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.reveal-delay-1 { animation-delay: 150ms; }
-.reveal-delay-2 { animation-delay: 300ms; }
-.reveal-delay-3 { animation-delay: 450ms; }
-.reveal-delay-4 { animation-delay: 600ms; }
-.reveal-delay-5 { animation-delay: 750ms; }
-.reveal-delay-6 { animation-delay: 900ms; }
+.reveal-delay-1 {}
+.reveal-delay-2 {}
+.reveal-delay-3 {}
+.reveal-delay-4 {}
+.reveal-delay-5 {}
+.reveal-delay-6 {}
 
 /* ============================================================
    EDITORIAL HERO — Treeview-style oversized headline

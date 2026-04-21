@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { client, urlFor } from './sanityClient'
 import { Footer } from './Footer'
 import { AnimatedWords } from './AnimatedText'
+import { Reveal } from './Reveal'
 import './landing.css'
 
 const PROJECT_QUERY = `*[_type == "project" && slug.current == $slug][0] {
@@ -74,11 +75,11 @@ export function PortfolioPost({ slug, onNavigate }) {
             {!loading && project && (
               <article key={slug}>
                 <header className="blog-post-header" style={{ marginBottom: '2rem' }}>
-                  <div className="blog-post-categories reveal-up">
+                  <Reveal as="div" className="blog-post-categories" delay={0.05}>
                     <span className="blog-post-category">
                       {project.division}
                     </span>
-                  </div>
+                  </Reveal>
 
                   <AnimatedWords
                     as="h1"
@@ -88,15 +89,15 @@ export function PortfolioPost({ slug, onNavigate }) {
                     stagger={55}
                   />
 
-                  <div className="blog-post-meta reveal-up reveal-delay-3">
+                  <Reveal as="div" className="blog-post-meta" delay={0.15}>
                     <div>
                       {project.date && <div>{new Date(project.date).toLocaleDateString(undefined, { year: 'numeric', month: 'long' })}</div>}
                     </div>
-                  </div>
+                  </Reveal>
                 </header>
 
                 {/* Main Media */}
-                <div className="blog-post-main-img-wrapper reveal-up reveal-delay-4" style={{ background: '#000' }}>
+                <Reveal as="div" className="blog-post-main-img-wrapper" delay={0.25} style={{ background: '#000' }}>
                   {project.mediaType === 'video' && project.videoUrl ? (
                     <video
                       src={project.videoUrl}
@@ -112,10 +113,10 @@ export function PortfolioPost({ slug, onNavigate }) {
                       className="blog-post-main-img"
                     />
                   ) : null}
-                </div>
+                </Reveal>
 
                 {/* Description and Tags */}
-                <div className="blog-content blog-post-body reveal-up reveal-delay-5" style={{ marginBottom: '3rem' }}>
+                <Reveal as="div" className="blog-content blog-post-body" delay={0.35} style={{ marginBottom: '3rem' }}>
                   {project.description && (
                     <p className="blog-post-p" style={{ whiteSpace: 'pre-wrap' }}>
                       {project.description}
@@ -129,7 +130,7 @@ export function PortfolioPost({ slug, onNavigate }) {
                       ))}
                     </div>
                   )}
-                </div>
+                </Reveal>
 
                 {/* Image Gallery */}
                 {project.mediaType !== 'video' && project.images?.length > 0 && (

@@ -4,6 +4,7 @@ import { PortableText } from '@portabletext/react'
 import { client, urlFor } from './sanityClient'
 import { Footer } from './Footer'
 import { AnimatedWords } from './AnimatedText'
+import { Reveal } from './Reveal'
 import './landing.css'
 
 const POST_QUERY = `*[_type == "post" && slug.current == $slug][0] {
@@ -180,13 +181,13 @@ export function BlogPost({ slug, onNavigate }) {
               <article key={slug}>
                 <header className="blog-post-header">
                   {post.categories?.length > 0 && (
-                    <div className="blog-post-categories reveal-up">
+                    <Reveal as="div" className="blog-post-categories" delay={0.05}>
                       {post.categories.map(cat => (
                         <span key={cat} className="blog-post-category">
                           {cat}
                         </span>
                       ))}
-                    </div>
+                    </Reveal>
                   )}
 
                   <AnimatedWords
@@ -197,7 +198,7 @@ export function BlogPost({ slug, onNavigate }) {
                     stagger={55}
                   />
 
-                  <div className="blog-post-meta reveal-up reveal-delay-3">
+                  <Reveal as="div" className="blog-post-meta" delay={0.15}>
                     {post.authorImage && (
                       <img
                         src={urlFor(post.authorImage).width(100).height(100).fit('crop').url()}
@@ -209,22 +210,22 @@ export function BlogPost({ slug, onNavigate }) {
                       {post.authorName && <div className="blog-post-author-name">{post.authorName}</div>}
                       {post.publishedAt && <div style={{ color: 'var(--text-secondary)' }}>{new Date(post.publishedAt).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}</div>}
                     </div>
-                  </div>
+                  </Reveal>
                 </header>
 
                 {post.mainImage && (
-                  <div className="blog-post-main-img-wrapper reveal-up reveal-delay-4">
+                  <Reveal as="div" className="blog-post-main-img-wrapper" delay={0.25}>
                     <img
                       src={urlFor(post.mainImage).width(1200).height(600).fit('crop').auto('format').url()}
                       alt={post.title}
                       className="blog-post-main-img"
                     />
-                  </div>
+                  </Reveal>
                 )}
 
-                <div className="blog-content blog-post-body reveal-up reveal-delay-5">
+                <Reveal as="div" className="blog-content blog-post-body" delay={0.35}>
                   <PortableText value={post.body} components={ptComponents} />
-                </div>
+                </Reveal>
               </article>
             )}
           </div>

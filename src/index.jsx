@@ -12,6 +12,7 @@ import { PortfolioPost } from './PortfolioPost'
 import { BlogPage } from './BlogPage'
 import { BlogPost } from './BlogPost'
 import { NavBar } from './NavBar'
+import { LenisProvider } from './LenisProvider'
 import './i18n'
 
 extend(THREE)
@@ -171,7 +172,9 @@ function MainApp() {
 
   return (
     <BrowserRouter>
-      <AnimatedRoutes theme={theme} onToggleTheme={toggleTheme} />
+      <LenisProvider>
+        <AnimatedRoutes theme={theme} onToggleTheme={toggleTheme} />
+      </LenisProvider>
     </BrowserRouter>
   )
 }

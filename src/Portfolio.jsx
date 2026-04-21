@@ -2,6 +2,8 @@ import React, { useState, useEffect, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { client, urlFor } from './sanityClient'
 import { AnimatedWords } from './AnimatedText'
+import { Reveal } from './Reveal'
+import { motion, useReducedMotion } from 'framer-motion'
 
 const FILTERS = ['all', 'xr', 'print3d', 'educational', 'gameAsset']
 
@@ -16,6 +18,7 @@ export function Portfolio({ onNavigate }) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [filter, setFilter] = useState('all')
+  const reduceMotion = useReducedMotion()
 
   useEffect(() => {
     client.fetch(QUERY)
@@ -37,7 +40,9 @@ export function Portfolio({ onNavigate }) {
   return (
     <section className="section" id="portfolio">
       <header className="editorial-hero">
-        <span className="editorial-hero__eyebrow reveal-up">{t('portfolio.eyebrow', 'Portfolio')}</span>
+        <Reveal as="span" className="editorial-hero__eyebrow" delay={0.05}>
+          {t('portfolio.eyebrow', 'Portfolio')}
+        </Reveal>
         <AnimatedWords
           as="h1"
           className="editorial-hero__title"
@@ -45,9 +50,9 @@ export function Portfolio({ onNavigate }) {
           delay={150}
           stagger={70}
         />
-        <p className="editorial-hero__subtitle reveal-up reveal-delay-4">
+        <Reveal as="p" className="editorial-hero__subtitle" delay={0.25}>
           {t('portfolio.heroSubtitle', 'Selected projects across XR, 3D printing, educational tools and interactive experiences.')}
-        </p>
+        </Reveal>
       </header>
 
       <div className="section-wrapper" style={{ padding: 0 }}>
@@ -115,16 +120,21 @@ export function Portfolio({ onNavigate }) {
 
 function ProjectEntry({ project, index, onOpen }) {
   const { t } = useTranslation()
+  const reduceMotion = useReducedMotion()
   const dateStr = project.date
     ? new Date(project.date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
     : null
   const division = project.division ? t(`portfolio.${project.division}`, project.division) : null
 
   return (
-    <article
+    <motion.article
       className="editorial-entry"
-      style={{ animationDelay: `${index * 0.06}s` }}
       onClick={onOpen}
+      style={{ willChange: 'transform, opacity', backfaceVisibility: 'hidden' }}
+      initial={reduceMotion ? false : { opacity: 0, y: 40 }}
+      whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+      viewport={reduceMotion ? undefined : { once: true, amount: 0.2 }}
+      transition={reduceMotion ? undefined : { type: 'tween', duration: 0.95, ease: [0.22, 1, 0.36, 1], delay: Math.min(index * 0.05, 0.45) }}
     >
       <div className="editorial-entry__date-col">
         {dateStr && <span className="editorial-entry__date">{dateStr}</span>}
@@ -136,6 +146,6 @@ function ProjectEntry({ project, index, onOpen }) {
           <p className="editorial-entry__excerpt">{project.description}</p>
         )}
       </div>
-    </article>
+    </motion.article>
   )
 }
