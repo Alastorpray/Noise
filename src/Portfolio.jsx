@@ -18,7 +18,6 @@ export function Portfolio({ onNavigate }) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [filter, setFilter] = useState('all')
-  const reduceMotion = useReducedMotion()
 
   useEffect(() => {
     client.fetch(QUERY)

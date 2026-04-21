@@ -601,9 +601,10 @@
 }
 
 .nav-link {
-  font-family: var(--font-data);
+  font-family: var(--font-body);
   font-size: var(--label);
-  letter-spacing: 0.08em;
+  font-weight: 500;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--text-disabled);
   text-decoration: none;
