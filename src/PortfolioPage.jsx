@@ -6,10 +6,7 @@ import './landing.css'
 export function PortfolioPage({ onNavigate }) {
   return (
     <div className="page-content expanded">
-      <div style={{ paddingTop: 'var(--space-xl)' }}>
-        <Portfolio onNavigate={onNavigate} />
-      </div>
-
+      <Portfolio onNavigate={onNavigate} />
       <Footer />
     </div>
   )

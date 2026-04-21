@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { PortableText } from '@portabletext/react'
 import { client, urlFor } from './sanityClient'
 import { Footer } from './Footer'
+import { AnimatedWords } from './AnimatedText'
 import './landing.css'
 
 const POST_QUERY = `*[_type == "post" && slug.current == $slug][0] {
@@ -176,10 +177,10 @@ export function BlogPost({ slug, onNavigate }) {
             )}
 
             {!loading && post && (
-              <article>
+              <article key={slug}>
                 <header className="blog-post-header">
                   {post.categories?.length > 0 && (
-                    <div className="blog-post-categories">
+                    <div className="blog-post-categories reveal-up">
                       {post.categories.map(cat => (
                         <span key={cat} className="blog-post-category">
                           {cat}
@@ -188,11 +189,15 @@ export function BlogPost({ slug, onNavigate }) {
                     </div>
                   )}
 
-                  <h1 className="blog-post-title">
-                    {post.title}
-                  </h1>
+                  <AnimatedWords
+                    as="h1"
+                    className="blog-post-title"
+                    text={post.title}
+                    delay={120}
+                    stagger={55}
+                  />
 
-                  <div className="blog-post-meta">
+                  <div className="blog-post-meta reveal-up reveal-delay-3">
                     {post.authorImage && (
                       <img
                         src={urlFor(post.authorImage).width(100).height(100).fit('crop').url()}
@@ -208,7 +213,7 @@ export function BlogPost({ slug, onNavigate }) {
                 </header>
 
                 {post.mainImage && (
-                  <div className="blog-post-main-img-wrapper">
+                  <div className="blog-post-main-img-wrapper reveal-up reveal-delay-4">
                     <img
                       src={urlFor(post.mainImage).width(1200).height(600).fit('crop').auto('format').url()}
                       alt={post.title}
@@ -217,7 +222,7 @@ export function BlogPost({ slug, onNavigate }) {
                   </div>
                 )}
 
-                <div className="blog-content blog-post-body">
+                <div className="blog-content blog-post-body reveal-up reveal-delay-5">
                   <PortableText value={post.body} components={ptComponents} />
                 </div>
               </article>
