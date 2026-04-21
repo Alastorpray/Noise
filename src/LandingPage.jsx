@@ -1,13 +1,17 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import emailjs from '@emailjs/browser'
+import { motion, useReducedMotion } from 'framer-motion'
 import './landing.css'
 import { audioManager } from './audioManager'
 
 import { Footer } from './Footer'
+import { AnimatedWords } from './AnimatedText'
+import { Reveal } from './Reveal'
 
 export function LandingPage({ initialExpanded = false, initialSection = null, theme = 'dark' }) {
   const { t } = useTranslation()
+  const reduceMotion = useReducedMotion()
   const [isExpanded, setIsExpanded] = useState(initialExpanded)
   const [isClosing, setIsClosing] = useState(false)
   const inactivityTimer = useRef(null)
@@ -510,10 +514,16 @@ export function LandingPage({ initialExpanded = false, initialSection = null, th
           {/* Hero Section */}
           <section className="hero">
             <div className="hero-content">
-              <h1 className="hero-title">{t('hero.title')}</h1>
-              <p className="hero-subtitle">
+              <AnimatedWords
+                as="h1"
+                className="hero-title"
+                text={t('hero.title')}
+                delay={120}
+                stagger={55}
+              />
+              <Reveal as="p" className="hero-subtitle" delay={0.2}>
                 {t('hero.subtitle')}
-              </p>
+              </Reveal>
             </div>
           </section>
 
@@ -522,15 +532,17 @@ export function LandingPage({ initialExpanded = false, initialSection = null, th
             <div className="section-wrapper">
               <div className="grid-2">
                 <div className="grid-item">
-                  <h2 className="section-heading">{t('about.title')}</h2>
+                  <Reveal as="h2" className="section-heading" delay={0.05}>
+                    {t('about.title')}
+                  </Reveal>
                 </div>
                 <div className="grid-item">
-                  <p className="body-text">
+                  <Reveal as="p" className="body-text" delay={0.1}>
                     {t('about.desc1')}
-                  </p>
-                  <p className="body-text">
+                  </Reveal>
+                  <Reveal as="p" className="body-text" delay={0.16}>
                     {t('about.desc2')}
-                  </p>
+                  </Reveal>
                 </div>
               </div>
             </div>
@@ -539,9 +551,19 @@ export function LandingPage({ initialExpanded = false, initialSection = null, th
 
           <section className="section" id="divisions">
             <div className="section-wrapper">
-              <h2 className="section-heading-center">{t('divisions.title')}</h2>
+              <Reveal as="h2" className="section-heading-center" delay={0.05}>
+                {t('divisions.title')}
+              </Reveal>
               <div className="divisions-grid">
-                <div className="division-card" onClick={() => toggleDivision('educational')}>
+                <motion.div
+                  className="division-card"
+                  onClick={() => toggleDivision('educational')}
+                  style={{ willChange: 'transform, opacity', backfaceVisibility: 'hidden' }}
+                  initial={reduceMotion ? false : { opacity: 0, y: 40 }}
+                  whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+                  viewport={reduceMotion ? undefined : { once: true, amount: 0.2 }}
+                  transition={reduceMotion ? undefined : { type: 'tween', duration: 0.95, ease: [0.22, 1, 0.36, 1], delay: 0.05 }}
+                >
                   <h3 className="division-title">{t('divisions.educational.title')}</h3>
                   <p className="division-desc">{t('divisions.educational.desc')}</p>
                   {expandedDivision === 'educational' && (
@@ -560,8 +582,16 @@ export function LandingPage({ initialExpanded = false, initialSection = null, th
                       </div>
                     </div>
                   )}
-                </div>
-                <div className="division-card" onClick={() => toggleDivision('3dprint')}>
+                </motion.div>
+                <motion.div
+                  className="division-card"
+                  onClick={() => toggleDivision('3dprint')}
+                  style={{ willChange: 'transform, opacity', backfaceVisibility: 'hidden' }}
+                  initial={reduceMotion ? false : { opacity: 0, y: 40 }}
+                  whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+                  viewport={reduceMotion ? undefined : { once: true, amount: 0.2 }}
+                  transition={reduceMotion ? undefined : { type: 'tween', duration: 0.95, ease: [0.22, 1, 0.36, 1], delay: 0.12 }}
+                >
                   <h3 className="division-title">{t('divisions.print3d.title')}</h3>
                   <p className="division-desc">{t('divisions.print3d.desc')}</p>
                   {expandedDivision === '3dprint' && (
@@ -580,8 +610,16 @@ export function LandingPage({ initialExpanded = false, initialSection = null, th
                       </div>
                     </div>
                   )}
-                </div>
-                <div className="division-card" onClick={() => toggleDivision('xr')}>
+                </motion.div>
+                <motion.div
+                  className="division-card"
+                  onClick={() => toggleDivision('xr')}
+                  style={{ willChange: 'transform, opacity', backfaceVisibility: 'hidden' }}
+                  initial={reduceMotion ? false : { opacity: 0, y: 40 }}
+                  whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+                  viewport={reduceMotion ? undefined : { once: true, amount: 0.2 }}
+                  transition={reduceMotion ? undefined : { type: 'tween', duration: 0.95, ease: [0.22, 1, 0.36, 1], delay: 0.19 }}
+                >
                   <h3 className="division-title">{t('divisions.xr.title')}</h3>
                   <p className="division-desc">{t('divisions.xr.desc')}</p>
                   {expandedDivision === 'xr' && (
@@ -600,7 +638,7 @@ export function LandingPage({ initialExpanded = false, initialSection = null, th
                       </div>
                     </div>
                   )}
-                </div>
+                </motion.div>
               </div>
             </div>
           </section>
@@ -613,8 +651,12 @@ export function LandingPage({ initialExpanded = false, initialSection = null, th
             <div className="section-wrapper">
               <div className="grid-2">
                 <div className="grid-item contact-side">
-                  <h2 className="contact-heading">{t('contact.title')}</h2>
-                  <p className="contact-tagline">{t('contact.desc')}</p>
+                  <Reveal as="h2" className="contact-heading" delay={0.05}>
+                    {t('contact.title')}
+                  </Reveal>
+                  <Reveal as="p" className="contact-tagline" delay={0.15}>
+                    {t('contact.desc')}
+                  </Reveal>
                   <ul className="contact-feature-list">
                     <li className="feature-item">
                       <svg className="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

@@ -39,7 +39,7 @@ export function NavBar({ onNavigate, theme, onToggleTheme }) {
     if (target === '/portfolio' || target === '/blog') {
       onNavigate(target)
     } else {
-      if (route === '/portfolio' || route.startsWith('/blog')) {
+      if (route !== '/') {
         onNavigate('/', target)
       } else {
         const el = document.querySelector(`#${target}`)
@@ -51,7 +51,7 @@ export function NavBar({ onNavigate, theme, onToggleTheme }) {
   const handleLogoClick = (e) => {
     e.preventDefault()
     setIsMobileMenuOpen(false)
-    if (route === '/portfolio' || route.startsWith('/blog')) {
+    if (route !== '/') {
       onNavigate('/')
     }
   }

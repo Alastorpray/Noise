@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { client, urlFor } from './sanityClient'
+import { AnimatedWords } from './AnimatedText'
+import { Reveal } from './Reveal'
+import { motion, useReducedMotion } from 'framer-motion'
 
 const FILTERS = ['all', 'xr', 'print3d', 'educational', 'gameAsset']
 
@@ -15,6 +18,7 @@ export function Portfolio({ onNavigate }) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [filter, setFilter] = useState('all')
+  const reduceMotion = useReducedMotion()
 
   useEffect(() => {
     client.fetch(QUERY)
@@ -34,21 +38,43 @@ export function Portfolio({ onNavigate }) {
     : projects.filter(p => p.division === filter)
 
   return (
-    <section className="section portfolio-section" id="portfolio">
-      <div className="section-wrapper">
-        <div className="portfolio-header">
-          <h2 className="section-heading-center">{t('portfolio.title')}</h2>
-          <div className="portfolio-filters">
-            {FILTERS.map(f => (
-              <button
-                key={f}
-                className={`portfolio-filter-btn ${filter === f ? 'active' : ''}`}
-                onClick={() => setFilter(f)}
-              >
-                {t(`portfolio.${f}`)}
-              </button>
-            ))}
-          </div>
+    <section className="section" id="portfolio">
+      <header className="editorial-hero">
+        <Reveal as="span" className="editorial-hero__eyebrow" delay={0.05}>
+          {t('portfolio.eyebrow', 'Portfolio')}
+        </Reveal>
+        <AnimatedWords
+          as="h1"
+          className="editorial-hero__title"
+          text={t('portfolio.heroTitle', 'Work.')}
+          delay={150}
+          stagger={70}
+        />
+        <Reveal as="p" className="editorial-hero__subtitle" delay={0.25}>
+          {t('portfolio.heroSubtitle', 'Selected projects across XR, 3D printing, educational tools and interactive experiences.')}
+        </Reveal>
+      </header>
+
+      <div className="section-wrapper" style={{ padding: 0 }}>
+        <div
+          className="portfolio-filters"
+          style={{
+            padding: 'var(--space-lg) var(--space-xl)',
+            borderBottom: '1px solid var(--border)',
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: 'var(--space-sm)'
+          }}
+        >
+          {FILTERS.map(f => (
+            <button
+              key={f}
+              className={`portfolio-filter-btn ${filter === f ? 'active' : ''}`}
+              onClick={() => setFilter(f)}
+            >
+              {t(`portfolio.${f}`)}
+            </button>
+          ))}
         </div>
 
         {error && (
@@ -70,9 +96,9 @@ export function Portfolio({ onNavigate }) {
         )}
 
         {!loading && filtered.length > 0 && (
-          <div className="portfolio-grid">
+          <div className="editorial-list editorial-list--minimal">
             {filtered.map((project, i) => (
-              <ProjectCard
+              <ProjectEntry
                 key={project._id}
                 project={project}
                 index={i}
@@ -92,51 +118,34 @@ export function Portfolio({ onNavigate }) {
   )
 }
 
-function ProjectCard({ project, index, onOpen }) {
-  const coverUrl = project.cover
-    ? urlFor(project.cover).width(800).height(600).fit('crop').auto('format').url()
+function ProjectEntry({ project, index, onOpen }) {
+  const { t } = useTranslation()
+  const reduceMotion = useReducedMotion()
+  const dateStr = project.date
+    ? new Date(project.date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
     : null
+  const division = project.division ? t(`portfolio.${project.division}`, project.division) : null
 
   return (
-    <div
-      className={`portfolio-card ${project.featured ? 'portfolio-card--featured' : ''}`}
-      style={{ animationDelay: `${index * 0.07}s` }}
+    <motion.article
+      className="editorial-entry"
       onClick={onOpen}
+      style={{ willChange: 'transform, opacity', backfaceVisibility: 'hidden' }}
+      initial={reduceMotion ? false : { opacity: 0, y: 40 }}
+      whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+      viewport={reduceMotion ? undefined : { once: true, amount: 0.2 }}
+      transition={reduceMotion ? undefined : { type: 'tween', duration: 0.95, ease: [0.22, 1, 0.36, 1], delay: Math.min(index * 0.05, 0.45) }}
     >
-      <div className="portfolio-card-media">
-        {project.mediaType === 'video' && project.videoUrl ? (
-          <video
-            src={project.videoUrl}
-            muted
-            loop
-            playsInline
-            className="portfolio-card-video"
-            onMouseEnter={e => e.target.play()}
-            onMouseLeave={e => { e.target.pause(); e.target.currentTime = 0 }}
-          />
-        ) : coverUrl ? (
-          <img src={coverUrl} alt={project.title} className="portfolio-card-img" loading="lazy" />
-        ) : (
-          <div className="portfolio-card-placeholder" />
-        )}
-        <div className="portfolio-card-overlay">
-          <span className="portfolio-card-cta">View Project</span>
-        </div>
+      <div className="editorial-entry__date-col">
+        {dateStr && <span className="editorial-entry__date">{dateStr}</span>}
+        {division && <span className="editorial-entry__meta">{division}</span>}
       </div>
-      <div className="portfolio-card-info">
-        <span className="portfolio-card-division">{project.division}</span>
-        <h3 className="portfolio-card-title">{project.title}</h3>
+      <div className="editorial-entry__text">
+        <h3 className="editorial-entry__title">{project.title}</h3>
         {project.description && (
-          <p className="portfolio-card-desc">{project.description}</p>
-        )}
-        {project.tags?.length > 0 && (
-          <div className="portfolio-card-tags">
-            {project.tags.map(tag => (
-              <span key={tag} className="portfolio-tag">{tag}</span>
-            ))}
-          </div>
+          <p className="editorial-entry__excerpt">{project.description}</p>
         )}
       </div>
-    </div>
+    </motion.article>
   )
 }
