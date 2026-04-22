@@ -9,8 +9,8 @@ export function AnimatedWords({
   stagger = 60,
   style = {},
 }) {
-  if (!text) return null
   const reduceMotion = useReducedMotion()
+  if (!text) return null
   const words = String(text).split(' ')
 
   if (reduceMotion) {

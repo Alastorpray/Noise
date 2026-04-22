@@ -4,6 +4,8 @@ import { client, urlFor } from './sanityClient'
 import { Footer } from './Footer'
 import { AnimatedWords } from './AnimatedText'
 import { Reveal } from './Reveal'
+import { ShareButtons } from './ShareButtons'
+import { SEO } from './SEO'
 import './landing.css'
 
 const PROJECT_QUERY = `*[_type == "project" && slug.current == $slug][0] {
@@ -11,20 +13,29 @@ const PROJECT_QUERY = `*[_type == "project" && slug.current == $slug][0] {
   cover, images, "videoUrl": video.asset->url
 }`
 
+const SIBLINGS_QUERY = `*[_type == "project" && defined(slug.current)] | order(featured desc, date desc) {
+  title, "slug": slug.current
+}`
+
 export function PortfolioPost({ slug, onNavigate }) {
   const { t } = useTranslation()
   const [project, setProject] = useState(null)
+  const [siblings, setSiblings] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  
+
   // Lightbox state for gallery images
   const [lightboxImg, setLightboxImg] = useState(null)
 
   useEffect(() => {
-    client.fetch(PROJECT_QUERY, { slug })
-      .then(data => {
+    Promise.all([
+      client.fetch(PROJECT_QUERY, { slug }),
+      client.fetch(SIBLINGS_QUERY),
+    ])
+      .then(([data, list]) => {
         if (!data) throw new Error('Project not found')
         setProject(data)
+        setSiblings(list || [])
         setLoading(false)
       })
       .catch(e => {
@@ -34,6 +45,10 @@ export function PortfolioPost({ slug, onNavigate }) {
       })
   }, [slug])
 
+  const currentIdx = siblings.findIndex(p => p.slug === slug)
+  const prev = currentIdx > 0 ? siblings[currentIdx - 1] : null
+  const next = currentIdx >= 0 && currentIdx < siblings.length - 1 ? siblings[currentIdx + 1] : null
+
   // Key listener for lightbox
   useEffect(() => {
     const onKey = (e) => { if (e.key === 'Escape') setLightboxImg(null) }
@@ -41,13 +56,24 @@ export function PortfolioPost({ slug, onNavigate }) {
     return () => window.removeEventListener('keydown', onKey)
   }, [])
 
+  const projectImage = project?.cover ? urlFor(project.cover).width(1200).height(630).fit('crop').auto('format').url() : undefined
+
   return (
     <div className="page-content expanded">
+      {project && (
+        <SEO
+          title={project.title}
+          description={project.description || undefined}
+          image={projectImage}
+          type="article"
+          publishedTime={project.date}
+        />
+      )}
       <div style={{ paddingTop: 'var(--space-xl)', paddingBottom: 'var(--space-xl)' }}>
         <section className="section">
           <div className="section-wrapper blog-post-wrapper">
-            
-            <button 
+
+            <button
               onClick={() => onNavigate('/portfolio')}
               className="blog-post-back-btn"
             >
@@ -138,13 +164,13 @@ export function PortfolioPost({ slug, onNavigate }) {
                     <h3 className="blog-post-h3" style={{ marginBottom: '1.5rem' }}>Gallery</h3>
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '1rem' }}>
                       {project.images.map((img, idx) => (
-                        <div 
-                          key={idx} 
+                        <div
+                          key={idx}
                           style={{ cursor: 'pointer', borderRadius: '8px', overflow: 'hidden', aspectRatio: '1', background: 'var(--surface)' }}
                           onClick={() => setLightboxImg(idx)}
                         >
-                          <img 
-                            src={urlFor(img).width(600).height(600).fit('crop').auto('format').url()} 
+                          <img
+                            src={urlFor(img).width(600).height(600).fit('crop').auto('format').url()}
                             alt={`Gallery ${idx + 1}`}
                             style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.3s ease' }}
                             onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.05)'}
@@ -155,6 +181,16 @@ export function PortfolioPost({ slug, onNavigate }) {
                     </div>
                   </div>
                 )}
+
+                <ShareButtons title={project.title} />
+
+                <PostNav
+                  prev={prev}
+                  next={next}
+                  basePath="/portfolio"
+                  onNavigate={onNavigate}
+                  t={t}
+                />
               </article>
             )}
           </div>
@@ -172,6 +208,46 @@ export function PortfolioPost({ slug, onNavigate }) {
         />
       )}
     </div>
+  )
+}
+
+function PostNav({ prev, next, basePath, onNavigate, t }) {
+  if (!prev && !next) return null
+  return (
+    <nav className="post-nav" aria-label="Post navigation">
+      {prev ? (
+        <button
+          type="button"
+          className="post-nav__item post-nav__item--prev"
+          onClick={() => onNavigate(`${basePath}/${prev.slug}`)}
+        >
+          <span className="post-nav__label">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="19" y1="12" x2="5" y2="12" />
+              <polyline points="12 19 5 12 12 5" />
+            </svg>
+            {t('post.previous', 'Previous')}
+          </span>
+          <span className="post-nav__title">{prev.title}</span>
+        </button>
+      ) : <span />}
+      {next ? (
+        <button
+          type="button"
+          className="post-nav__item post-nav__item--next"
+          onClick={() => onNavigate(`${basePath}/${next.slug}`)}
+        >
+          <span className="post-nav__label">
+            {t('post.next', 'Next')}
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12" />
+              <polyline points="12 5 19 12 12 19" />
+            </svg>
+          </span>
+          <span className="post-nav__title">{next.title}</span>
+        </button>
+      ) : <span />}
+    </nav>
   )
 }
 
@@ -197,20 +273,20 @@ function GalleryLightbox({ images, initialIndex, onClose }) {
     return () => window.removeEventListener('keydown', onKey)
   }, [goNext, goPrev])
 
-  const currentImgUrl = urlFor(images[currentIndex]).width(1400).auto('format').url()
+  const currentImgUrl = urlFor(images[currentIndex]).width(2400).auto('format').url()
 
   return (
-    <div className="lightbox-backdrop" onClick={onClose} style={{ zIndex: 1000 }}>
-      <div className="lightbox-panel" onClick={e => e.stopPropagation()} style={{ padding: '0', background: 'transparent', border: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        <button className="lightbox-close" onClick={onClose} aria-label="Close" style={{ top: '-40px', right: '0' }}>
+    <div className="lightbox-backdrop lightbox-backdrop--gallery" onClick={onClose} style={{ zIndex: 1000 }}>
+      <div className="lightbox-panel lightbox-panel--gallery" onClick={e => e.stopPropagation()}>
+        <button className="lightbox-close lightbox-close--gallery" onClick={onClose} aria-label="Close">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
             <line x1="18" y1="6" x2="6" y2="18" />
             <line x1="6" y1="6" x2="18" y2="18" />
           </svg>
         </button>
 
-        <div className="lightbox-media" style={{ background: 'transparent' }}>
-          <img src={currentImgUrl} alt={`Gallery ${currentIndex + 1}`} className="lightbox-img" style={{ maxHeight: '80vh', objectFit: 'contain' }} />
+        <div className="lightbox-media lightbox-media--gallery">
+          <img src={currentImgUrl} alt={`Gallery ${currentIndex + 1}`} className="lightbox-img lightbox-img--gallery" />
 
           {images.length > 1 && (
             <>

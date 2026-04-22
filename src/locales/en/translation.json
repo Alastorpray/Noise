@@ -73,5 +73,15 @@
   },
   "footer": {
     "rights": "All rights reserved."
+  },
+  "share": {
+    "label": "Share",
+    "copy": "Copy link",
+    "copied": "Copied!"
+  },
+  "post": {
+    "previous": "Previous",
+    "next": "Next",
+    "readingTime": "{{min}} min read"
   }
 }

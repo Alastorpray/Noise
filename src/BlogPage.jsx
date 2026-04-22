@@ -5,10 +5,12 @@ import { Footer } from './Footer'
 import { AnimatedWords } from './AnimatedText'
 import { Reveal } from './Reveal'
 import { motion, useReducedMotion } from 'framer-motion'
+import { SEO } from './SEO'
+import { getReadingTimeMinutes } from './utils/readingTime'
 import './landing.css'
 
 const BLOG_QUERY = `*[_type == "post"] | order(publishedAt desc) {
-  _id, title, slug, publishedAt, excerpt, mainImage,
+  _id, title, slug, publishedAt, excerpt, mainImage, body,
   "authorName": author->name,
   "categories": categories[]->title
 }`
@@ -35,6 +37,10 @@ export function BlogPage({ onNavigate }) {
 
   return (
     <div className="page-content expanded">
+      <SEO
+        title={t('blog.title', 'Our Blog')}
+        description={t('blog.heroSubtitle', 'Notes, experiments and deep-dives on creative technology, shaders and real-time graphics.')}
+      />
       <header className="editorial-hero">
         <Reveal as="span" className="editorial-hero__eyebrow" delay={0.05}>
           {t('blog.eyebrow', 'Blog')}
@@ -95,6 +101,11 @@ export function BlogPage({ onNavigate }) {
                     <div className="editorial-entry__date-col">
                       {dateStr && <span className="editorial-entry__date">{dateStr}</span>}
                       {category && <span className="editorial-entry__meta">{category}</span>}
+                      {post.body && (
+                        <span className="editorial-entry__meta">
+                          {t('post.readingTime', '{{min}} min read', { min: getReadingTimeMinutes(post.body) })}
+                        </span>
+                      )}
                     </div>
                     <div className="editorial-entry__text">
                       <h3 className="editorial-entry__title">{post.title}</h3>

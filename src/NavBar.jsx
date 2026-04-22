@@ -43,7 +43,12 @@ export function NavBar({ onNavigate, theme, onToggleTheme }) {
         onNavigate('/', target)
       } else {
         const el = document.querySelector(`#${target}`)
-        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        if (!el) return
+        if (window.__lenis) {
+          window.__lenis.scrollTo(el, { offset: 0, duration: 1.2 })
+        } else {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        }
       }
     }
   }
@@ -86,7 +91,7 @@ export function NavBar({ onNavigate, theme, onToggleTheme }) {
           </a>
           <a
             href="/portfolio"
-            className={`nav-link ${route === '/portfolio' ? 'nav-link--active' : ''}`}
+            className={`nav-link ${route.startsWith('/portfolio') ? 'nav-link--active' : ''}`}
             onClick={(e) => handleNavClick(e, '/portfolio')}
           >
             {t('nav.portfolio')}

@@ -5,13 +5,21 @@ import { client, urlFor } from './sanityClient'
 import { Footer } from './Footer'
 import { AnimatedWords } from './AnimatedText'
 import { Reveal } from './Reveal'
+import { ShareButtons } from './ShareButtons'
+import { SEO } from './SEO'
+import { ScrollProgress } from './ScrollProgress'
+import { getReadingTimeMinutes } from './utils/readingTime'
 import './landing.css'
 
 const POST_QUERY = `*[_type == "post" && slug.current == $slug][0] {
-  title, publishedAt, mainImage, body,
+  title, publishedAt, excerpt, mainImage, body,
   "authorName": author->name,
   "authorImage": author->image,
   "categories": categories[]->title
+}`
+
+const SIBLINGS_QUERY = `*[_type == "post" && defined(slug.current)] | order(publishedAt desc) {
+  title, "slug": slug.current
 }`
 
 function getVideoEmbedUrl(url) {
@@ -129,14 +137,19 @@ const ptComponents = {
 export function BlogPost({ slug, onNavigate }) {
   const { t } = useTranslation()
   const [post, setPost] = useState(null)
+  const [siblings, setSiblings] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
   useEffect(() => {
-    client.fetch(POST_QUERY, { slug })
-      .then(data => {
+    Promise.all([
+      client.fetch(POST_QUERY, { slug }),
+      client.fetch(SIBLINGS_QUERY),
+    ])
+      .then(([data, list]) => {
         if (!data) throw new Error('Post not found')
         setPost(data)
+        setSiblings(list || [])
         setLoading(false)
       })
       .catch(e => {
@@ -146,8 +159,25 @@ export function BlogPost({ slug, onNavigate }) {
       })
   }, [slug])
 
+  const currentIdx = siblings.findIndex(p => p.slug === slug)
+  const prev = currentIdx > 0 ? siblings[currentIdx - 1] : null
+  const next = currentIdx >= 0 && currentIdx < siblings.length - 1 ? siblings[currentIdx + 1] : null
+
+  const readingMinutes = post?.body ? getReadingTimeMinutes(post.body) : null
+  const postImage = post?.mainImage ? urlFor(post.mainImage).width(1200).height(630).fit('crop').auto('format').url() : undefined
+
   return (
     <div className="page-content expanded">
+      {post && (
+        <SEO
+          title={post.title}
+          description={post.excerpt || undefined}
+          image={postImage}
+          type="article"
+          publishedTime={post.publishedAt}
+        />
+      )}
+      <ScrollProgress />
       <div style={{ paddingTop: 'var(--space-xl)', paddingBottom: 'var(--space-xl)' }}>
         <section className="section">
           <div className="section-wrapper blog-post-wrapper">
@@ -208,7 +238,15 @@ export function BlogPost({ slug, onNavigate }) {
                     )}
                     <div>
                       {post.authorName && <div className="blog-post-author-name">{post.authorName}</div>}
-                      {post.publishedAt && <div style={{ color: 'var(--text-secondary)' }}>{new Date(post.publishedAt).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}</div>}
+                      <div style={{ color: 'var(--text-secondary)' }}>
+                        {post.publishedAt && new Date(post.publishedAt).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}
+                        {readingMinutes && (
+                          <>
+                            {post.publishedAt && <span className="blog-post-meta-sep"> · </span>}
+                            <span>{t('post.readingTime', '{{min}} min read', { min: readingMinutes })}</span>
+                          </>
+                        )}
+                      </div>
                     </div>
                   </Reveal>
                 </header>
@@ -226,6 +264,45 @@ export function BlogPost({ slug, onNavigate }) {
                 <Reveal as="div" className="blog-content blog-post-body" delay={0.35}>
                   <PortableText value={post.body} components={ptComponents} />
                 </Reveal>
+
+                <ShareButtons title={post.title} />
+
+                {(prev || next) && (
+                  <nav className="post-nav" aria-label="Post navigation">
+                    {prev ? (
+                      <button
+                        type="button"
+                        className="post-nav__item post-nav__item--prev"
+                        onClick={() => onNavigate(`/blog/${prev.slug}`)}
+                      >
+                        <span className="post-nav__label">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <line x1="19" y1="12" x2="5" y2="12" />
+                            <polyline points="12 19 5 12 12 5" />
+                          </svg>
+                          {t('post.previous', 'Previous')}
+                        </span>
+                        <span className="post-nav__title">{prev.title}</span>
+                      </button>
+                    ) : <span />}
+                    {next ? (
+                      <button
+                        type="button"
+                        className="post-nav__item post-nav__item--next"
+                        onClick={() => onNavigate(`/blog/${next.slug}`)}
+                      >
+                        <span className="post-nav__label">
+                          {t('post.next', 'Next')}
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <line x1="5" y1="12" x2="19" y2="12" />
+                            <polyline points="12 5 19 12 12 19" />
+                          </svg>
+                        </span>
+                        <span className="post-nav__title">{next.title}</span>
+                      </button>
+                    ) : <span />}
+                  </nav>
+                )}
               </article>
             )}
           </div>

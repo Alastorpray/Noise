@@ -4,6 +4,7 @@ import { client, urlFor } from './sanityClient'
 import { AnimatedWords } from './AnimatedText'
 import { Reveal } from './Reveal'
 import { motion, useReducedMotion } from 'framer-motion'
+import { SEO } from './SEO'
 
 const FILTERS = ['all', 'xr', 'print3d', 'educational', 'gameAsset']
 
@@ -18,7 +19,6 @@ export function Portfolio({ onNavigate }) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [filter, setFilter] = useState('all')
-  const reduceMotion = useReducedMotion()
 
   useEffect(() => {
     client.fetch(QUERY)
@@ -39,6 +39,10 @@ export function Portfolio({ onNavigate }) {
 
   return (
     <section className="section" id="portfolio">
+      <SEO
+        title={t('portfolio.title', 'Our Work')}
+        description={t('portfolio.heroSubtitle', 'Selected projects across XR, 3D printing, educational tools and interactive experiences.')}
+      />
       <header className="editorial-hero">
         <Reveal as="span" className="editorial-hero__eyebrow" delay={0.05}>
           {t('portfolio.eyebrow', 'Portfolio')}
@@ -146,6 +150,15 @@ function ProjectEntry({ project, index, onOpen }) {
           <p className="editorial-entry__excerpt">{project.description}</p>
         )}
       </div>
+      {project.cover && (
+        <div className="editorial-entry__cover">
+          <img
+            src={urlFor(project.cover).width(600).height(400).fit('crop').url()}
+            alt=""
+            loading="lazy"
+          />
+        </div>
+      )}
     </motion.article>
   )
 }
