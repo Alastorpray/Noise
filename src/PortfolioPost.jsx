@@ -5,6 +5,7 @@ import { Footer } from './Footer'
 import { AnimatedWords } from './AnimatedText'
 import { Reveal } from './Reveal'
 import { ShareButtons } from './ShareButtons'
+import { SEO } from './SEO'
 import './landing.css'
 
 const PROJECT_QUERY = `*[_type == "project" && slug.current == $slug][0] {
@@ -12,20 +13,29 @@ const PROJECT_QUERY = `*[_type == "project" && slug.current == $slug][0] {
   cover, images, "videoUrl": video.asset->url
 }`
 
+const SIBLINGS_QUERY = `*[_type == "project" && defined(slug.current)] | order(featured desc, date desc) {
+  title, "slug": slug.current
+}`
+
 export function PortfolioPost({ slug, onNavigate }) {
   const { t } = useTranslation()
   const [project, setProject] = useState(null)
+  const [siblings, setSiblings] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  
+
   // Lightbox state for gallery images
   const [lightboxImg, setLightboxImg] = useState(null)
 
   useEffect(() => {
-    client.fetch(PROJECT_QUERY, { slug })
-      .then(data => {
+    Promise.all([
+      client.fetch(PROJECT_QUERY, { slug }),
+      client.fetch(SIBLINGS_QUERY),
+    ])
+      .then(([data, list]) => {
         if (!data) throw new Error('Project not found')
         setProject(data)
+        setSiblings(list || [])
         setLoading(false)
       })
       .catch(e => {
@@ -35,6 +45,10 @@ export function PortfolioPost({ slug, onNavigate }) {
       })
   }, [slug])
 
+  const currentIdx = siblings.findIndex(p => p.slug === slug)
+  const prev = currentIdx > 0 ? siblings[currentIdx - 1] : null
+  const next = currentIdx >= 0 && currentIdx < siblings.length - 1 ? siblings[currentIdx + 1] : null
+
   // Key listener for lightbox
   useEffect(() => {
     const onKey = (e) => { if (e.key === 'Escape') setLightboxImg(null) }
@@ -42,13 +56,24 @@ export function PortfolioPost({ slug, onNavigate }) {
     return () => window.removeEventListener('keydown', onKey)
   }, [])
 
+  const projectImage = project?.cover ? urlFor(project.cover).width(1200).height(630).fit('crop').auto('format').url() : undefined
+
   return (
     <div className="page-content expanded">
+      {project && (
+        <SEO
+          title={project.title}
+          description={project.description || undefined}
+          image={projectImage}
+          type="article"
+          publishedTime={project.date}
+        />
+      )}
       <div style={{ paddingTop: 'var(--space-xl)', paddingBottom: 'var(--space-xl)' }}>
         <section className="section">
           <div className="section-wrapper blog-post-wrapper">
-            
-            <button 
+
+            <button
               onClick={() => onNavigate('/portfolio')}
               className="blog-post-back-btn"
             >
@@ -158,6 +183,14 @@ export function PortfolioPost({ slug, onNavigate }) {
                 )}
 
                 <ShareButtons title={project.title} />
+
+                <PostNav
+                  prev={prev}
+                  next={next}
+                  basePath="/portfolio"
+                  onNavigate={onNavigate}
+                  t={t}
+                />
               </article>
             )}
           </div>
@@ -175,6 +208,46 @@ export function PortfolioPost({ slug, onNavigate }) {
         />
       )}
     </div>
+  )
+}
+
+function PostNav({ prev, next, basePath, onNavigate, t }) {
+  if (!prev && !next) return null
+  return (
+    <nav className="post-nav" aria-label="Post navigation">
+      {prev ? (
+        <button
+          type="button"
+          className="post-nav__item post-nav__item--prev"
+          onClick={() => onNavigate(`${basePath}/${prev.slug}`)}
+        >
+          <span className="post-nav__label">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="19" y1="12" x2="5" y2="12" />
+              <polyline points="12 19 5 12 12 5" />
+            </svg>
+            {t('post.previous', 'Previous')}
+          </span>
+          <span className="post-nav__title">{prev.title}</span>
+        </button>
+      ) : <span />}
+      {next ? (
+        <button
+          type="button"
+          className="post-nav__item post-nav__item--next"
+          onClick={() => onNavigate(`${basePath}/${next.slug}`)}
+        >
+          <span className="post-nav__label">
+            {t('post.next', 'Next')}
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12" />
+              <polyline points="12 5 19 12 12 19" />
+            </svg>
+          </span>
+          <span className="post-nav__title">{next.title}</span>
+        </button>
+      ) : <span />}
+    </nav>
   )
 }
 

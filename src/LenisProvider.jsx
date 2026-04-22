@@ -43,6 +43,7 @@ export function LenisProvider({ children }) {
         syncTouchLerp: 0.12,
         lerp: 0.08,
       })
+      window.__lenis = lenisRef.current
     }
 
     ensure()
@@ -60,6 +61,7 @@ export function LenisProvider({ children }) {
         lenisRef.current.destroy()
         lenisRef.current = null
       }
+      if (window.__lenis) window.__lenis = null
     }
   }, [])
 

@@ -4,6 +4,7 @@ import { createRoot } from 'react-dom/client'
 import { flushSync } from 'react-dom'
 import { useState, useEffect, useRef } from 'react'
 import { BrowserRouter, Routes, Route, useLocation, useNavigate, useParams } from 'react-router-dom'
+import { HelmetProvider } from 'react-helmet-async'
 import './styles.css'
 import App from './App'
 import { LandingPage } from './LandingPage'
@@ -171,11 +172,13 @@ function MainApp() {
   }
 
   return (
-    <BrowserRouter>
-      <LenisProvider>
-        <AnimatedRoutes theme={theme} onToggleTheme={toggleTheme} />
-      </LenisProvider>
-    </BrowserRouter>
+    <HelmetProvider>
+      <BrowserRouter>
+        <LenisProvider>
+          <AnimatedRoutes theme={theme} onToggleTheme={toggleTheme} />
+        </LenisProvider>
+      </BrowserRouter>
+    </HelmetProvider>
   )
 }
 

@@ -8,6 +8,7 @@ import { audioManager } from './audioManager'
 import { Footer } from './Footer'
 import { AnimatedWords } from './AnimatedText'
 import { Reveal } from './Reveal'
+import { SEO } from './SEO'
 
 export function LandingPage({ initialExpanded = false, initialSection = null, theme = 'dark' }) {
   const { t } = useTranslation()
@@ -105,10 +106,18 @@ export function LandingPage({ initialExpanded = false, initialSection = null, th
     if (initialExpanded) {
       window.dispatchEvent(new Event('landing-expanded'))
       if (initialSection) {
-        setTimeout(() => {
+        const tryScroll = (attempt = 0) => {
           const el = document.getElementById(initialSection)
-          if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
-        }, 200)
+          if (!el) return
+          if (window.__lenis) {
+            window.__lenis.scrollTo(el, { offset: 0, duration: 1.2 })
+          } else if (attempt < 10) {
+            setTimeout(() => tryScroll(attempt + 1), 60)
+          } else {
+            el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+          }
+        }
+        setTimeout(() => tryScroll(), 250)
       }
     }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
@@ -437,6 +446,7 @@ export function LandingPage({ initialExpanded = false, initialSection = null, th
 
   return (
     <div className="landing-container">
+      <SEO description={t('hero.subtitle')} />
       {/* Paper plane animation */}
       {planePos && (
         <div className="paper-plane-container" style={{ left: planePos.x, top: planePos.y }}>

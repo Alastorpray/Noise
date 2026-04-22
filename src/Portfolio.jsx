@@ -4,6 +4,7 @@ import { client, urlFor } from './sanityClient'
 import { AnimatedWords } from './AnimatedText'
 import { Reveal } from './Reveal'
 import { motion, useReducedMotion } from 'framer-motion'
+import { SEO } from './SEO'
 
 const FILTERS = ['all', 'xr', 'print3d', 'educational', 'gameAsset']
 
@@ -38,6 +39,10 @@ export function Portfolio({ onNavigate }) {
 
   return (
     <section className="section" id="portfolio">
+      <SEO
+        title={t('portfolio.title', 'Our Work')}
+        description={t('portfolio.heroSubtitle', 'Selected projects across XR, 3D printing, educational tools and interactive experiences.')}
+      />
       <header className="editorial-hero">
         <Reveal as="span" className="editorial-hero__eyebrow" delay={0.05}>
           {t('portfolio.eyebrow', 'Portfolio')}

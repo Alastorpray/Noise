@@ -2506,6 +2506,111 @@ mark.blog-highlight {
 }
 
 /* ============================================================
+   SCROLL PROGRESS — thin top bar on blog posts
+   ============================================================ */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: transparent;
+  z-index: 1200;
+  pointer-events: none;
+}
+
+.scroll-progress__bar {
+  height: 100%;
+  background: var(--accent);
+  transform-origin: left center;
+  transform: scaleX(0);
+  will-change: transform;
+}
+
+.blog-post-meta-sep {
+  margin: 0 0.25rem;
+  color: var(--text-disabled);
+}
+
+/* ============================================================
+   POST NAV — previous / next (minimal inline)
+   ============================================================ */
+.post-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-md);
+  margin-top: var(--space-xl);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--border);
+}
+
+.post-nav__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.35rem 0;
+  background: transparent;
+  border: 0;
+  color: var(--text-secondary);
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+  min-width: 0;
+  max-width: 48%;
+  transition: color var(--duration-micro) var(--ease);
+}
+
+.post-nav__item--next {
+  margin-left: auto;
+}
+
+.post-nav__item:hover { color: var(--accent); }
+
+.post-nav__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: var(--font-data);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-disabled);
+  flex: 0 0 auto;
+  transition: transform var(--duration-micro) var(--ease), color var(--duration-micro) var(--ease);
+}
+
+.post-nav__item:hover .post-nav__label { color: var(--accent); }
+.post-nav__item--prev:hover .post-nav__label { transform: translateX(-3px); }
+.post-nav__item--next:hover .post-nav__label { transform: translateX(3px); }
+
+.post-nav__title {
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1.3;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+@media (max-width: 700px) {
+  .post-nav {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-sm);
+  }
+  .post-nav__item,
+  .post-nav__item--next {
+    max-width: 100%;
+    margin-left: 0;
+  }
+}
+
+/* ============================================================
    SHARE BUTTONS
    ============================================================ */
 .share-buttons {

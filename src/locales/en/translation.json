@@ -78,5 +78,10 @@
     "label": "Share",
     "copy": "Copy link",
     "copied": "Copied!"
+  },
+  "post": {
+    "previous": "Previous",
+    "next": "Next",
+    "readingTime": "{{min}} min read"
   }
 }
