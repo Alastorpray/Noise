@@ -35,7 +35,8 @@ jobs:
           port: 21
           local-dir: ./build/
           server-dir: ${{ secrets.FTP_DIR }}
-          dangerous-clean-slate: true
+          dangerous-clean-slate: false
+          timeout: 120000
           exclude: |
             **/.git*
             **/.git*/**
