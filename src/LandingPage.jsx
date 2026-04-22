@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import emailjs from '@emailjs/browser'
-import { motion, useReducedMotion } from 'framer-motion'
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import './landing.css'
 import { audioManager } from './audioManager'
 
@@ -18,8 +18,6 @@ export function LandingPage({ initialExpanded = false, initialSection = null, th
   const inactivityTimer = useRef(null)
   const [form, setForm] = useState({ nombre: '', email: '', empresa: '', mensaje: '' })
   const [formStatus, setFormStatus] = useState('idle')
-  const [planePos, setPlanePos] = useState(null)
-  const submitBtnRef = useRef(null)
   const [expandedDivision, setExpandedDivision] = useState(null)
   const [glitchIntensity, setGlitchIntensity] = useState(0)
   const [isHovering, setIsHovering] = useState(false)
@@ -136,18 +134,10 @@ export function LandingPage({ initialExpanded = false, initialSection = null, th
     setForm((f) => ({ ...f, [name]: value }))
   }
 
-  const launchPlane = () => {
-    if (!submitBtnRef.current) return
-    const rect = submitBtnRef.current.getBoundingClientRect()
-    setPlanePos({ x: rect.right, y: rect.top + rect.height / 2 })
-    setTimeout(() => setPlanePos(null), 900)
-  }
-
   const handleSubmit = (e) => {
     e.preventDefault()
     if (!form.nombre || !form.email || !form.mensaje) return
     setFormStatus('sending')
-    launchPlane()
 
     emailjs.send(
       'service_2wg37bc',
@@ -447,16 +437,6 @@ export function LandingPage({ initialExpanded = false, initialSection = null, th
   return (
     <div className="landing-container">
       <SEO description={t('hero.subtitle')} />
-      {/* Paper plane animation */}
-      {planePos && (
-        <div className="paper-plane-container" style={{ left: planePos.x, top: planePos.y }}>
-          <svg className="paper-plane" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M22 2L11 13" />
-            <path d="M22 2L15 22L11 13L2 9L22 2Z" />
-          </svg>
-        </div>
-      )}
-
       {/* Audio Toggle Icon */}
       {!isExpanded && !isClosing && (
         <button
@@ -702,33 +682,67 @@ export function LandingPage({ initialExpanded = false, initialSection = null, th
                 <div className="grid-item">
                   <div className="contact-card">
                     <h3 className="contact-title">{t('contact.title')}</h3>
-                    <form className="contact-form" onSubmit={handleSubmit}>
-                    <div className="input-row">
-                      <div className="input-group">
-                        <label htmlFor="nombre">{t('contact.form.name')}</label>
-                        <input id="nombre" name="nombre" type="text" value={form.nombre} onChange={handleChange} required />
-                      </div>
-                      <div className="input-group">
-                        <label htmlFor="email">{t('contact.form.email')}</label>
-                        <input id="email" name="email" type="email" value={form.email} onChange={handleChange} required />
-                      </div>
-                    </div>
-                    <div className="input-group">
-                      <label htmlFor="empresa">{t('contact.form.company')}</label>
-                      <input id="empresa" name="empresa" type="text" value={form.empresa} onChange={handleChange} />
-                    </div>
-                    <div className="input-group">
-                      <label htmlFor="mensaje">{t('contact.form.message')}</label>
-                      <textarea id="mensaje" name="mensaje" rows="4" value={form.mensaje} onChange={handleChange} required />
-                    </div>
-                    <div className="form-actions">
-                      <button ref={submitBtnRef} className="contact-submit" type="submit" disabled={formStatus === 'sending'}>
-                        {formStatus === 'sending' ? t('contact.form.sending') : t('contact.form.send')}
-                      </button>
-                      {formStatus === 'success' && <span className="form-success">{t('contact.form.success')}</span>}
-                      {formStatus === 'error' && <span className="form-error">{t('contact.form.error')}</span>}
-                    </div>
-                    </form>
+                    <AnimatePresence mode="wait" initial={false}>
+                      {formStatus !== 'success' ? (
+                        <motion.form
+                          key="form"
+                          className="contact-form"
+                          onSubmit={handleSubmit}
+                          initial={{ opacity: 0, y: 8 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -8, transition: { duration: 0.25 } }}
+                          transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                        >
+                          <div className="input-row">
+                            <div className="input-group">
+                              <label htmlFor="nombre">{t('contact.form.name')}</label>
+                              <input id="nombre" name="nombre" type="text" value={form.nombre} onChange={handleChange} required />
+                            </div>
+                            <div className="input-group">
+                              <label htmlFor="email">{t('contact.form.email')}</label>
+                              <input id="email" name="email" type="email" value={form.email} onChange={handleChange} required />
+                            </div>
+                          </div>
+                          <div className="input-group">
+                            <label htmlFor="empresa">{t('contact.form.company')}</label>
+                            <input id="empresa" name="empresa" type="text" value={form.empresa} onChange={handleChange} />
+                          </div>
+                          <div className="input-group">
+                            <label htmlFor="mensaje">{t('contact.form.message')}</label>
+                            <textarea id="mensaje" name="mensaje" rows="4" value={form.mensaje} onChange={handleChange} required />
+                          </div>
+                          <div className="form-actions">
+                            <button className="contact-submit" type="submit" disabled={formStatus === 'sending'}>
+                              {formStatus === 'sending' ? t('contact.form.sending') : t('contact.form.send')}
+                            </button>
+                            {formStatus === 'error' && <span className="form-error">{t('contact.form.error')}</span>}
+                          </div>
+                        </motion.form>
+                      ) : (
+                        <motion.div
+                          key="success"
+                          className="contact-success"
+                          initial={{ opacity: 0, y: 12 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -8 }}
+                          transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1], delay: 0.15 }}
+                        >
+                          <svg className="contact-success__check" viewBox="0 0 52 52" aria-hidden="true">
+                            <circle className="contact-success__circle" cx="26" cy="26" r="24" fill="none" />
+                            <path className="contact-success__tick" fill="none" d="M14 27 L23 35 L39 18" />
+                          </svg>
+                          <h4 className="contact-success__title">{t('contact.form.successTitle', 'Thanks!')}</h4>
+                          <p className="contact-success__text">{t('contact.form.success')}</p>
+                          <button
+                            type="button"
+                            className="contact-success__reset"
+                            onClick={() => setFormStatus('idle')}
+                          >
+                            {t('contact.form.sendAnother', 'Send another message')}
+                          </button>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
                 </div>
               </div>

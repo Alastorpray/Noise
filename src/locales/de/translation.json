@@ -68,6 +68,8 @@
       "send": "Senden",
       "sending": "Wird gesendet…",
       "success": "Danke, wir melden uns bald.",
+      "successTitle": "Nachricht gesendet",
+      "sendAnother": "Weitere Nachricht senden",
       "error": "Etwas ist schiefgelaufen. Bitte versuche es erneut."
     }
   },

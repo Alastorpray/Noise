@@ -68,6 +68,8 @@
       "send": "Send",
       "sending": "Sending…",
       "success": "Thanks, we'll contact you soon.",
+      "successTitle": "Message sent",
+      "sendAnother": "Send another message",
       "error": "Something went wrong. Please try again."
     }
   },

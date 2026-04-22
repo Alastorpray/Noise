@@ -68,6 +68,8 @@
       "send": "Enviar",
       "sending": "Enviando…",
       "success": "Gracias, te contactaremos pronto.",
+      "successTitle": "Mensaje enviado",
+      "sendAnother": "Enviar otro mensaje",
       "error": "Algo salio mal. Intentalo de nuevo."
     }
   },
