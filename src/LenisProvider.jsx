@@ -15,11 +15,34 @@ function isAndroid() {
 export function LenisProvider({ children }) {
   const lenisRef = useRef(null)
   const scrollerRef = useRef(null)
+  const contentROref = useRef(null)
+  const imgLoadHandlerRef = useRef(null)
 
   useEffect(() => {
     if (isIOS()) return undefined
 
     const allowTouch = isAndroid()
+
+    const attachGrowthWatchers = (scroller) => {
+      if (contentROref.current) {
+        contentROref.current.disconnect()
+        contentROref.current = null
+      }
+      if (imgLoadHandlerRef.current) {
+        scrollerRef.current?.removeEventListener('load', imgLoadHandlerRef.current, true)
+        imgLoadHandlerRef.current = null
+      }
+
+      const ro = new ResizeObserver(() => lenisRef.current?.resize())
+      Array.from(scroller.children).forEach((child) => ro.observe(child))
+      contentROref.current = ro
+
+      const onLoad = (e) => {
+        if (e.target?.tagName === 'IMG') lenisRef.current?.resize()
+      }
+      scroller.addEventListener('load', onLoad, true)
+      imgLoadHandlerRef.current = onLoad
+    }
 
     const ensure = () => {
       const scroller = document.querySelector('.page-content.expanded')
@@ -44,6 +67,8 @@ export function LenisProvider({ children }) {
         lerp: 0.08,
       })
       window.__lenis = lenisRef.current
+
+      attachGrowthWatchers(scroller)
     }
 
     ensure()
@@ -57,6 +82,14 @@ export function LenisProvider({ children }) {
     return () => {
       window.removeEventListener('resize', onResize)
       observer.disconnect()
+      if (contentROref.current) {
+        contentROref.current.disconnect()
+        contentROref.current = null
+      }
+      if (imgLoadHandlerRef.current && scrollerRef.current) {
+        scrollerRef.current.removeEventListener('load', imgLoadHandlerRef.current, true)
+        imgLoadHandlerRef.current = null
+      }
       if (lenisRef.current) {
         lenisRef.current.destroy()
         lenisRef.current = null
