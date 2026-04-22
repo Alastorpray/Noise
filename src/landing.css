@@ -2046,7 +2046,7 @@ html, body {
 .page-blackout {
   position: fixed;
   inset: 0;
-  background: #000;
+  background: var(--page-bg);
   z-index: 199;
   pointer-events: none;
 }
