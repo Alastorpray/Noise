@@ -4,6 +4,7 @@ import { client, urlFor } from './sanityClient'
 import { Footer } from './Footer'
 import { AnimatedWords } from './AnimatedText'
 import { Reveal } from './Reveal'
+import { ShareButtons } from './ShareButtons'
 import './landing.css'
 
 const PROJECT_QUERY = `*[_type == "project" && slug.current == $slug][0] {
@@ -138,13 +139,13 @@ export function PortfolioPost({ slug, onNavigate }) {
                     <h3 className="blog-post-h3" style={{ marginBottom: '1.5rem' }}>Gallery</h3>
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '1rem' }}>
                       {project.images.map((img, idx) => (
-                        <div 
-                          key={idx} 
+                        <div
+                          key={idx}
                           style={{ cursor: 'pointer', borderRadius: '8px', overflow: 'hidden', aspectRatio: '1', background: 'var(--surface)' }}
                           onClick={() => setLightboxImg(idx)}
                         >
-                          <img 
-                            src={urlFor(img).width(600).height(600).fit('crop').auto('format').url()} 
+                          <img
+                            src={urlFor(img).width(600).height(600).fit('crop').auto('format').url()}
                             alt={`Gallery ${idx + 1}`}
                             style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.3s ease' }}
                             onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.05)'}
@@ -155,6 +156,8 @@ export function PortfolioPost({ slug, onNavigate }) {
                     </div>
                   </div>
                 )}
+
+                <ShareButtons title={project.title} />
               </article>
             )}
           </div>
@@ -197,20 +200,20 @@ function GalleryLightbox({ images, initialIndex, onClose }) {
     return () => window.removeEventListener('keydown', onKey)
   }, [goNext, goPrev])
 
-  const currentImgUrl = urlFor(images[currentIndex]).width(1400).auto('format').url()
+  const currentImgUrl = urlFor(images[currentIndex]).width(2400).auto('format').url()
 
   return (
-    <div className="lightbox-backdrop" onClick={onClose} style={{ zIndex: 1000 }}>
-      <div className="lightbox-panel" onClick={e => e.stopPropagation()} style={{ padding: '0', background: 'transparent', border: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        <button className="lightbox-close" onClick={onClose} aria-label="Close" style={{ top: '-40px', right: '0' }}>
+    <div className="lightbox-backdrop lightbox-backdrop--gallery" onClick={onClose} style={{ zIndex: 1000 }}>
+      <div className="lightbox-panel lightbox-panel--gallery" onClick={e => e.stopPropagation()}>
+        <button className="lightbox-close lightbox-close--gallery" onClick={onClose} aria-label="Close">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
             <line x1="18" y1="6" x2="6" y2="18" />
             <line x1="6" y1="6" x2="18" y2="18" />
           </svg>
         </button>
 
-        <div className="lightbox-media" style={{ background: 'transparent' }}>
-          <img src={currentImgUrl} alt={`Gallery ${currentIndex + 1}`} className="lightbox-img" style={{ maxHeight: '80vh', objectFit: 'contain' }} />
+        <div className="lightbox-media lightbox-media--gallery">
+          <img src={currentImgUrl} alt={`Gallery ${currentIndex + 1}`} className="lightbox-img lightbox-img--gallery" />
 
           {images.length > 1 && (
             <>

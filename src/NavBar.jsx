@@ -86,7 +86,7 @@ export function NavBar({ onNavigate, theme, onToggleTheme }) {
           </a>
           <a
             href="/portfolio"
-            className={`nav-link ${route === '/portfolio' ? 'nav-link--active' : ''}`}
+            className={`nav-link ${route.startsWith('/portfolio') ? 'nav-link--active' : ''}`}
             onClick={(e) => handleNavClick(e, '/portfolio')}
           >
             {t('nav.portfolio')}

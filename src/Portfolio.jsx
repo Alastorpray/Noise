@@ -145,6 +145,15 @@ function ProjectEntry({ project, index, onOpen }) {
           <p className="editorial-entry__excerpt">{project.description}</p>
         )}
       </div>
+      {project.cover && (
+        <div className="editorial-entry__cover">
+          <img
+            src={urlFor(project.cover).width(600).height(400).fit('crop').url()}
+            alt=""
+            loading="lazy"
+          />
+        </div>
+      )}
     </motion.article>
   )
 }

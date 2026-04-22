@@ -5,6 +5,7 @@ import { client, urlFor } from './sanityClient'
 import { Footer } from './Footer'
 import { AnimatedWords } from './AnimatedText'
 import { Reveal } from './Reveal'
+import { ShareButtons } from './ShareButtons'
 import './landing.css'
 
 const POST_QUERY = `*[_type == "post" && slug.current == $slug][0] {
@@ -226,6 +227,8 @@ export function BlogPost({ slug, onNavigate }) {
                 <Reveal as="div" className="blog-content blog-post-body" delay={0.35}>
                   <PortableText value={post.body} components={ptComponents} />
                 </Reveal>
+
+                <ShareButtons title={post.title} />
               </article>
             )}
           </div>

@@ -73,5 +73,10 @@
   },
   "footer": {
     "rights": "Alle Rechte vorbehalten."
+  },
+  "share": {
+    "label": "Teilen",
+    "copy": "Link kopieren",
+    "copied": "Kopiert!"
   }
 }

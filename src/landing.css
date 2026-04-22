@@ -1499,6 +1499,62 @@
   .lightbox-title { font-size: var(--heading); }
 }
 
+/* ── Gallery Lightbox (full-viewport variant) ─────────────── */
+.lightbox-backdrop--gallery {
+  top: 0;
+  padding: var(--space-xl);
+}
+
+.lightbox-panel--gallery {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  max-width: min(96vw, 1800px);
+  width: auto;
+  max-height: none;
+  overflow: visible;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0;
+}
+
+.lightbox-close--gallery {
+  position: absolute;
+  top: var(--space-lg);
+  right: var(--space-lg);
+  background: rgba(0, 0, 0, 0.5);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.lightbox-media--gallery {
+  background: transparent;
+  aspect-ratio: auto;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.lightbox-img--gallery {
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: calc(100vh - var(--space-3xl) * 2);
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+@media (max-width: 640px) {
+  .lightbox-backdrop--gallery { padding: var(--space-md); }
+  .lightbox-close--gallery { top: var(--space-md); right: var(--space-md); }
+  .lightbox-img--gallery { max-height: calc(100vh - var(--space-2xl) * 2); }
+}
+
 /* ============================================================
    EDITORIAL LIST — Blog & Portfolio (Linear/Vercel style)
    ============================================================ */
@@ -1702,13 +1758,6 @@
   animation: none;
 }
 
-.reveal-delay-1 {}
-.reveal-delay-2 {}
-.reveal-delay-3 {}
-.reveal-delay-4 {}
-.reveal-delay-5 {}
-.reveal-delay-6 {}
-
 /* ============================================================
    EDITORIAL HERO — Treeview-style oversized headline
    ============================================================ */
@@ -1759,9 +1808,9 @@
 }
 
 .editorial-list--minimal .editorial-entry {
-  grid-template-columns: minmax(140px, 200px) 1fr;
+  grid-template-columns: minmax(140px, 200px) 1fr minmax(160px, 220px);
   gap: var(--space-xl);
-  align-items: baseline;
+  align-items: center;
   padding: var(--space-xl) var(--space-xl);
   border-radius: 0;
 }
@@ -1772,6 +1821,29 @@
 
 .editorial-list--minimal .editorial-entry__media {
   display: none;
+}
+
+.editorial-entry__cover {
+  position: relative;
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+  background: var(--surface-raised);
+  border-radius: 4px;
+  justify-self: end;
+  width: 100%;
+  max-width: 220px;
+}
+
+.editorial-entry__cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.9s var(--ease-dramatic);
+}
+
+.editorial-entry:hover .editorial-entry__cover img {
+  transform: scale(1.04);
 }
 
 .editorial-entry__date-col {
@@ -2431,4 +2503,64 @@ mark.blog-highlight {
 
 .blog-divider--space {
   height: 2.5rem;
+}
+
+/* ============================================================
+   SHARE BUTTONS
+   ============================================================ */
+.share-buttons {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  margin: 3rem 0 1rem;
+  padding: var(--space-lg) 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.share-buttons__label {
+  font-family: var(--font-body);
+  font-size: var(--caption);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-disabled);
+}
+
+.share-buttons__list {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+.share-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border: 1px solid var(--border-visible);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text-secondary);
+  text-decoration: none;
+  cursor: pointer;
+  transition: color var(--duration-micro) var(--ease),
+              border-color var(--duration-micro) var(--ease),
+              background var(--duration-micro) var(--ease);
+  padding: 0;
+}
+
+.share-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.share-btn:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.share-btn--copied {
+  color: var(--accent);
+  border-color: var(--accent);
 }
