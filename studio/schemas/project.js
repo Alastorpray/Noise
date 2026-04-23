@@ -4,6 +4,11 @@ export default {
   type: 'document',
   fields: [
     {
+      name: 'language',
+      type: 'string',
+      readOnly: true,
+    },
+    {
       name: 'title',
       title: 'Title',
       type: 'string',
@@ -13,7 +18,23 @@ export default {
       name: 'slug',
       title: 'Slug',
       type: 'slug',
-      options: { source: 'title' },
+      options: {
+        source: 'title',
+        isUnique: (slug, context) => {
+          const { document, getClient } = context
+          const client = getClient({ apiVersion: '2024-01-01' })
+          const id = document._id.replace(/^drafts\./, '')
+          const params = {
+            draft: `drafts.${id}`,
+            published: id,
+            slug,
+            language: document.language,
+            type: document._type,
+          }
+          const query = `!defined(*[_type == $type && !(_id in [$draft, $published]) && slug.current == $slug && language == $language][0]._id)`
+          return client.fetch(query, params)
+        },
+      },
       validation: Rule => Rule.required()
     },
     {

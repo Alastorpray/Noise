@@ -9,21 +9,23 @@ import { SEO } from './SEO'
 import { getReadingTimeMinutes } from './utils/readingTime'
 import './landing.css'
 
-const BLOG_QUERY = `*[_type == "post"] | order(publishedAt desc) {
+const BLOG_QUERY = `*[_type == "post" && language == $lang] | order(publishedAt desc) {
   _id, title, slug, publishedAt, excerpt, mainImage, body,
   "authorName": author->name,
   "categories": categories[]->title
 }`
 
 export function BlogPage({ onNavigate }) {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const [posts, setPosts] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const reduceMotion = useReducedMotion()
 
   useEffect(() => {
-    client.fetch(BLOG_QUERY)
+    const lang = (i18n.language || 'en').split('-')[0]
+    setLoading(true)
+    client.fetch(BLOG_QUERY, { lang })
       .then(data => {
         setPosts(data)
         setLoading(false)
@@ -33,7 +35,7 @@ export function BlogPage({ onNavigate }) {
         setError(e.message)
         setLoading(false)
       })
-  }, [])
+  }, [i18n.language])
 
   return (
     <div className="page-content expanded">

@@ -8,17 +8,17 @@ import { ShareButtons } from './ShareButtons'
 import { SEO } from './SEO'
 import './landing.css'
 
-const PROJECT_QUERY = `*[_type == "project" && slug.current == $slug][0] {
+const PROJECT_QUERY = `*[_type == "project" && slug.current == $slug && language == $lang][0] {
   title, division, description, tags, date, mediaType,
   cover, images, "videoUrl": video.asset->url
 }`
 
-const SIBLINGS_QUERY = `*[_type == "project" && defined(slug.current)] | order(featured desc, date desc) {
+const SIBLINGS_QUERY = `*[_type == "project" && defined(slug.current) && language == $lang] | order(featured desc, date desc) {
   title, "slug": slug.current
 }`
 
 export function PortfolioPost({ slug, onNavigate }) {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const [project, setProject] = useState(null)
   const [siblings, setSiblings] = useState([])
   const [loading, setLoading] = useState(true)
@@ -28,9 +28,11 @@ export function PortfolioPost({ slug, onNavigate }) {
   const [lightboxImg, setLightboxImg] = useState(null)
 
   useEffect(() => {
+    const lang = (i18n.language || 'en').split('-')[0]
+    setLoading(true)
     Promise.all([
-      client.fetch(PROJECT_QUERY, { slug }),
-      client.fetch(SIBLINGS_QUERY),
+      client.fetch(PROJECT_QUERY, { slug, lang }),
+      client.fetch(SIBLINGS_QUERY, { lang }),
     ])
       .then(([data, list]) => {
         if (!data) throw new Error('Project not found')
@@ -43,7 +45,7 @@ export function PortfolioPost({ slug, onNavigate }) {
         setError(e.message)
         setLoading(false)
       })
-  }, [slug])
+  }, [slug, i18n.language])
 
   const currentIdx = siblings.findIndex(p => p.slug === slug)
   const prev = currentIdx > 0 ? siblings[currentIdx - 1] : null

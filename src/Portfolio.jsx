@@ -8,20 +8,22 @@ import { SEO } from './SEO'
 
 const FILTERS = ['all', 'xr', 'print3d', 'educational', 'gameAsset']
 
-const QUERY = `*[_type == "project"] | order(featured desc, date desc) {
+const QUERY = `*[_type == "project" && language == $lang] | order(featured desc, date desc) {
   _id, title, slug, division, description, tags, date, featured, mediaType,
   cover, images, "videoUrl": video.asset->url
 }`
 
 export function Portfolio({ onNavigate }) {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const [projects, setProjects] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [filter, setFilter] = useState('all')
 
   useEffect(() => {
-    client.fetch(QUERY)
+    const lang = (i18n.language || 'en').split('-')[0]
+    setLoading(true)
+    client.fetch(QUERY, { lang })
       .then(data => {
         setProjects(data)
         setLoading(false)
@@ -31,7 +33,7 @@ export function Portfolio({ onNavigate }) {
         setError(e.message)
         setLoading(false)
       })
-  }, [])
+  }, [i18n.language])
 
   const filtered = filter === 'all'
     ? projects
