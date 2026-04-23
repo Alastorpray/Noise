@@ -40,6 +40,9 @@
   },
   "portfolio": {
     "title": "Nuestro Trabajo",
+    "eyebrow": "Portafolio",
+    "heroTitle": "Trabajo.",
+    "heroSubtitle": "Proyectos seleccionados en XR, impresión 3D, herramientas educativas y experiencias interactivas.",
     "all": "Todos",
     "xr": "XR",
     "print3d": "Impresión 3D",
@@ -50,6 +53,9 @@
   },
   "blog": {
     "title": "Nuestro Blog",
+    "eyebrow": "Blog",
+    "heroTitle": "Ideas.",
+    "heroSubtitle": "Notas, experimentos y análisis en profundidad sobre tecnología creativa, shaders y gráficos en tiempo real.",
     "empty": "No hay publicaciones disponibles en este momento.",
     "back": "Volver al Blog"
   },

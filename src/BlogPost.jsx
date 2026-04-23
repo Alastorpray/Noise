@@ -11,14 +11,14 @@ import { ScrollProgress } from './ScrollProgress'
 import { getReadingTimeMinutes } from './utils/readingTime'
 import './landing.css'
 
-const POST_QUERY = `*[_type == "post" && slug.current == $slug][0] {
+const POST_QUERY = `*[_type == "post" && slug.current == $slug && language == $lang][0] {
   title, publishedAt, excerpt, mainImage, body,
   "authorName": author->name,
   "authorImage": author->image,
   "categories": categories[]->title
 }`
 
-const SIBLINGS_QUERY = `*[_type == "post" && defined(slug.current)] | order(publishedAt desc) {
+const SIBLINGS_QUERY = `*[_type == "post" && defined(slug.current) && language == $lang] | order(publishedAt desc) {
   title, "slug": slug.current
 }`
 
@@ -135,16 +135,18 @@ const ptComponents = {
 }
 
 export function BlogPost({ slug, onNavigate }) {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const [post, setPost] = useState(null)
   const [siblings, setSiblings] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
   useEffect(() => {
+    const lang = (i18n.language || 'en').split('-')[0]
+    setLoading(true)
     Promise.all([
-      client.fetch(POST_QUERY, { slug }),
-      client.fetch(SIBLINGS_QUERY),
+      client.fetch(POST_QUERY, { slug, lang }),
+      client.fetch(SIBLINGS_QUERY, { lang }),
     ])
       .then(([data, list]) => {
         if (!data) throw new Error('Post not found')
@@ -157,7 +159,7 @@ export function BlogPost({ slug, onNavigate }) {
         setError(e.message)
         setLoading(false)
       })
-  }, [slug])
+  }, [slug, i18n.language])
 
   const currentIdx = siblings.findIndex(p => p.slug === slug)
   const prev = currentIdx > 0 ? siblings[currentIdx - 1] : null
