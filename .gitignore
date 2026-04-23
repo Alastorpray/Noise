@@ -6,3 +6,4 @@ dist
 .env.local
 studio/.env
 studio/.env.local
+studio/.env.production
