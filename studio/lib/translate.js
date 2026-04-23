@@ -31,9 +31,13 @@ async function translateStrings(strings, sourceLang, targetLang) {
   params.append('target_lang', SUPPORTED_TARGETS[targetLang])
   toTranslate.forEach(text => params.append('text', text))
 
+  const headers = { 'Content-Type': 'application/x-www-form-urlencoded' }
+  const token = import.meta.env.SANITY_STUDIO_DEEPL_PROXY_TOKEN
+  if (token) headers['X-Proxy-Token'] = token
+
   const res = await fetch(endpoint, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    headers,
     body: params.toString(),
   })
 

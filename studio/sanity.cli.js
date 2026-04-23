@@ -1,4 +1,5 @@
 import { defineCliConfig } from 'sanity/cli'
+import { loadEnv } from 'vite'
 
 export default defineCliConfig({
   api: {
@@ -6,7 +7,9 @@ export default defineCliConfig({
     dataset: 'production'
   },
   vite: (config) => {
-    const apiKey = process.env.DEEPL_API_KEY || process.env.SANITY_STUDIO_DEEPL_API_KEY
+    const mode = process.env.NODE_ENV || 'development'
+    const env = loadEnv(mode, process.cwd(), '')
+    const apiKey = env.DEEPL_API_KEY
     const target = apiKey && apiKey.endsWith(':fx')
       ? 'https://api-free.deepl.com'
       : 'https://api.deepl.com'

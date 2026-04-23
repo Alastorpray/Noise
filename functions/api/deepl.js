@@ -1,21 +1,60 @@
-const CORS_HEADERS = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type',
-  'Access-Control-Max-Age': '86400',
+function parseAllowedOrigins(env) {
+  return (env.ALLOWED_ORIGINS || '')
+    .split(',')
+    .map(s => s.trim())
+    .filter(Boolean)
 }
 
-export async function onRequestOptions() {
-  return new Response(null, { headers: CORS_HEADERS })
+function corsHeaders(request, env) {
+  const allowed = parseAllowedOrigins(env)
+  const origin = request.headers.get('Origin') || ''
+  const allowOrigin = allowed.includes(origin) ? origin : allowed[0] || ''
+  return {
+    'Access-Control-Allow-Origin': allowOrigin,
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, X-Proxy-Token',
+    'Access-Control-Max-Age': '86400',
+    'Vary': 'Origin',
+  }
 }
 
-export async function onRequestPost(context) {
-  const { request, env } = context
+function originAllowed(request, env) {
+  const allowed = parseAllowedOrigins(env)
+  if (!allowed.length) return true
+  const origin = request.headers.get('Origin') || ''
+  return allowed.includes(origin)
+}
+
+export async function onRequestOptions({ request, env }) {
+  return new Response(null, { headers: corsHeaders(request, env) })
+}
+
+export async function onRequestPost({ request, env }) {
+  const headers = corsHeaders(request, env)
+
+  if (!originAllowed(request, env)) {
+    return new Response(JSON.stringify({ error: 'origin not allowed' }), {
+      status: 403,
+      headers: { ...headers, 'Content-Type': 'application/json' },
+    })
+  }
+
+  const expectedToken = env.DEEPL_PROXY_TOKEN
+  if (expectedToken) {
+    const gotToken = request.headers.get('X-Proxy-Token')
+    if (gotToken !== expectedToken) {
+      return new Response(JSON.stringify({ error: 'unauthorized' }), {
+        status: 401,
+        headers: { ...headers, 'Content-Type': 'application/json' },
+      })
+    }
+  }
+
   const apiKey = env.DEEPL_API_KEY
   if (!apiKey) {
     return new Response(JSON.stringify({ error: 'DEEPL_API_KEY not configured' }), {
       status: 500,
-      headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+      headers: { ...headers, 'Content-Type': 'application/json' },
     })
   }
 
@@ -39,7 +78,7 @@ export async function onRequestPost(context) {
   return new Response(text, {
     status: upstream.status,
     headers: {
-      ...CORS_HEADERS,
+      ...headers,
       'Content-Type': upstream.headers.get('Content-Type') || 'application/json',
     },
   })
