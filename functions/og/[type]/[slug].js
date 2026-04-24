@@ -36,19 +36,18 @@ export async function onRequestGet({ params, request }) {
   const { result } = await res.json()
 
   const title = result?.title || 'Coresearch'
-  const category = result?.category || (type === 'post' ? 'Blog' : 'Portfolio')
+  const category = (result?.category || (type === 'post' ? 'Blog' : 'Portfolio')).toUpperCase()
 
   const html = `
-    <div style="width:100%;height:100%;display:flex;flex-direction:column;justify-content:space-between;padding:80px;background:linear-gradient(135deg,#0a0a0a 0%,#1a1a1a 100%);color:#E8E8E8;font-family:system-ui,sans-serif;">
-      <div style="font-size:28px;color:#ff6600;text-transform:uppercase;letter-spacing:6px;display:flex;">
+    <div style="width:1200px;height:630px;display:flex;flex-direction:column;justify-content:space-between;padding:80px;background-color:#0a0a0a;color:#E8E8E8;">
+      <div style="display:flex;width:100%;font-size:28px;color:#ff6600;letter-spacing:6px;">
         ${escapeHtml(category)}
       </div>
-      <div style="font-size:76px;font-weight:700;line-height:1.1;display:flex;flex-wrap:wrap;max-width:100%;">
+      <div style="display:flex;width:100%;font-size:76px;font-weight:700;line-height:1.15;">
         ${escapeHtml(title)}
       </div>
-      <div style="display:flex;justify-content:space-between;align-items:center;font-size:26px;color:#888;">
-        <div style="display:flex;">coresearch.studio</div>
-        <div style="display:flex;color:#ff6600;">●</div>
+      <div style="display:flex;width:100%;font-size:26px;color:#888888;">
+        coresearch.studio
       </div>
     </div>
   `
