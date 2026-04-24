@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { SUPPORTED_LANGS } from './index'
 
 export function NavBar({ onNavigate, theme, onToggleTheme }) {
   const { t, i18n } = useTranslation()
@@ -8,7 +9,12 @@ export function NavBar({ onNavigate, theme, onToggleTheme }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const langMenuRef = useRef(null)
   const location = useLocation()
-  const route = location.pathname
+  const navigate = useNavigate()
+
+  const pathParts = location.pathname.split('/').filter(Boolean)
+  const urlLang = SUPPORTED_LANGS.includes(pathParts[0]) ? pathParts[0] : null
+  const pathWithoutLang = '/' + pathParts.slice(urlLang ? 1 : 0).join('/')
+  const route = pathWithoutLang === '/' ? '/' : pathWithoutLang
 
   const languages = [
     { code: 'en', label: 'English' },
@@ -16,10 +22,11 @@ export function NavBar({ onNavigate, theme, onToggleTheme }) {
     { code: 'de', label: 'Deutsch' }
   ]
 
-  const currentLang = languages.find(l => l.code === i18n.language) || languages[0]
+  const currentLang = languages.find(l => l.code === (urlLang || i18n.language)) || languages[0]
 
   const changeLanguage = (lng) => {
-    i18n.changeLanguage(lng)
+    const rest = pathWithoutLang === '/' ? '' : pathWithoutLang
+    navigate(`/${lng}${rest}${location.search}`)
     setIsLangMenuOpen(false)
   }
 

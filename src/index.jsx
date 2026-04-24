@@ -3,7 +3,7 @@ import { render, events, extend } from '@react-three/fiber'
 import { createRoot } from 'react-dom/client'
 import { flushSync } from 'react-dom'
 import { useState, useEffect, useRef } from 'react'
-import { BrowserRouter, Routes, Route, useLocation, useNavigate, useParams } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, useLocation, useNavigate, useParams, Navigate } from 'react-router-dom'
 import { HelmetProvider } from 'react-helmet-async'
 import './styles.css'
 import App from './App'
@@ -14,7 +14,18 @@ import { BlogPage } from './BlogPage'
 import { BlogPost } from './BlogPost'
 import { NavBar } from './NavBar'
 import { LenisProvider } from './LenisProvider'
-import './i18n'
+import i18n from './i18n'
+
+export const SUPPORTED_LANGS = ['en', 'es', 'de']
+export const DEFAULT_LANG = 'en'
+
+function detectInitialLang() {
+  const pathLang = window.location.pathname.split('/').filter(Boolean)[0]
+  if (SUPPORTED_LANGS.includes(pathLang)) return pathLang
+  const detected = (i18n.language || '').split('-')[0]
+  if (SUPPORTED_LANGS.includes(detected)) return detected
+  return DEFAULT_LANG
+}
 
 extend(THREE)
 
@@ -38,57 +49,74 @@ window.dispatchEvent(new Event('resize'))
 const COVER_DURATION = 500   // ms — overlay fades in (covers screen)
 const REVEAL_DURATION = 500  // ms — overlay fades out (reveals new page)
 
+function LegacyRedirect() {
+  const location = useLocation()
+  const pathParts = location.pathname.split('/').filter(Boolean)
+  const firstPart = pathParts[0]
+  if (SUPPORTED_LANGS.includes(firstPart)) {
+    return <Navigate to={`/${firstPart}`} replace />
+  }
+  return <Navigate to={`/${detectInitialLang()}${location.pathname}${location.search}`} replace />
+}
+
 function AnimatedRoutes({ theme, onToggleTheme }) {
   const location = useLocation()
   const navigate = useNavigate()
-  
+
+  const pathParts = location.pathname.split('/').filter(Boolean)
+  const urlLang = SUPPORTED_LANGS.includes(pathParts[0]) ? pathParts[0] : null
+
   const [displayLocation, setDisplayLocation] = useState(location)
   const [transition, setTransition] = useState(null) // null | 'covering' | 'revealing'
-  
+
   // Custom navigation state for landing page sections
   const [landingSection, setLandingSection] = useState(null)
-  const [landingExpanded, setLandingExpanded] = useState(location.pathname !== '/')
-  
+  const isHomePath = urlLang && pathParts.length === 1
+  const [landingExpanded, setLandingExpanded] = useState(!isHomePath)
+
   // We ALWAYS render the NavBar, but we control its visibility via CSS classes.
-  // This completely eliminates any React unmounting flicker during route transitions.
-  const [isNavVisible, setIsNavVisible] = useState(location.pathname !== '/')
+  const [isNavVisible, setIsNavVisible] = useState(!isHomePath)
+
+  // Sync i18n with the URL language
+  useEffect(() => {
+    if (urlLang && i18n.language !== urlLang) {
+      i18n.changeLanguage(urlLang)
+    }
+  }, [urlLang])
 
   useEffect(() => {
-    // If the path changed, trigger the transition
     if (location.pathname !== displayLocation.pathname) {
-      // Phase 1: overlay slides in
       setTransition('covering')
 
       const coverTimer = setTimeout(() => {
-        // Phase 2: swap the rendered page while screen is covered
         setDisplayLocation(location)
         window.scrollTo(0, 0)
-        
-        // Phase 3: overlay slides out
+
         setTransition('revealing')
 
         const revealTimer = setTimeout(() => {
           setTransition(null)
         }, REVEAL_DURATION)
-        
+
         return () => clearTimeout(revealTimer)
       }, COVER_DURATION)
-      
+
       return () => clearTimeout(coverTimer)
     }
   }, [location, displayLocation.pathname])
 
-  // Expose a custom navigation function to NavBar and LandingPage
-  // that can handle hash sections (like /#about)
+  // Navigate helper — auto-prefixes the current language
   const handleNavigate = (path, section = null) => {
+    const lang = urlLang || detectInitialLang()
+    const prefixedPath = path === '/' ? `/${lang}` : `/${lang}${path}`
     if (path === '/') {
       setLandingSection(section)
       setLandingExpanded(!!section)
-      if (!section) setIsNavVisible(false) // Hide only if going to pure home
-      navigate('/')
+      if (!section) setIsNavVisible(false)
+      navigate(prefixedPath)
     } else {
-      setIsNavVisible(true) // Always show nav when going to other pages
-      navigate(path)
+      setIsNavVisible(true)
+      navigate(prefixedPath)
     }
   }
 
@@ -97,9 +125,8 @@ function AnimatedRoutes({ theme, onToggleTheme }) {
     const onNav = (e) => handleNavigate(e.detail)
     window.addEventListener('navigate', onNav)
     return () => window.removeEventListener('navigate', onNav)
-  }, [navigate])
+  }, [navigate, urlLang])
 
-  // Show nav when LandingPage expands from clicking the logo
   useEffect(() => {
     const onExpand = () => setIsNavVisible(true)
     const onCollapse = () => setIsNavVisible(false)
@@ -111,9 +138,16 @@ function AnimatedRoutes({ theme, onToggleTheme }) {
     }
   }, [])
 
+  // If the URL has no recognized language segment, redirect to default lang + keep path
+  if (!urlLang) {
+    const target = location.pathname === '/'
+      ? `/${detectInitialLang()}`
+      : `/${detectInitialLang()}${location.pathname}${location.search}`
+    return <Navigate to={target} replace />
+  }
+
   return (
     <div className={`theme-${theme} ${isNavVisible ? 'app-content-visible' : ''}`}>
-      {/* We always render NavBar, visibility is handled by CSS to prevent unmounting flicker */}
       <div style={{ opacity: isNavVisible ? 1 : 0, pointerEvents: isNavVisible ? 'auto' : 'none', transition: 'opacity 0.3s ease' }}>
         <NavBar
           onNavigate={handleNavigate}
@@ -123,7 +157,7 @@ function AnimatedRoutes({ theme, onToggleTheme }) {
       </div>
 
       <Routes location={displayLocation}>
-        <Route path="/" element={
+        <Route path="/:lang" element={
           <LandingPage
             key={landingSection || 'home'}
             initialExpanded={landingExpanded}
@@ -131,10 +165,11 @@ function AnimatedRoutes({ theme, onToggleTheme }) {
             theme={theme}
           />
         } />
-        <Route path="/portfolio" element={<PortfolioPage theme={theme} onNavigate={handleNavigate} />} />
-        <Route path="/portfolio/:slug" element={<PortfolioPostWrapper onNavigate={handleNavigate} />} />
-        <Route path="/blog" element={<BlogPage onNavigate={handleNavigate} />} />
-        <Route path="/blog/:slug" element={<BlogPostWrapper onNavigate={handleNavigate} />} />
+        <Route path="/:lang/portfolio" element={<PortfolioPage theme={theme} onNavigate={handleNavigate} />} />
+        <Route path="/:lang/portfolio/:slug" element={<PortfolioPostWrapper onNavigate={handleNavigate} />} />
+        <Route path="/:lang/blog" element={<BlogPage onNavigate={handleNavigate} />} />
+        <Route path="/:lang/blog/:slug" element={<BlogPostWrapper onNavigate={handleNavigate} />} />
+        <Route path="*" element={<LegacyRedirect />} />
       </Routes>
 
       {transition && (
@@ -158,7 +193,7 @@ function PortfolioPostWrapper({ onNavigate }) {
 
 function MainApp() {
   const [theme, setTheme] = useState('dark')
-  
+
   const toggleTheme = () => {
     if (!document.startViewTransition) {
       setTheme(prev => prev === 'dark' ? 'light' : 'dark')

@@ -6,13 +6,15 @@ import { Footer } from './Footer'
 import { AnimatedWords } from './AnimatedText'
 import { Reveal } from './Reveal'
 import { ShareButtons } from './ShareButtons'
-import { SEO } from './SEO'
+import { SEO, SITE_ORIGIN } from './SEO'
 import { ScrollProgress } from './ScrollProgress'
 import { getReadingTimeMinutes } from './utils/readingTime'
+import { DEFAULT_LANG } from './index'
 import './landing.css'
 
-const POST_QUERY = `*[_type == "post" && slug.current == $slug && language == $lang][0] {
-  title, publishedAt, excerpt, mainImage, body,
+const POST_QUERY = `*[_type == "post" && slug.current == $slug]
+  | order((language == $lang) desc, (language == $defaultLang) desc)[0] {
+  title, publishedAt, excerpt, mainImage, body, language,
   "authorName": author->name,
   "authorImage": author->image,
   "categories": categories[]->title
@@ -140,17 +142,17 @@ export function BlogPost({ slug, onNavigate }) {
   const [siblings, setSiblings] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const requestedLang = (i18n.language || DEFAULT_LANG).split('-')[0]
 
   useEffect(() => {
-    const lang = (i18n.language || 'en').split('-')[0]
     setLoading(true)
-    Promise.all([
-      client.fetch(POST_QUERY, { slug, lang }),
-      client.fetch(SIBLINGS_QUERY, { lang }),
-    ])
-      .then(([data, list]) => {
+    client.fetch(POST_QUERY, { slug, lang: requestedLang, defaultLang: DEFAULT_LANG })
+      .then(data => {
         if (!data) throw new Error('Post not found')
         setPost(data)
+        return client.fetch(SIBLINGS_QUERY, { lang: data.language })
+      })
+      .then(list => {
         setSiblings(list || [])
         setLoading(false)
       })
@@ -159,14 +161,16 @@ export function BlogPost({ slug, onNavigate }) {
         setError(e.message)
         setLoading(false)
       })
-  }, [slug, i18n.language])
+  }, [slug, requestedLang])
+
+  const isFallbackLang = post && post.language !== requestedLang
 
   const currentIdx = siblings.findIndex(p => p.slug === slug)
   const prev = currentIdx > 0 ? siblings[currentIdx - 1] : null
   const next = currentIdx >= 0 && currentIdx < siblings.length - 1 ? siblings[currentIdx + 1] : null
 
   const readingMinutes = post?.body ? getReadingTimeMinutes(post.body) : null
-  const postImage = post?.mainImage ? urlFor(post.mainImage).width(1200).height(630).fit('crop').auto('format').url() : undefined
+  const postImage = post ? `${SITE_ORIGIN}/og/post/${slug}?lang=${post.language}` : undefined
 
   return (
     <div className="page-content expanded">
@@ -175,6 +179,7 @@ export function BlogPost({ slug, onNavigate }) {
           title={post.title}
           description={post.excerpt || undefined}
           image={postImage}
+          url={isFallbackLang ? `${SITE_ORIGIN}/${post.language}/blog/${slug}` : undefined}
           type="article"
           publishedTime={post.publishedAt}
         />
@@ -210,7 +215,15 @@ export function BlogPost({ slug, onNavigate }) {
             )}
 
             {!loading && post && (
-              <article key={slug}>
+              <article key={slug} lang={post.language}>
+                {isFallbackLang && (
+                  <div className="blog-post-translation-notice" role="status">
+                    {t('post.translationMissing', {
+                      requested: t(`languages.${requestedLang}`, requestedLang),
+                      actual: t(`languages.${post.language}`, post.language),
+                    })}
+                  </div>
+                )}
                 <header className="blog-post-header">
                   {post.categories?.length > 0 && (
                     <Reveal as="div" className="blog-post-categories" delay={0.05}>
