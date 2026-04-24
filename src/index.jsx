@@ -68,10 +68,13 @@ function AnimatedRoutes({ theme, onToggleTheme }) {
 
   const [displayLocation, setDisplayLocation] = useState(location)
   const [transition, setTransition] = useState(null) // null | 'covering' | 'revealing'
+  const hasMountedRef = useRef(false)
+  const transitionIntentRef = useRef(false)
 
   // Custom navigation state for landing page sections
   const [landingSection, setLandingSection] = useState(null)
-  const isHomePath = urlLang && pathParts.length === 1
+  // Home = "/" (pre-redirect) o "/:lang" (post-redirect). Ambos muestran partículas.
+  const isHomePath = pathParts.length === 0 || (urlLang && pathParts.length === 1)
   const [landingExpanded, setLandingExpanded] = useState(!isHomePath)
 
   // We ALWAYS render the NavBar, but we control its visibility via CSS classes.
@@ -85,7 +88,25 @@ function AnimatedRoutes({ theme, onToggleTheme }) {
   }, [urlLang])
 
   useEffect(() => {
+    if (!hasMountedRef.current) {
+      hasMountedRef.current = true
+      setDisplayLocation(location)
+      return
+    }
     if (location.pathname !== displayLocation.pathname) {
+      // Skip blackout transition when the change is the initial root → /:lang redirect
+      // (no real navigation — just resolving the default language).
+      if (displayLocation.pathname === '/') {
+        setDisplayLocation(location)
+        return
+      }
+
+      if (!transitionIntentRef.current) {
+        setDisplayLocation(location)
+        return
+      }
+
+      transitionIntentRef.current = false
       setTransition('covering')
 
       const coverTimer = setTimeout(() => {
@@ -109,6 +130,7 @@ function AnimatedRoutes({ theme, onToggleTheme }) {
   const handleNavigate = (path, section = null) => {
     const lang = urlLang || detectInitialLang()
     const prefixedPath = path === '/' ? `/${lang}` : `/${lang}${path}`
+    transitionIntentRef.current = true
     if (path === '/') {
       setLandingSection(section)
       setLandingExpanded(!!section)
@@ -151,6 +173,7 @@ function AnimatedRoutes({ theme, onToggleTheme }) {
       <div style={{ opacity: isNavVisible ? 1 : 0, pointerEvents: isNavVisible ? 'auto' : 'none', transition: 'opacity 0.3s ease' }}>
         <NavBar
           onNavigate={handleNavigate}
+          onBeforeNavigate={() => { transitionIntentRef.current = true }}
           theme={theme}
           onToggleTheme={onToggleTheme}
         />
