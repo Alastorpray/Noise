@@ -90,6 +90,12 @@
   "post": {
     "previous": "Anterior",
     "next": "Siguiente",
-    "readingTime": "{{min}} min de lectura"
+    "readingTime": "{{min}} min de lectura",
+    "translationMissing": "Este contenido aún no está disponible en {{requested}}. Mostrando la versión en {{actual}}."
+  },
+  "languages": {
+    "en": "inglés",
+    "es": "español",
+    "de": "alemán"
   }
 }

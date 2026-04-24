@@ -2261,6 +2261,18 @@ html, body {
   margin-bottom: 1.25rem;
 }
 
+.blog-post-translation-notice {
+  margin-bottom: 2rem;
+  padding: 0.85rem 1.1rem;
+  border-left: 2px solid var(--accent);
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+  color: var(--text-secondary);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  border-radius: 0 4px 4px 0;
+}
+
 .blog-post-category {
   font-family: var(--font-body);
   color: var(--accent);

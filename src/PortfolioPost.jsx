@@ -5,11 +5,13 @@ import { Footer } from './Footer'
 import { AnimatedWords } from './AnimatedText'
 import { Reveal } from './Reveal'
 import { ShareButtons } from './ShareButtons'
-import { SEO } from './SEO'
+import { SEO, SITE_ORIGIN } from './SEO'
+import { DEFAULT_LANG } from './index'
 import './landing.css'
 
-const PROJECT_QUERY = `*[_type == "project" && slug.current == $slug && language == $lang][0] {
-  title, division, description, tags, date, mediaType,
+const PROJECT_QUERY = `*[_type == "project" && slug.current == $slug]
+  | order((language == $lang) desc, (language == $defaultLang) desc)[0] {
+  title, division, description, tags, date, mediaType, language,
   cover, images, "videoUrl": video.asset->url
 }`
 
@@ -26,17 +28,17 @@ export function PortfolioPost({ slug, onNavigate }) {
 
   // Lightbox state for gallery images
   const [lightboxImg, setLightboxImg] = useState(null)
+  const requestedLang = (i18n.language || DEFAULT_LANG).split('-')[0]
 
   useEffect(() => {
-    const lang = (i18n.language || 'en').split('-')[0]
     setLoading(true)
-    Promise.all([
-      client.fetch(PROJECT_QUERY, { slug, lang }),
-      client.fetch(SIBLINGS_QUERY, { lang }),
-    ])
-      .then(([data, list]) => {
+    client.fetch(PROJECT_QUERY, { slug, lang: requestedLang, defaultLang: DEFAULT_LANG })
+      .then(data => {
         if (!data) throw new Error('Project not found')
         setProject(data)
+        return client.fetch(SIBLINGS_QUERY, { lang: data.language })
+      })
+      .then(list => {
         setSiblings(list || [])
         setLoading(false)
       })
@@ -45,7 +47,9 @@ export function PortfolioPost({ slug, onNavigate }) {
         setError(e.message)
         setLoading(false)
       })
-  }, [slug, i18n.language])
+  }, [slug, requestedLang])
+
+  const isFallbackLang = project && project.language !== requestedLang
 
   const currentIdx = siblings.findIndex(p => p.slug === slug)
   const prev = currentIdx > 0 ? siblings[currentIdx - 1] : null
@@ -58,7 +62,7 @@ export function PortfolioPost({ slug, onNavigate }) {
     return () => window.removeEventListener('keydown', onKey)
   }, [])
 
-  const projectImage = project?.cover ? urlFor(project.cover).width(1200).height(630).fit('crop').auto('format').url() : undefined
+  const projectImage = project ? `${SITE_ORIGIN}/og/project/${slug}?lang=${project.language}` : undefined
 
   return (
     <div className="page-content expanded">
@@ -67,6 +71,7 @@ export function PortfolioPost({ slug, onNavigate }) {
           title={project.title}
           description={project.description || undefined}
           image={projectImage}
+          url={isFallbackLang ? `${SITE_ORIGIN}/${project.language}/portfolio/${slug}` : undefined}
           type="article"
           publishedTime={project.date}
         />
@@ -101,7 +106,15 @@ export function PortfolioPost({ slug, onNavigate }) {
             )}
 
             {!loading && project && (
-              <article key={slug}>
+              <article key={slug} lang={project.language}>
+                {isFallbackLang && (
+                  <div className="blog-post-translation-notice" role="status">
+                    {t('post.translationMissing', {
+                      requested: t(`languages.${requestedLang}`, requestedLang),
+                      actual: t(`languages.${project.language}`, project.language),
+                    })}
+                  </div>
+                )}
                 <header className="blog-post-header" style={{ marginBottom: '2rem' }}>
                   <Reveal as="div" className="blog-post-categories" delay={0.05}>
                     <span className="blog-post-category">
