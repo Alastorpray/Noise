@@ -4,6 +4,15 @@ const PROJECT_ID = '2lf16gxk'
 const DATASET = 'production'
 const API_VERSION = 'v2025-04-02'
 
+const INTER_400_URL = 'https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-400-normal.ttf'
+const INTER_700_URL = 'https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-700-normal.ttf'
+
+async function loadFont(url) {
+  const res = await fetch(url, { cf: { cacheTtl: 2592000, cacheEverything: true } })
+  if (!res.ok) throw new Error(`Failed to load font: ${url}`)
+  return await res.arrayBuffer()
+}
+
 export async function onRequestGet({ params, request }) {
   const type = params.type
   const slug = params.slug
@@ -38,15 +47,20 @@ export async function onRequestGet({ params, request }) {
   const title = result?.title || 'Coresearch'
   const category = (result?.category || (type === 'post' ? 'Blog' : 'Portfolio')).toUpperCase()
 
+  const [inter400, inter700] = await Promise.all([
+    loadFont(INTER_400_URL),
+    loadFont(INTER_700_URL),
+  ])
+
   const html = `
-    <div style="width:1200px;height:630px;display:flex;flex-direction:column;justify-content:space-between;padding:80px;background-color:#0a0a0a;color:#E8E8E8;">
-      <div style="display:flex;width:100%;font-size:28px;color:#ff6600;letter-spacing:6px;">
+    <div style="width:1200px;height:630px;display:flex;flex-direction:column;justify-content:space-between;padding:80px;background-color:#0a0a0a;color:#E8E8E8;font-family:Inter;">
+      <div style="display:flex;width:100%;font-size:28px;font-weight:700;color:#ff6600;letter-spacing:6px;">
         ${escapeHtml(category)}
       </div>
-      <div style="display:flex;width:100%;font-size:76px;font-weight:700;line-height:1.15;">
+      <div style="display:flex;width:100%;font-size:76px;font-weight:700;line-height:1.15;letter-spacing:-2px;">
         ${escapeHtml(title)}
       </div>
-      <div style="display:flex;width:100%;font-size:26px;color:#888888;">
+      <div style="display:flex;width:100%;font-size:26px;font-weight:400;color:#888888;">
         coresearch.studio
       </div>
     </div>
@@ -55,6 +69,10 @@ export async function onRequestGet({ params, request }) {
   return new ImageResponse(html, {
     width: 1200,
     height: 630,
+    fonts: [
+      { name: 'Inter', data: inter400, weight: 400, style: 'normal' },
+      { name: 'Inter', data: inter700, weight: 700, style: 'normal' },
+    ],
     headers: {
       'Cache-Control': 'public, max-age=3600, s-maxage=86400',
     },
