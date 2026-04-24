@@ -40,6 +40,10 @@ export function LandingPage({ initialExpanded = false, initialSection = null, th
   const rgbShiftX = useRef(0)
   const rgbShiftY = useRef(0)
   const glitchSkew = useRef(0)
+  // Refs por letra (para vibración independiente al mantener el hover)
+  const letterRefs = useRef([])
+  const LOGO_MAIN_TEXT = 'CORE'
+  const LOGO_SUB_TEXT = 'Research'
   const audioInitialized = useRef(false)
   const audioUnlocked = useRef(false)
   const [audioEnabled, setAudioEnabled] = useState(false)
@@ -359,32 +363,42 @@ export function LandingPage({ initialExpanded = false, initialSection = null, th
         })
 
         // === AUDIO-DRIVEN RANDOM DISPLACEMENT ===
-        // Bass hits → saltos grandes horizontales, dirección random. CORE y Research se desgarran en direcciones opuestas.
+        // Bass hits → saltos random en X e Y (dirección independiente cada eje). CORE y Research en direcciones opuestas.
         if (isBassHit) {
-          const sign = Math.random() < 0.5 ? -1 : 1
-          const magnitude = 14 * Math.min(data.bass * 1.3, 1)
-          glitchOffsetX.current = sign * magnitude
-          glitchSubOffsetX.current = -sign * magnitude
+          const signX = Math.random() < 0.5 ? -1 : 1
+          const signY = Math.random() < 0.5 ? -1 : 1
+          const magX = 14 * Math.min(data.bass * 1.3, 1)
+          const magY = 10 * Math.min(data.bass * 1.3, 1)
+          glitchOffsetX.current = signX * magX
+          glitchOffsetY.current = signY * magY
+          glitchSubOffsetX.current = -signX * magX
+          glitchSubOffsetY.current = -signY * magY
         }
-        // Decay horizontal entre hits (el "settle" tras el golpe)
+        // Decay entre hits
         glitchOffsetX.current *= 0.78
         glitchSubOffsetX.current *= 0.78
+        glitchOffsetY.current *= 0.72
+        glitchSubOffsetY.current *= 0.72
 
-        // Mids (snares) → impulso diagonal random
+        // Mids (snares) → impulso diagonal random (ángulo aleatorio)
         if (isMidHit) {
           const angle = Math.random() * Math.PI * 2
-          glitchOffsetX.current += Math.cos(angle) * 7 * data.mid
-          glitchOffsetY.current += Math.sin(angle) * 5 * data.mid
-          glitchSubOffsetX.current -= Math.cos(angle) * 7 * data.mid
-          glitchSubOffsetY.current -= Math.sin(angle) * 5 * data.mid
+          glitchOffsetX.current += Math.cos(angle) * 8 * data.mid
+          glitchOffsetY.current += Math.sin(angle) * 8 * data.mid
+          glitchSubOffsetX.current -= Math.cos(angle) * 8 * data.mid
+          glitchSubOffsetY.current -= Math.sin(angle) * 8 * data.mid
         }
 
-        // Treble (hi-hats, platillos) → jitter vertical fino cada frame
-        const trebleAmt = 5 * data.treble
-        const trebleJitter = (Math.random() - 0.5) * trebleAmt
-        const trebleJitterSub = (Math.random() - 0.5) * trebleAmt
-        glitchOffsetY.current = glitchOffsetY.current * 0.5 + trebleJitter
-        glitchSubOffsetY.current = glitchSubOffsetY.current * 0.5 + trebleJitterSub
+        // Treble (hi-hats, platillos) → jitter fino en ambos ejes
+        const trebleAmt = 8 * data.treble
+        const trebleJitterYMain = (Math.random() - 0.5) * trebleAmt
+        const trebleJitterYSub = (Math.random() - 0.5) * trebleAmt
+        const trebleJitterXMain = (Math.random() - 0.5) * trebleAmt * 0.5
+        const trebleJitterXSub = (Math.random() - 0.5) * trebleAmt * 0.5
+        glitchOffsetY.current += trebleJitterYMain
+        glitchSubOffsetY.current += trebleJitterYSub
+        glitchOffsetX.current += trebleJitterXMain
+        glitchSubOffsetX.current += trebleJitterXSub
 
         // Chromatic aberration: bass → X, treble → Y
         rgbShiftX.current = data.bass * 5 + (Math.random() - 0.5) * 1.5 * data.mid
@@ -403,6 +417,25 @@ export function LandingPage({ initialExpanded = false, initialSection = null, th
           el.style.setProperty('--rgb-shift-x', `${rgbShiftX.current.toFixed(2)}px`)
           el.style.setProperty('--rgb-shift-y', `${rgbShiftY.current.toFixed(2)}px`)
           el.style.setProperty('--glitch-skew', `${glitchSkew.current.toFixed(2)}deg`)
+        }
+
+        // === VIBRACIÓN INDEPENDIENTE POR LETRA ===
+        // Crece con hover duration (0→1 en 5s). Cada letra usa una fase única por índice
+        // para que no vibren sincronizadas. Mezcla oscilación sinusoidal suave + jitter random.
+        const now = performance.now() * 0.001
+        const hoverProgress = Math.min((Date.now() - hoverStartTime.current) / 15000, 1)
+        const letterEnergy = Math.max(data.bass * 0.5, data.mid * 0.7, data.treble * 0.9)
+        const perLetterMax = 12 * hoverProgress * letterEnergy
+        for (let i = 0; i < letterRefs.current.length; i++) {
+          const letterEl = letterRefs.current[i]
+          if (!letterEl) continue
+          const phase = i * 1.37
+          const x = Math.sin(now * 11 + phase) * perLetterMax
+                  + (Math.random() - 0.5) * perLetterMax * 0.6
+          const y = Math.cos(now * 13 + phase * 1.3) * perLetterMax
+                  + (Math.random() - 0.5) * perLetterMax * 0.6
+          letterEl.style.setProperty('--char-x', `${x.toFixed(2)}px`)
+          letterEl.style.setProperty('--char-y', `${y.toFixed(2)}px`)
         }
 
         // Calcular duración del hover (0-1, max 5 segundos)
@@ -442,6 +475,16 @@ export function LandingPage({ initialExpanded = false, initialSection = null, th
           el.style.setProperty('--rgb-shift-x', `${rgbShiftX.current.toFixed(2)}px`)
           el.style.setProperty('--rgb-shift-y', `${rgbShiftY.current.toFixed(2)}px`)
           el.style.setProperty('--glitch-skew', `${glitchSkew.current.toFixed(2)}deg`)
+        }
+
+        // Decay per-letter offsets también
+        for (let i = 0; i < letterRefs.current.length; i++) {
+          const letterEl = letterRefs.current[i]
+          if (!letterEl) continue
+          const cx = parseFloat(letterEl.style.getPropertyValue('--char-x')) || 0
+          const cy = parseFloat(letterEl.style.getPropertyValue('--char-y')) || 0
+          letterEl.style.setProperty('--char-x', `${(cx * 0.85).toFixed(2)}px`)
+          letterEl.style.setProperty('--char-y', `${(cy * 0.85).toFixed(2)}px`)
         }
 
         setGlitchIntensity(prev => {
@@ -557,17 +600,33 @@ export function LandingPage({ initialExpanded = false, initialSection = null, th
           >
             <div
               className="logo-main"
-              data-text="CORE"
+              data-text={LOGO_MAIN_TEXT}
               style={{ color: isHovering ? '#ff6600' : '#FFFFFF' }}
             >
-              CORE
+              {Array.from(LOGO_MAIN_TEXT).map((ch, i) => (
+                <span
+                  key={`main-${i}`}
+                  className="glitch-char"
+                  ref={el => { letterRefs.current[i] = el }}
+                >
+                  {ch}
+                </span>
+              ))}
             </div>
             <div
               className="logo-sub"
-              data-text="Research"
+              data-text={LOGO_SUB_TEXT}
               style={{ color: isHovering ? '#E8E8E8' : '#999999' }}
             >
-              Research
+              {Array.from(LOGO_SUB_TEXT).map((ch, i) => (
+                <span
+                  key={`sub-${i}`}
+                  className="glitch-char"
+                  ref={el => { letterRefs.current[LOGO_MAIN_TEXT.length + i] = el }}
+                >
+                  {ch}
+                </span>
+              ))}
             </div>
           </div>
         </div>
@@ -577,7 +636,7 @@ export function LandingPage({ initialExpanded = false, initialSection = null, th
       {(isExpanded || isClosing) && (
         <div className={`page-content ${isClosing ? 'collapsed' : 'expanded'} theme-${theme}`}>
           {/* Hero Section */}
-          <section className="hero">
+          <section className="hero" id="top">
             <div className="hero-content">
               <AnimatedWords
                 as="h1"

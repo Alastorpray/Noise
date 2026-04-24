@@ -64,7 +64,9 @@ export function NavBar({ onNavigate, theme, onToggleTheme }) {
     e.preventDefault()
     setIsMobileMenuOpen(false)
     if (route !== '/') {
-      onNavigate('/')
+      onNavigate('/', 'top')
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
     }
   }
 

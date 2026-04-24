@@ -249,6 +249,12 @@
   transform: none;
 }
 
+.glitch-char {
+  display: inline-block;
+  transform: translate(var(--char-x, 0), var(--char-y, 0));
+  will-change: transform;
+}
+
 .logo-text .logo-main::before,
 .logo-text .logo-main::after,
 .logo-text .logo-sub::before,

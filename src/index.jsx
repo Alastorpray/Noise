@@ -68,10 +68,12 @@ function AnimatedRoutes({ theme, onToggleTheme }) {
 
   const [displayLocation, setDisplayLocation] = useState(location)
   const [transition, setTransition] = useState(null) // null | 'covering' | 'revealing'
+  const hasMountedRef = useRef(false)
 
   // Custom navigation state for landing page sections
   const [landingSection, setLandingSection] = useState(null)
-  const isHomePath = urlLang && pathParts.length === 1
+  // Home = "/" (pre-redirect) o "/:lang" (post-redirect). Ambos muestran partículas.
+  const isHomePath = pathParts.length === 0 || (urlLang && pathParts.length === 1)
   const [landingExpanded, setLandingExpanded] = useState(!isHomePath)
 
   // We ALWAYS render the NavBar, but we control its visibility via CSS classes.
@@ -86,6 +88,13 @@ function AnimatedRoutes({ theme, onToggleTheme }) {
 
   useEffect(() => {
     if (location.pathname !== displayLocation.pathname) {
+      // Skip blackout transition when the change is the initial root → /:lang redirect
+      // (no real navigation — just resolving the default language).
+      if (displayLocation.pathname === '/') {
+        setDisplayLocation(location)
+        return
+      }
+
       setTransition('covering')
 
       const coverTimer = setTimeout(() => {
