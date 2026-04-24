@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { SUPPORTED_LANGS } from './index'
 
-export function NavBar({ onNavigate, theme, onToggleTheme }) {
+export function NavBar({ onNavigate, onBeforeNavigate, theme, onToggleTheme }) {
   const { t, i18n } = useTranslation()
   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
@@ -26,6 +26,7 @@ export function NavBar({ onNavigate, theme, onToggleTheme }) {
 
   const changeLanguage = (lng) => {
     const rest = pathWithoutLang === '/' ? '' : pathWithoutLang
+    if (onBeforeNavigate) onBeforeNavigate()
     navigate(`/${lng}${rest}${location.search}`)
     setIsLangMenuOpen(false)
   }
