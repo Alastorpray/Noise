@@ -32,6 +32,14 @@ export function LandingPage({ initialExpanded = false, initialSection = null, th
   const prevMid = useRef(0)
   const beatHold = useRef(0)
   const midBeatHold = useRef(0)
+  // Audio-driven glitch offset refs (mutated in RAF, applied via ref.style — no re-renders)
+  const glitchOffsetX = useRef(0)
+  const glitchOffsetY = useRef(0)
+  const glitchSubOffsetX = useRef(0)
+  const glitchSubOffsetY = useRef(0)
+  const rgbShiftX = useRef(0)
+  const rgbShiftY = useRef(0)
+  const glitchSkew = useRef(0)
   const audioInitialized = useRef(false)
   const audioUnlocked = useRef(false)
   const [audioEnabled, setAudioEnabled] = useState(false)
@@ -350,6 +358,53 @@ export function LandingPage({ initialExpanded = false, initialSection = null, th
           return prev + (target - prev) * smoothing
         })
 
+        // === AUDIO-DRIVEN RANDOM DISPLACEMENT ===
+        // Bass hits → saltos grandes horizontales, dirección random. CORE y Research se desgarran en direcciones opuestas.
+        if (isBassHit) {
+          const sign = Math.random() < 0.5 ? -1 : 1
+          const magnitude = 14 * Math.min(data.bass * 1.3, 1)
+          glitchOffsetX.current = sign * magnitude
+          glitchSubOffsetX.current = -sign * magnitude
+        }
+        // Decay horizontal entre hits (el "settle" tras el golpe)
+        glitchOffsetX.current *= 0.78
+        glitchSubOffsetX.current *= 0.78
+
+        // Mids (snares) → impulso diagonal random
+        if (isMidHit) {
+          const angle = Math.random() * Math.PI * 2
+          glitchOffsetX.current += Math.cos(angle) * 7 * data.mid
+          glitchOffsetY.current += Math.sin(angle) * 5 * data.mid
+          glitchSubOffsetX.current -= Math.cos(angle) * 7 * data.mid
+          glitchSubOffsetY.current -= Math.sin(angle) * 5 * data.mid
+        }
+
+        // Treble (hi-hats, platillos) → jitter vertical fino cada frame
+        const trebleAmt = 5 * data.treble
+        const trebleJitter = (Math.random() - 0.5) * trebleAmt
+        const trebleJitterSub = (Math.random() - 0.5) * trebleAmt
+        glitchOffsetY.current = glitchOffsetY.current * 0.5 + trebleJitter
+        glitchSubOffsetY.current = glitchSubOffsetY.current * 0.5 + trebleJitterSub
+
+        // Chromatic aberration: bass → X, treble → Y
+        rgbShiftX.current = data.bass * 5 + (Math.random() - 0.5) * 1.5 * data.mid
+        rgbShiftY.current = data.treble * 3 + (Math.random() - 0.5) * 1 * data.mid
+
+        // Skew sutil en beats fuertes
+        glitchSkew.current = (Math.random() - 0.5) * 3 * beatComponent
+
+        // Push a DOM directamente (evita re-render de React)
+        if (logoTextRef.current) {
+          const el = logoTextRef.current
+          el.style.setProperty('--glitch-x', `${glitchOffsetX.current.toFixed(2)}px`)
+          el.style.setProperty('--glitch-y', `${glitchOffsetY.current.toFixed(2)}px`)
+          el.style.setProperty('--glitch-sub-x', `${glitchSubOffsetX.current.toFixed(2)}px`)
+          el.style.setProperty('--glitch-sub-y', `${glitchSubOffsetY.current.toFixed(2)}px`)
+          el.style.setProperty('--rgb-shift-x', `${rgbShiftX.current.toFixed(2)}px`)
+          el.style.setProperty('--rgb-shift-y', `${rgbShiftY.current.toFixed(2)}px`)
+          el.style.setProperty('--glitch-skew', `${glitchSkew.current.toFixed(2)}deg`)
+        }
+
         // Calcular duración del hover (0-1, max 5 segundos)
         const duration = Math.min((Date.now() - hoverStartTime.current) / 5000, 1)
         setHoverDuration(duration)
@@ -369,6 +424,26 @@ export function LandingPage({ initialExpanded = false, initialSection = null, th
 
       // Decay suave del glitch cuando se quita el hover
       const decayGlitch = () => {
+        // Decay offsets hacia 0
+        glitchOffsetX.current *= 0.85
+        glitchOffsetY.current *= 0.85
+        glitchSubOffsetX.current *= 0.85
+        glitchSubOffsetY.current *= 0.85
+        rgbShiftX.current *= 0.85
+        rgbShiftY.current *= 0.85
+        glitchSkew.current *= 0.85
+
+        if (logoTextRef.current) {
+          const el = logoTextRef.current
+          el.style.setProperty('--glitch-x', `${glitchOffsetX.current.toFixed(2)}px`)
+          el.style.setProperty('--glitch-y', `${glitchOffsetY.current.toFixed(2)}px`)
+          el.style.setProperty('--glitch-sub-x', `${glitchSubOffsetX.current.toFixed(2)}px`)
+          el.style.setProperty('--glitch-sub-y', `${glitchSubOffsetY.current.toFixed(2)}px`)
+          el.style.setProperty('--rgb-shift-x', `${rgbShiftX.current.toFixed(2)}px`)
+          el.style.setProperty('--rgb-shift-y', `${rgbShiftY.current.toFixed(2)}px`)
+          el.style.setProperty('--glitch-skew', `${glitchSkew.current.toFixed(2)}deg`)
+        }
+
         setGlitchIntensity(prev => {
           const newValue = prev * 0.92
           if (newValue < 0.01) return 0
