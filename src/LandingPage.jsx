@@ -61,14 +61,13 @@ export function LandingPage({ initialExpanded = false, initialSection = null, th
 
   const handleCollapse = useCallback(() => {
     setIsClosing(true)
-    // Resetear el glitch inmediatamente
     setIsHovering(false)
     setGlitchIntensity(0)
+    window.dispatchEvent(new Event('landing-collapsed'))
     setTimeout(() => {
-      window.dispatchEvent(new Event('landing-collapsed'))
       setIsExpanded(false)
       setIsClosing(false)
-    }, 800) // Duración de la animación de colapso
+    }, 800)
   }, [])
 
   const resetTimer = useCallback(() => {
@@ -487,12 +486,14 @@ export function LandingPage({ initialExpanded = false, initialSection = null, th
           letterEl.style.setProperty('--char-y', `${(cy * 0.85).toFixed(2)}px`)
         }
 
+        let nextIntensity = 0
         setGlitchIntensity(prev => {
-          const newValue = prev * 0.92
-          if (newValue < 0.01) return 0
-          audioAnimationFrame.current = requestAnimationFrame(decayGlitch)
-          return newValue
+          nextIntensity = prev * 0.92 < 0.01 ? 0 : prev * 0.92
+          return nextIntensity
         })
+        if (nextIntensity > 0) {
+          audioAnimationFrame.current = requestAnimationFrame(decayGlitch)
+        }
       }
       decayGlitch()
     }
