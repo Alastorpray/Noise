@@ -170,7 +170,7 @@ function AnimatedRoutes({ theme, onToggleTheme }) {
 
   return (
     <div className={`theme-${theme} ${isNavVisible ? 'app-content-visible' : ''}`}>
-      <div style={{ opacity: isNavVisible ? 1 : 0, pointerEvents: isNavVisible ? 'auto' : 'none', transition: 'opacity 0.3s ease' }}>
+      <div style={{ opacity: isNavVisible ? 1 : 0, pointerEvents: isNavVisible ? 'auto' : 'none', transition: 'opacity 0.6s cubic-bezier(0.25, 0.1, 0.25, 1)' }}>
         <NavBar
           onNavigate={handleNavigate}
           onBeforeNavigate={() => { transitionIntentRef.current = true }}
