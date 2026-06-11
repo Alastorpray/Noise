@@ -5,7 +5,7 @@ import { SUPPORTED_LANGS, DEFAULT_LANG } from './index'
 
 const SITE_NAME = 'Coresearch'
 export const SITE_ORIGIN = 'https://coresearch.studio'
-const DEFAULT_DESCRIPTION = 'We transform ideas into innovative digital experiences that connect people, technologies and new possibilities.'
+const DEFAULT_DESCRIPTION = 'Coresearch is an independent research studio. We conduct and evaluate rigorous investigations across an expanding range of fields, archiving every study as a permanent asset.'
 const DEFAULT_IMAGE = `${SITE_ORIGIN}/og-image.png`
 
 export function SEO({
@@ -22,7 +22,7 @@ export function SEO({
   const tail = parts.slice(SUPPORTED_LANGS.includes(parts[0]) ? 1 : 0).join('/')
   const tailWithSlash = tail ? `/${tail}` : ''
 
-  const fullTitle = title ? `${title} — ${SITE_NAME}` : `${SITE_NAME} — Connecting worlds`
+  const fullTitle = title ? `${title} — ${SITE_NAME}` : `${SITE_NAME} — Research without boundaries`
   const desc = description || DEFAULT_DESCRIPTION
   const canonical = url || `${SITE_ORIGIN}/${currentLang}${tailWithSlash}`
   const imageUrl = image || DEFAULT_IMAGE

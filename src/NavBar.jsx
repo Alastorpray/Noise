@@ -44,7 +44,7 @@ export function NavBar({ onNavigate, onBeforeNavigate, theme, onToggleTheme }) {
   const handleNavClick = (e, target) => {
     e.preventDefault()
     setIsMobileMenuOpen(false) // Close menu on navigation
-    if (target === '/portfolio' || target === '/blog') {
+    if (target === '/portfolio' || target === '/blog' || target === '/publications') {
       onNavigate(target)
     } else {
       if (route !== '/') {
@@ -98,6 +98,13 @@ export function NavBar({ onNavigate, onBeforeNavigate, theme, onToggleTheme }) {
             onClick={(e) => handleNavClick(e, 'about')}
           >
             {t('nav.about')}
+          </a>
+          <a
+            href="/publications"
+            className={`nav-link ${route.startsWith('/publications') ? 'nav-link--active' : ''}`}
+            onClick={(e) => handleNavClick(e, '/publications')}
+          >
+            {t('nav.publications', 'Publications')}
           </a>
           <a
             href="/portfolio"

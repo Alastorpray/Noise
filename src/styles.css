@@ -29,19 +29,6 @@ html {
 }
 
 body {
-  background: #181820;
-}
-
-#leva__root,
-.leva-c-dmsJDs {
-  display: none !important;
-}
-
-canvas {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  background: #0E0E11;
 }
 

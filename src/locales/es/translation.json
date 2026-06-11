@@ -1,42 +1,72 @@
 {
   "nav": {
     "about": "Nosotros",
+    "publications": "Publicaciones",
     "portfolio": "Portafolio",
     "blog": "Blog",
     "contact": "Contacto"
   },
-  "hero": {
-    "title": "Conectando mundos",
-    "subtitle": "Transformamos ideas en experiencias digitales innovadoras que conectan personas, tecnologías y nuevas posibilidades."
-  },
   "about": {
-    "title": "Quiénes Somos",
-    "desc1": "Equipo multidisciplinar especializado en investigación aplicada y desarrollo de soluciones digitales. Diseñamos y validamos tecnologías con impacto real en el negocio.",
-    "desc2": "Combinamos prototipado rápido, experimentación controlada y transferencia a producción para acortar el camino de la idea a los resultados."
+    "label": "Quiénes somos",
+    "eyebrow": "Estudio de investigación independiente",
+    "title": "Investigación sin fronteras.",
+    "titleSub": "Explorando las metodologías de hoy. Creando las de mañana.",
+    "desc1": "Coresearch es un estudio de investigación e innovación enfocado en el desarrollo de nuevas metodologías, tecnologías y soluciones para los desafíos del presente y del futuro.",
+    "desc2": "Investigamos, experimentamos y creamos conocimiento aplicable en múltiples disciplinas, con una visión abierta a la exploración constante y a la generación de nuevas formas de pensar, diseñar y construir.",
+    "desc3": "Cada estudio completado se verifica y se archiva como un activo permanente.",
+    "metaFields": "Campos",
+    "metaFieldsValue": "Multidisciplinar",
+    "metaMethod": "Método",
+    "metaMethodValue": "Revisión por pares",
+    "metaArchive": "Archivo",
+    "metaArchiveValue": "Publicaciones abiertas"
   },
-  "divisions": {
-    "title": "Divisiones",
+  "fields": {
+    "label": "Campos de investigación",
+    "title": "Líneas de investigación actuales",
+    "intro": "Áreas donde hoy investigamos y desarrollamos con medios propios. El alcance se amplía a medida que crecen nuestras capacidades.",
     "educational": {
-      "title": "Educación",
-      "desc": "Formación y consultoría en desarrollo 3D y experiencias XR.",
+      "title": "Investigación educativa",
+      "desc": "Métodos de aprendizaje, planes de estudio y formación sobre tecnología 3D y XR.",
       "sessions": { "title": "Sesiones", "text": "Planes de estudio adaptados para equipos y universidades." },
       "advisory": { "title": "Consultoría XR", "text": "Revisiones de diseño, modelos de interacción y prototipado." },
       "partnerships": { "title": "Alianzas", "text": "Colaboraciones académicas e industriales." }
     },
     "print3d": {
-      "title": "Desarrollo Impresión 3D",
-      "desc": "Desarrollo para fabricación aditiva, prototipado y flujos de trabajo 3D.",
+      "title": "Fabricación aditiva",
+      "desc": "Investigación aplicada en impresión 3D: materiales, prototipado y flujos de producción.",
       "prototypes": { "title": "Prototipos", "text": "Iteraciones funcionales y piezas a medida." },
       "materials": { "title": "Materiales", "text": "Flujos de trabajo con PLA, PETG, ABS, resinas y compuestos." },
       "integration": { "title": "Integración", "text": "Impresoras, slicers y pipelines de control de calidad." }
     },
     "xr": {
-      "title": "Desarrollo XR",
-      "desc": "Simuladores y aplicaciones XR con Unity y Meta Quest 2/3.",
+      "title": "Realidad extendida",
+      "desc": "Simuladores y aplicaciones XR experimentales con Unity y visores autónomos.",
       "simulators": { "title": "Simuladores", "text": "Entrenamiento de tareas y entornos procedimentales." },
       "interaction": { "title": "Interacción", "text": "Seguimiento de manos, controladores y lógica multiusuario." },
       "optimization": { "title": "Optimización", "text": "Perfilado de rendimiento para visores VR autónomos." }
+    },
+    "expanding": {
+      "title": "Alcance en expansión",
+      "desc": "De la arqueología a la ciencia espacial — el alcance crece con cada investigación, siempre bajo los mismos estándares de método y revisión."
     }
+  },
+  "method": {
+    "label": "Método",
+    "title": "Cómo una pregunta se convierte en un activo",
+    "step1": { "title": "Delimitación", "text": "Todo estudio nace de una pregunta precisa. Definimos objetivos, hipótesis y los criterios que debe cumplir un resultado." },
+    "step2": { "title": "Investigación", "text": "Trabajo sistemático con la metodología que cada campo exige: experimentación, trabajo de campo, análisis de datos y fuentes documentadas." },
+    "step3": { "title": "Revisión por pares", "text": "Los hallazgos se validan según nuestros estándares: fuentes, métodos, reproducibilidad. Nada se acepta sin verificar." },
+    "step4": { "title": "Publicación", "text": "El estudio validado entra al archivo como activo permanente — citable, reutilizable y base para nuevas investigaciones." }
+  },
+  "publications": {
+    "eyebrow": "Archivo",
+    "heroTitle": "Publicaciones.",
+    "heroSubtitle": "Reportes, papers y estudios — el registro permanente de las investigaciones de Coresearch.",
+    "empty": "El archivo está en preparación. Primeras publicaciones próximamente.",
+    "download": "PDF",
+    "doi": "DOI",
+    "viewIndex": "Explorar el archivo de publicaciones"
   },
   "portfolio": {
     "title": "Nuestro Trabajo",
@@ -55,28 +85,28 @@
     "title": "Nuestro Blog",
     "eyebrow": "Blog",
     "heroTitle": "Ideas.",
-    "heroSubtitle": "Notas, experimentos y análisis en profundidad sobre tecnología creativa, shaders y gráficos en tiempo real.",
+    "heroSubtitle": "Notas, experimentos y análisis en profundidad de la investigación en curso y la tecnología creativa.",
     "empty": "No hay publicaciones disponibles en este momento.",
     "back": "Volver al Blog"
   },
   "contact": {
     "title": "Contáctanos",
-    "desc": "¿Tienes un proyecto en mente? Nos encantaría escucharte.",
+    "desc": "Una pregunta de investigación, un encargo o experiencia que ofrecer — queremos escucharla.",
     "email": "Escríbenos",
     "location": "Trabajando globalmente.",
-    "e2e": "E2E delivery",
-    "speed": "Startup Speed",
+    "e2e": "Revisión por pares",
+    "speed": "Alcance multidisciplinar",
     "form": {
       "name": "Nombre",
       "email": "Email",
-      "company": "Empresa (opcional)",
+      "company": "Organización (opcional)",
       "message": "Mensaje",
       "send": "Enviar",
       "sending": "Enviando…",
       "success": "Gracias, te contactaremos pronto.",
       "successTitle": "Mensaje enviado",
       "sendAnother": "Enviar otro mensaje",
-      "error": "Algo salio mal. Intentalo de nuevo."
+      "error": "Algo salió mal. Inténtalo de nuevo."
     }
   },
   "footer": {

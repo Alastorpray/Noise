@@ -1,42 +1,72 @@
 {
   "nav": {
     "about": "About",
+    "publications": "Publications",
     "portfolio": "Portfolio",
     "blog": "Blog",
     "contact": "Contact"
   },
-  "hero": {
-    "title": "Connecting worlds",
-    "subtitle": "We transform ideas into innovative digital experiences that connect people, technologies and new possibilities."
-  },
   "about": {
-    "title": "Who We Are",
-    "desc1": "Multidisciplinary team specialized in applied research and digital solution development. We design and validate technologies with real business impact.",
-    "desc2": "We combine rapid prototyping, controlled experimentation and transfer to production to shorten the path from idea to results."
+    "label": "Who we are",
+    "eyebrow": "Independent research studio",
+    "title": "Research without boundaries.",
+    "titleSub": "Exploring today's methodologies. Creating tomorrow's.",
+    "desc1": "Coresearch is a research and innovation studio focused on developing new methodologies, technologies and solutions for the challenges of the present and the future.",
+    "desc2": "We investigate, experiment and create applicable knowledge across multiple disciplines, with a vision open to constant exploration and to generating new ways of thinking, designing and building.",
+    "desc3": "Every completed study is verified and archived as a permanent asset.",
+    "metaFields": "Fields",
+    "metaFieldsValue": "Multidisciplinary",
+    "metaMethod": "Method",
+    "metaMethodValue": "Peer-reviewed",
+    "metaArchive": "Archive",
+    "metaArchiveValue": "Open publications"
   },
-  "divisions": {
-    "title": "Divisions",
+  "fields": {
+    "label": "Research fields",
+    "title": "Current lines of inquiry",
+    "intro": "Areas where we research and build in-house today. The scope expands as our capabilities grow.",
     "educational": {
-      "title": "Educational",
-      "desc": "Training and advisory in 3D development and XR experiences.",
+      "title": "Educational research",
+      "desc": "Learning methods, curricula and training built on 3D and XR technology.",
       "sessions": { "title": "Sessions", "text": "Curricula tailored for teams and universities." },
-      "advisory": { "title": "XR Advisory", "text": "Design reviews, interaction models and prototyping." },
+      "advisory": { "title": "XR advisory", "text": "Design reviews, interaction models and prototyping." },
       "partnerships": { "title": "Partnerships", "text": "Academic and industry collaborations." }
     },
     "print3d": {
-      "title": "3D print development",
-      "desc": "Development for additive manufacturing, prototyping and 3D print workflows.",
-      "prototypes": { "title": "Prototypes", "text": "Functional iterations and fit‑for‑purpose parts." },
+      "title": "Additive manufacturing",
+      "desc": "Applied research in 3D printing: materials, prototyping and production workflows.",
+      "prototypes": { "title": "Prototypes", "text": "Functional iterations and fit-for-purpose parts." },
       "materials": { "title": "Materials", "text": "PLA, PETG, ABS, resins and composites workflows." },
       "integration": { "title": "Integration", "text": "Printers, slicers and QC pipelines." }
     },
     "xr": {
-      "title": "XR development",
-      "desc": "XR simulators and applications with Unity and Meta Quest 2/3.",
+      "title": "Extended reality",
+      "desc": "Simulators and experimental XR applications with Unity and standalone headsets.",
       "simulators": { "title": "Simulators", "text": "Task training and procedural environments." },
       "interaction": { "title": "Interaction", "text": "Hand tracking, controllers and multi-user logic." },
       "optimization": { "title": "Optimization", "text": "Performance profiling for standalone VR headsets." }
+    },
+    "expanding": {
+      "title": "Expanding scope",
+      "desc": "From archaeology to space science — the scope grows with every inquiry, always under the same standards of method and review."
     }
+  },
+  "method": {
+    "label": "Method",
+    "title": "How an inquiry becomes an asset",
+    "step1": { "title": "Scoping", "text": "Every study begins with a precise question. We define objectives, hypotheses and the criteria a result must meet." },
+    "step2": { "title": "Investigation", "text": "Systematic work with the methodology each field demands: experimentation, fieldwork, data analysis and documented sources." },
+    "step3": { "title": "Peer review", "text": "Findings are validated against our standards: sources, methods, reproducibility. Nothing is accepted unverified." },
+    "step4": { "title": "Publication", "text": "The validated study enters the archive as a permanent asset — citable, reusable and the basis for further research." }
+  },
+  "publications": {
+    "eyebrow": "Archive",
+    "heroTitle": "Publications.",
+    "heroSubtitle": "Reports, papers and studies — the permanent record of Coresearch investigations.",
+    "empty": "The archive is being prepared. First publications coming soon.",
+    "download": "PDF",
+    "doi": "DOI",
+    "viewIndex": "Browse the publications archive"
   },
   "portfolio": {
     "title": "Our Work",
@@ -55,21 +85,21 @@
     "title": "Our Blog",
     "eyebrow": "Blog",
     "heroTitle": "Insights.",
-    "heroSubtitle": "Notes, experiments and deep-dives on creative technology, shaders and real-time graphics.",
+    "heroSubtitle": "Notes, experiments and deep-dives from ongoing research and creative technology.",
     "empty": "No posts available at the moment.",
     "back": "Back to Blog"
   },
   "contact": {
     "title": "Get in Touch",
-    "desc": "Have a project in mind? We'd love to hear from you.",
+    "desc": "A research question, a commission, or expertise to offer — we'd like to hear it.",
     "email": "Email us",
     "location": "Working globally.",
-    "e2e": "E2E delivery",
-    "speed": "Startup Speed",
+    "e2e": "Peer-reviewed studies",
+    "speed": "Cross-disciplinary scope",
     "form": {
       "name": "Name",
       "email": "Email",
-      "company": "Company (optional)",
+      "company": "Organisation (optional)",
       "message": "Message",
       "send": "Send",
       "sending": "Sending…",
