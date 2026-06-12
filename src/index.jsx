@@ -59,12 +59,14 @@ function AnimatedRoutes({ theme, onToggleTheme }) {
   const displayLang = SUPPORTED_LANGS.includes(displayParts[0]) ? displayParts[0] : null
   const isHomeDisplayed = displayParts.length === 0 || (displayLang && displayParts.length === 1)
 
-  // Sync i18n with the URL language
+  // Sync i18n with the DISPLAYED location's language (not the URL's).
+  // displayLocation only updates mid-blackout, so the text swaps while the
+  // screen is covered: fade out → switch language → fade in already translated.
   useEffect(() => {
-    if (urlLang && i18n.language !== urlLang) {
-      i18n.changeLanguage(urlLang)
+    if (displayLang && i18n.language !== displayLang) {
+      i18n.changeLanguage(displayLang)
     }
-  }, [urlLang])
+  }, [displayLang])
 
   useEffect(() => {
     if (!hasMountedRef.current) {

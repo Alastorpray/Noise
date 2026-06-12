@@ -22,7 +22,7 @@ export function SEO({
   const tail = parts.slice(SUPPORTED_LANGS.includes(parts[0]) ? 1 : 0).join('/')
   const tailWithSlash = tail ? `/${tail}` : ''
 
-  const fullTitle = title ? `${title} — ${SITE_NAME}` : `${SITE_NAME} — Research without boundaries`
+  const fullTitle = title ? `${title} — ${SITE_NAME}` : `${SITE_NAME} — Connecting worlds`
   const desc = description || DEFAULT_DESCRIPTION
   const canonical = url || `${SITE_ORIGIN}/${currentLang}${tailWithSlash}`
   const imageUrl = image || DEFAULT_IMAGE

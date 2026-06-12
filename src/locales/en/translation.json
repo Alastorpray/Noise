@@ -8,56 +8,68 @@
   },
   "about": {
     "label": "Who we are",
-    "eyebrow": "Independent research studio",
-    "title": "Research without boundaries.",
+    "title": "Connecting worlds",
     "titleSub": "Exploring today's methodologies. Creating tomorrow's.",
     "desc1": "Coresearch is a research and innovation studio focused on developing new methodologies, technologies and solutions for the challenges of the present and the future.",
     "desc2": "We investigate, experiment and create applicable knowledge across multiple disciplines, with a vision open to constant exploration and to generating new ways of thinking, designing and building.",
-    "desc3": "Every completed study is verified and archived as a permanent asset.",
-    "metaFields": "Fields",
-    "metaFieldsValue": "Multidisciplinary",
-    "metaMethod": "Method",
-    "metaMethodValue": "Peer-reviewed",
-    "metaArchive": "Archive",
-    "metaArchiveValue": "Open publications"
+    "desc3": "Every completed study is verified and archived as a permanent asset."
   },
   "fields": {
     "label": "Research fields",
-    "title": "Current lines of inquiry",
+    "title": "Current areas of research",
     "intro": "Areas where we research and build in-house today. The scope expands as our capabilities grow.",
     "educational": {
       "title": "Educational research",
       "desc": "Learning methods, curricula and training built on 3D and XR technology.",
-      "sessions": { "title": "Sessions", "text": "Curricula tailored for teams and universities." },
-      "advisory": { "title": "XR advisory", "text": "Design reviews, interaction models and prototyping." },
-      "partnerships": { "title": "Partnerships", "text": "Academic and industry collaborations." }
+      "sessions": {
+        "title": "Sessions",
+        "text": "Curricula tailored for teams and universities."
+      },
+      "advisory": {
+        "title": "XR advisory",
+        "text": "Design reviews, interaction models and prototyping."
+      },
+      "partnerships": {
+        "title": "Partnerships",
+        "text": "Academic and industry collaborations."
+      }
     },
     "print3d": {
       "title": "Additive manufacturing",
       "desc": "Applied research in 3D printing: materials, prototyping and production workflows.",
-      "prototypes": { "title": "Prototypes", "text": "Functional iterations and fit-for-purpose parts." },
-      "materials": { "title": "Materials", "text": "PLA, PETG, ABS, resins and composites workflows." },
-      "integration": { "title": "Integration", "text": "Printers, slicers and QC pipelines." }
+      "prototypes": {
+        "title": "Prototypes",
+        "text": "Functional iterations and fit-for-purpose parts."
+      },
+      "materials": {
+        "title": "Materials",
+        "text": "PLA, PETG, ABS, resins and composites workflows."
+      },
+      "integration": {
+        "title": "Integration",
+        "text": "Printers, slicers and QC pipelines."
+      }
     },
     "xr": {
       "title": "Extended reality",
       "desc": "Simulators and experimental XR applications with Unity and standalone headsets.",
-      "simulators": { "title": "Simulators", "text": "Task training and procedural environments." },
-      "interaction": { "title": "Interaction", "text": "Hand tracking, controllers and multi-user logic." },
-      "optimization": { "title": "Optimization", "text": "Performance profiling for standalone VR headsets." }
+      "simulators": {
+        "title": "Simulators",
+        "text": "Task training and procedural environments."
+      },
+      "interaction": {
+        "title": "Interaction",
+        "text": "Hand tracking, controllers and multi-user logic."
+      },
+      "optimization": {
+        "title": "Optimization",
+        "text": "Performance profiling for standalone VR headsets."
+      }
     },
     "expanding": {
       "title": "Expanding scope",
       "desc": "From archaeology to space science — the scope grows with every inquiry, always under the same standards of method and review."
     }
-  },
-  "method": {
-    "label": "Method",
-    "title": "How an inquiry becomes an asset",
-    "step1": { "title": "Scoping", "text": "Every study begins with a precise question. We define objectives, hypotheses and the criteria a result must meet." },
-    "step2": { "title": "Investigation", "text": "Systematic work with the methodology each field demands: experimentation, fieldwork, data analysis and documented sources." },
-    "step3": { "title": "Peer review", "text": "Findings are validated against our standards: sources, methods, reproducibility. Nothing is accepted unverified." },
-    "step4": { "title": "Publication", "text": "The validated study enters the archive as a permanent asset — citable, reusable and the basis for further research." }
   },
   "publications": {
     "eyebrow": "Archive",

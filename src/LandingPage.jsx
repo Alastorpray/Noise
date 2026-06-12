@@ -1,21 +1,52 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import emailjs from '@emailjs/browser'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import './landing.css'
 
 import { Footer } from './Footer'
-import { AnimatedWords } from './AnimatedText'
 import { Reveal } from './Reveal'
 import { SEO } from './SEO'
+
+const FieldIcon = ({ children }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    {children}
+  </svg>
+)
+
+const ICONS = {
+  educational: (
+    <FieldIcon>
+      <path d="M12 5.5C10.1 4.1 7.6 3.5 4.5 3.5v14c3.1 0 5.6.6 7.5 2 1.9-1.4 4.4-2 7.5-2v-14c-3.1 0-5.6.6-7.5 2z" />
+      <path d="M12 5.5v14" />
+    </FieldIcon>
+  ),
+  print3d: (
+    <FieldIcon>
+      <path d="M12 3.5l8 4-8 4-8-4 8-4z" />
+      <path d="M4 12.5l8 4 8-4" />
+      <path d="M4 16.5l8 4 8-4" />
+    </FieldIcon>
+  ),
+  xr: (
+    <FieldIcon>
+      <path d="M3 9.5c0-1.1.9-2 2-2h14c1.1 0 2 .9 2 2v4c0 1.1-.9 2-2 2h-3.2c-.6 0-1.18-.27-1.57-.73l-.93-1.1c-.68-.8-1.92-.8-2.6 0l-.93 1.1c-.39.46-.97.73-1.57.73H5c-1.1 0-2-.9-2-2v-4z" />
+      <path d="M7.5 10.75h.01M16.5 10.75h.01" />
+    </FieldIcon>
+  ),
+  expanding: (
+    <FieldIcon>
+      <circle cx="12" cy="12" r="8.5" />
+      <path d="M14.9 9.1l-1.7 4.1-4.1 1.7 1.7-4.1 4.1-1.7z" />
+    </FieldIcon>
+  ),
+}
 
 const FIELDS = [
   { key: 'educational', items: ['sessions', 'advisory', 'partnerships'] },
   { key: 'print3d', items: ['prototypes', 'materials', 'integration'] },
   { key: 'xr', items: ['simulators', 'interaction', 'optimization'] },
 ]
-
-const METHOD_STEPS = ['step1', 'step2', 'step3', 'step4']
 
 const headerItem = {
   hidden: { opacity: 0, y: 12 },
@@ -44,12 +75,47 @@ function SectionHeader({ index, label }) {
   )
 }
 
+const BRAND = 'CORESEARCH'
+// Glyph pool for the decode effect — data/archive characters
+const SCRAMBLE_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789§Δ░▒█<>/'
+
 export function LandingPage({ initialSection = null, theme = 'dark' }) {
   const { t } = useTranslation()
   const reduceMotion = useReducedMotion()
   const [form, setForm] = useState({ nombre: '', email: '', empresa: '', mensaje: '' })
   const [formStatus, setFormStatus] = useState('idle')
-  const [expandedField, setExpandedField] = useState(null)
+  const [expandedFields, setExpandedFields] = useState([])
+  const [brandText, setBrandText] = useState(BRAND)
+  const brandFrame = useRef(null)
+  const brandAnimating = useRef(false)
+
+  // Decode/scramble: letters cycle through data glyphs and resolve left → right
+  const handleBrandHover = () => {
+    if (reduceMotion || brandAnimating.current) return
+    brandAnimating.current = true
+    const duration = 950
+    const start = performance.now()
+    const step = (now) => {
+      const p = Math.min((now - start) / duration, 1)
+      const resolved = Math.floor(p * BRAND.length)
+      let out = ''
+      for (let i = 0; i < BRAND.length; i++) {
+        out += i < resolved
+          ? BRAND[i]
+          : SCRAMBLE_CHARS[(Math.random() * SCRAMBLE_CHARS.length) | 0]
+      }
+      setBrandText(p < 1 ? out : BRAND)
+      if (p < 1) {
+        brandFrame.current = requestAnimationFrame(step)
+      } else {
+        brandAnimating.current = false
+      }
+    }
+    cancelAnimationFrame(brandFrame.current)
+    brandFrame.current = requestAnimationFrame(step)
+  }
+
+  useEffect(() => () => cancelAnimationFrame(brandFrame.current), [])
 
   // Scroll to a section when arriving from another page (e.g. nav "Contact")
   useEffect(() => {
@@ -103,7 +169,9 @@ export function LandingPage({ initialSection = null, theme = 'dark' }) {
   }
 
   const toggleField = (key) => {
-    setExpandedField((prev) => (prev === key ? null : key))
+    setExpandedFields((prev) =>
+      prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]
+    )
   }
 
   const goToPublications = () => {
@@ -118,19 +186,27 @@ export function LandingPage({ initialSection = null, theme = 'dark' }) {
         {/* About — opening statement */}
         <section className="section section--opening" id="about">
           <div className="section-wrapper">
+            <div className="opening-intro">
+              <div className="grid-col">
+                <div
+                  className="about-brand-block"
+                  onMouseEnter={handleBrandHover}
+                  onTouchStart={handleBrandHover}
+                >
+                  <Reveal as="h1" className="about-brand" delay={0.05}>
+                    {brandText}
+                  </Reveal>
+                  <Reveal as="p" className="about-tagline" delay={0.15}>
+                    {t('about.title')}
+                  </Reveal>
+                </div>
+              </div>
+            </div>
+
+            <div className="opening-divider" aria-hidden="true" />
             <SectionHeader index="01" label={t('about.label')} />
             <div className="grid-2 grid-2--loose">
               <div className="grid-col">
-                <Reveal as="span" className="about-eyebrow" delay={0.05}>
-                  Coresearch — {t('about.eyebrow')}
-                </Reveal>
-                <AnimatedWords
-                  as="h1"
-                  className="about-title"
-                  text={t('about.title')}
-                  delay={150}
-                  stagger={70}
-                />
                 <Reveal as="p" className="about-title-sub" delay={0.18}>
                   {t('about.titleSub')}
                 </Reveal>
@@ -147,20 +223,6 @@ export function LandingPage({ initialSection = null, theme = 'dark' }) {
                 </Reveal>
               </div>
             </div>
-            <Reveal className="about-meta" delay={0.3}>
-              <div className="about-meta__item">
-                <span className="about-meta__key">{t('about.metaFields')}</span>
-                <span className="about-meta__value">{t('about.metaFieldsValue')}</span>
-              </div>
-              <div className="about-meta__item">
-                <span className="about-meta__key">{t('about.metaMethod')}</span>
-                <span className="about-meta__value">{t('about.metaMethodValue')}</span>
-              </div>
-              <div className="about-meta__item">
-                <span className="about-meta__key">{t('about.metaArchive')}</span>
-                <span className="about-meta__value">{t('about.metaArchiveValue')}</span>
-              </div>
-            </Reveal>
           </div>
         </section>
 
@@ -181,28 +243,31 @@ export function LandingPage({ initialSection = null, theme = 'dark' }) {
               </div>
             </div>
 
-            <div className="field-index">
+            <div className="field-cards">
               {FIELDS.map(({ key, items }, i) => {
-                const open = expandedField === key
+                const open = expandedFields.includes(key)
                 return (
-                  <motion.div
+                  <motion.article
                     key={key}
-                    className={`field-row ${open ? 'field-row--open' : ''}`}
+                    className={`field-card ${open ? 'field-card--open' : ''}`}
                     initial={reduceMotion ? false : { opacity: 0, y: 32 }}
                     whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
                     viewport={reduceMotion ? undefined : { once: true, amount: 0.2 }}
-                    transition={reduceMotion ? undefined : { type: 'tween', duration: 0.85, ease: [0.22, 1, 0.36, 1], delay: 0.05 + i * 0.07 }}
+                    transition={reduceMotion ? undefined : { type: 'tween', duration: 0.85, ease: [0.22, 1, 0.36, 1], delay: 0.05 + i * 0.09 }}
                   >
                     <button
                       type="button"
-                      className="field-row__head"
+                      className="field-card__head"
                       onClick={() => toggleField(key)}
                       aria-expanded={open}
                     >
-                      <span className="field-row__number">{String(i + 1).padStart(2, '0')}</span>
-                      <span className="field-row__title">{t(`fields.${key}.title`)}</span>
-                      <span className="field-row__desc">{t(`fields.${key}.desc`)}</span>
-                      <span className="field-row__toggle" aria-hidden="true">{open ? '−' : '+'}</span>
+                      <span className="field-card__top">
+                        <span className="field-card__icon">{ICONS[key]}</span>
+                        <span className="field-card__index">{String(i + 1).padStart(2, '0')}</span>
+                      </span>
+                      <span className="field-card__title">{t(`fields.${key}.title`)}</span>
+                      <span className="field-card__desc">{t(`fields.${key}.desc`)}</span>
+                      <span className="field-card__toggle" aria-hidden="true">{open ? '−' : '+'}</span>
                     </button>
                     <div className={`flow flow-panel ${open ? 'flow-visible' : ''}`}>
                       {items.map((item) => (
@@ -215,43 +280,19 @@ export function LandingPage({ initialSection = null, theme = 'dark' }) {
                         </div>
                       ))}
                     </div>
-                  </motion.div>
+                  </motion.article>
                 )
               })}
 
-              <Reveal className="field-row field-row--expanding" delay={0.25}>
-                <div className="field-row__head field-row__head--static">
-                  <span className="field-row__number">∞</span>
-                  <span className="field-row__title field-row__title--muted">{t('fields.expanding.title')}</span>
-                  <span className="field-row__desc">{t('fields.expanding.desc')}</span>
+              <Reveal className="field-card field-card--ghost" delay={0.3}>
+                <div className="field-card__ghost-inner">
+                  <span className="field-card__icon field-card__icon--ghost">{ICONS.expanding}</span>
+                  <span className="field-card__ghost-text">
+                    <span className="field-card__title field-card__title--ghost">{t('fields.expanding.title')}</span>
+                    <span className="field-card__desc">{t('fields.expanding.desc')}</span>
+                  </span>
                 </div>
               </Reveal>
-            </div>
-          </div>
-        </section>
-
-        {/* Method */}
-        <section className="section" id="method">
-          <div className="section-wrapper">
-            <SectionHeader index="03" label={t('method.label')} />
-            <Reveal as="h2" className="about-title method-title" delay={0.1}>
-              {t('method.title')}
-            </Reveal>
-            <div className="method-grid">
-              {METHOD_STEPS.map((step, i) => (
-                <motion.div
-                  key={step}
-                  className="method-step"
-                  initial={reduceMotion ? false : { opacity: 0, y: 32 }}
-                  whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
-                  viewport={reduceMotion ? undefined : { once: true, amount: 0.2 }}
-                  transition={reduceMotion ? undefined : { type: 'tween', duration: 0.85, ease: [0.22, 1, 0.36, 1], delay: 0.05 + i * 0.09 }}
-                >
-                  <span className="method-step__number">{String(i + 1).padStart(2, '0')}</span>
-                  <h3 className="method-step__title">{t(`method.${step}.title`)}</h3>
-                  <p className="method-step__text">{t(`method.${step}.text`)}</p>
-                </motion.div>
-              ))}
             </div>
 
             <Reveal className="archive-cta" delay={0.2}>
@@ -266,7 +307,7 @@ export function LandingPage({ initialSection = null, theme = 'dark' }) {
         {/* Contact */}
         <section className="section" id="contact">
           <div className="section-wrapper">
-            <SectionHeader index="04" label={t('nav.contact')} />
+            <SectionHeader index="03" label={t('nav.contact')} />
             <div className="grid-2">
               <div className="grid-item contact-side">
                 <Reveal as="h2" className="contact-heading" delay={0.05}>
