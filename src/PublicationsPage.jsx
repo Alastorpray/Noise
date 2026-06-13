@@ -6,6 +6,7 @@ import { Footer } from './Footer'
 import { AnimatedWords } from './AnimatedText'
 import { Reveal } from './Reveal'
 import { SEO } from './SEO'
+import { DotSpotlight } from './DotSpotlight'
 import './landing.css'
 
 const PUBLICATIONS_QUERY = `*[_type == "publication" && language == $lang] | order(publishedAt desc) {
@@ -37,6 +38,7 @@ export function PublicationsPage() {
 
   return (
     <div className="page-content expanded">
+      <DotSpotlight fixed />
       <SEO
         title={t('publications.heroTitle', 'Publications.')}
         description={t('publications.heroSubtitle')}

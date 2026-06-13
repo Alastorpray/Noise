@@ -91,7 +91,8 @@
     "educational": "Educational",
     "gameAsset": "Game Asset",
     "empty": "No projects yet.",
-    "back": "Back to Portfolio"
+    "back": "Back to Portfolio",
+    "other": "Other"
   },
   "blog": {
     "title": "Our Blog",

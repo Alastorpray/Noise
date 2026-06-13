@@ -6,6 +6,7 @@ import { AnimatedWords } from './AnimatedText'
 import { Reveal } from './Reveal'
 import { motion, useReducedMotion } from 'framer-motion'
 import { SEO } from './SEO'
+import { DotSpotlight } from './DotSpotlight'
 import { getReadingTimeMinutes } from './utils/readingTime'
 import './landing.css'
 
@@ -39,6 +40,7 @@ export function BlogPage({ onNavigate }) {
 
   return (
     <div className="page-content expanded">
+      <DotSpotlight fixed />
       <SEO
         title={t('blog.title', 'Our Blog')}
         description={t('blog.heroSubtitle', 'Notes, experiments and deep-dives on creative technology, shaders and real-time graphics.')}
@@ -81,43 +83,55 @@ export function BlogPage({ onNavigate }) {
 
           {!loading && posts.length > 0 && (
             <div className="editorial-list editorial-list--minimal">
-              {posts.map((post, i) => {
-                const dateStr = post.publishedAt
-                  ? new Date(post.publishedAt).toLocaleDateString('en-US', {
-                      month: 'short', day: 'numeric', year: 'numeric'
-                    })
-                  : null
-                const category = post.categories?.[0]
+              {(() => {
+                let lastYear = null
+                return posts.map((post, i) => {
+                  const date = post.publishedAt ? new Date(post.publishedAt) : null
+                  const year = date ? date.getFullYear() : '—'
+                  const showYear = year !== lastYear
+                  lastYear = year
+                  const dateStr = date
+                    ? date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+                    : null
+                  const category = post.categories?.[0]
 
-                return (
-                  <motion.article
-                    key={post._id}
-                    className="editorial-entry"
-                    onClick={() => onNavigate(`/blog/${post.slug.current}`)}
-                    style={{ willChange: 'transform, opacity', backfaceVisibility: 'hidden' }}
-                    initial={reduceMotion ? false : { opacity: 0, y: 40 }}
-                    whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
-                    viewport={reduceMotion ? undefined : { once: true, amount: 0.2 }}
-                    transition={reduceMotion ? undefined : { type: 'tween', duration: 0.95, ease: [0.22, 1, 0.36, 1], delay: Math.min(i * 0.05, 0.45) }}
-                  >
-                    <div className="editorial-entry__date-col">
-                      {dateStr && <span className="editorial-entry__date">{dateStr}</span>}
-                      {category && <span className="editorial-entry__meta">{category}</span>}
-                      {post.body && (
-                        <span className="editorial-entry__meta">
-                          {t('post.readingTime', '{{min}} min read', { min: getReadingTimeMinutes(post.body) })}
-                        </span>
+                  return (
+                    <React.Fragment key={post._id}>
+                      {showYear && (
+                        <div className="year-divider" aria-hidden="true">
+                          <span className="year-divider__year">{year}</span>
+                          <span className="year-divider__rule" />
+                        </div>
                       )}
-                    </div>
-                    <div className="editorial-entry__text">
-                      <h3 className="editorial-entry__title">{post.title}</h3>
-                      {post.excerpt && (
-                        <p className="editorial-entry__excerpt">{post.excerpt}</p>
-                      )}
-                    </div>
-                  </motion.article>
-                )
-              })}
+                      <motion.article
+                        className="editorial-entry"
+                        onClick={() => onNavigate(`/blog/${post.slug.current}`)}
+                        style={{ willChange: 'transform, opacity', backfaceVisibility: 'hidden' }}
+                        initial={reduceMotion ? false : { opacity: 0, y: 40 }}
+                        whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+                        viewport={reduceMotion ? undefined : { once: true, amount: 0.2 }}
+                        transition={reduceMotion ? undefined : { type: 'tween', duration: 0.95, ease: [0.22, 1, 0.36, 1], delay: Math.min(i * 0.05, 0.45) }}
+                      >
+                        <div className="editorial-entry__date-col">
+                          {dateStr && <span className="editorial-entry__date">{dateStr}</span>}
+                          {category && <span className="editorial-entry__meta editorial-entry__meta--accent">{category}</span>}
+                          {post.body && (
+                            <span className="editorial-entry__meta">
+                              {t('post.readingTime', '{{min}} min read', { min: getReadingTimeMinutes(post.body) })}
+                            </span>
+                          )}
+                        </div>
+                        <div className="editorial-entry__text">
+                          <h3 className="editorial-entry__title">{post.title}</h3>
+                          {post.excerpt && (
+                            <p className="editorial-entry__excerpt">{post.excerpt}</p>
+                          )}
+                        </div>
+                      </motion.article>
+                    </React.Fragment>
+                  )
+                })
+              })()}
             </div>
           )}
         </div>

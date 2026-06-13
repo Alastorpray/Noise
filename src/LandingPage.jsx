@@ -7,6 +7,7 @@ import './landing.css'
 import { Footer } from './Footer'
 import { Reveal } from './Reveal'
 import { SEO } from './SEO'
+import { DotSpotlight } from './DotSpotlight'
 
 const FieldIcon = ({ children }) => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -135,61 +136,23 @@ export function LandingPage({ initialSection = null, theme = 'dark' }) {
   const [form, setForm] = useState({ nombre: '', email: '', empresa: '', mensaje: '' })
   const [formStatus, setFormStatus] = useState('idle')
   const [expandedFields, setExpandedFields] = useState([])
-  const [brandText, setBrandText] = useState(BRAND)
-  const brandFrame = useRef(null)
-  const brandAnimating = useRef(false)
+  const [scanning, setScanning] = useState(false)
+  const scanTimeout = useRef(null)
   const [drawnCards, setDrawnCards] = useState([])
   const [activeSection, setActiveSection] = useState('about')
-  const sectionsRef = useRef(null)
 
   const markDrawn = (key) => {
     setDrawnCards((prev) => (prev.includes(key) ? prev : [...prev, key]))
   }
 
-  // Foco de "lupa": la retícula de puntos se revela alrededor del cursor.
-  // Coordenadas relativas a .landing-sections, con inercia vía rAF.
-  useEffect(() => {
-    const el = sectionsRef.current
-    if (!el || window.matchMedia('(hover: none)').matches) return
-    let raf = null
-    let hasTarget = false
-    let tx = 0, ty = 0, cx = 0, cy = 0
-    const apply = () => {
-      const rect = el.getBoundingClientRect()
-      el.style.setProperty('--spot-x', `${cx - rect.left}px`)
-      el.style.setProperty('--spot-y', `${cy - rect.top}px`)
-    }
-    const loop = () => {
-      raf = requestAnimationFrame(() => {
-        cx += (tx - cx) * 0.16
-        cy += (ty - cy) * 0.16
-        apply()
-        if (Math.abs(tx - cx) > 0.4 || Math.abs(ty - cy) > 0.4) loop()
-        else raf = null
-      })
-    }
-    const onMove = (e) => {
-      tx = e.clientX
-      ty = e.clientY
-      if (!hasTarget) {
-        hasTarget = true
-        cx = tx
-        cy = ty
-      }
-      if (!raf) loop()
-    }
-    const scroller = document.querySelector('.page-content.expanded')
-    const onScroll = () => {
-      if (hasTarget) apply()
-    }
-    window.addEventListener('mousemove', onMove)
-    scroller?.addEventListener('scroll', onScroll, { passive: true })
-    return () => {
-      window.removeEventListener('mousemove', onMove)
-      scroller?.removeEventListener('scroll', onScroll)
-      cancelAnimationFrame(raf)
-    }
-  }, [])
+  // Línea de escaneo: un barrido por hover, sin re-disparos a mitad
+  const handleBrandHover = () => {
+    if (reduceMotion || scanning) return
+    setScanning(true)
+    scanTimeout.current = setTimeout(() => setScanning(false), 1150)
+  }
+
+  useEffect(() => () => clearTimeout(scanTimeout.current), [])
 
   // Índice lateral: sección activa según la franja central del viewport
   useEffect(() => {
@@ -218,34 +181,6 @@ export function LandingPage({ initialSection = null, theme = 'dark' }) {
       target.scrollIntoView({ behavior: 'smooth', block: 'start' })
     }
   }
-
-  // Decode/scramble: letters cycle through data glyphs and resolve left → right
-  const handleBrandHover = () => {
-    if (reduceMotion || brandAnimating.current) return
-    brandAnimating.current = true
-    const duration = 950
-    const start = performance.now()
-    const step = (now) => {
-      const p = Math.min((now - start) / duration, 1)
-      const resolved = Math.floor(p * BRAND.length)
-      let out = ''
-      for (let i = 0; i < BRAND.length; i++) {
-        out += i < resolved
-          ? BRAND[i]
-          : SCRAMBLE_CHARS[(Math.random() * SCRAMBLE_CHARS.length) | 0]
-      }
-      setBrandText(p < 1 ? out : BRAND)
-      if (p < 1) {
-        brandFrame.current = requestAnimationFrame(step)
-      } else {
-        brandAnimating.current = false
-      }
-    }
-    cancelAnimationFrame(brandFrame.current)
-    brandFrame.current = requestAnimationFrame(step)
-  }
-
-  useEffect(() => () => cancelAnimationFrame(brandFrame.current), [])
 
   // Scroll to a section when arriving from another page (e.g. nav "Contact")
   useEffect(() => {
@@ -327,24 +262,25 @@ export function LandingPage({ initialSection = null, theme = 'dark' }) {
         ))}
       </nav>
 
-      <div className="landing-sections" id="top" ref={sectionsRef}>
-        <div className="dot-spotlight" aria-hidden="true" />
+      <div className="landing-sections" id="top">
+        <DotSpotlight />
         {/* About — opening statement */}
         <section className="section section--opening" id="about">
           <div className="section-wrapper">
             <div className="opening-intro">
               <div className="grid-col">
                 <div
-                  className="about-brand-block"
+                  className={`about-brand-block ${scanning ? 'about-brand-block--scanning' : ''}`}
                   onMouseEnter={handleBrandHover}
                   onTouchStart={handleBrandHover}
                 >
-                  <Reveal as="h1" className="about-brand" delay={0.05}>
-                    {brandText}
+                  <Reveal as="h1" className="about-brand" delay={0.05} data-text={BRAND}>
+                    {BRAND}
                   </Reveal>
-                  <Reveal as="p" className="about-tagline" delay={0.15}>
+                  <Reveal as="p" className="about-tagline" delay={0.15} data-text={t('about.title')}>
                     {t('about.title')}
                   </Reveal>
+                  <span className="brand-scanline" aria-hidden="true" />
                 </div>
               </div>
             </div>

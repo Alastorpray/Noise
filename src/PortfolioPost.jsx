@@ -7,6 +7,7 @@ import { Reveal } from './Reveal'
 import { ShareButtons } from './ShareButtons'
 import { SEO, SITE_ORIGIN } from './SEO'
 import { DEFAULT_LANG } from './index'
+import { DotSpotlight } from './DotSpotlight'
 import './landing.css'
 
 const PROJECT_QUERY = `*[_type == "project" && slug.current == $slug]
@@ -66,6 +67,7 @@ export function PortfolioPost({ slug, onNavigate }) {
 
   return (
     <div className="page-content expanded">
+      <DotSpotlight fixed />
       {project && (
         <SEO
           title={project.title}

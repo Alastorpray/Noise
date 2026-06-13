@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { client, urlFor } from './sanityClient'
 import { AnimatedWords } from './AnimatedText'
@@ -6,7 +6,7 @@ import { Reveal } from './Reveal'
 import { motion, useReducedMotion } from 'framer-motion'
 import { SEO } from './SEO'
 
-const FILTERS = ['all', 'xr', 'print3d', 'educational', 'gameAsset']
+const DIVISION_ORDER = ['xr', 'print3d', 'educational', 'gameAsset']
 
 const QUERY = `*[_type == "project" && language == $lang] | order(featured desc, date desc) {
   _id, title, slug, division, description, tags, date, featured, mediaType,
@@ -18,7 +18,7 @@ export function Portfolio({ onNavigate }) {
   const [projects, setProjects] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  const [filter, setFilter] = useState('all')
+  const [activeGroup, setActiveGroup] = useState(null)
 
   useEffect(() => {
     const lang = (i18n.language || 'en').split('-')[0]
@@ -35,9 +35,47 @@ export function Portfolio({ onNavigate }) {
       })
   }, [i18n.language])
 
-  const filtered = filter === 'all'
-    ? projects
-    : projects.filter(p => p.division === filter)
+  // Catálogo agrupado por división, en orden fijo; lo desconocido cae en "other"
+  const groups = useMemo(() => {
+    const map = {}
+    projects.forEach(p => {
+      const key = DIVISION_ORDER.includes(p.division) ? p.division : 'other'
+      if (!map[key]) map[key] = []
+      map[key].push(p)
+    })
+    return [...DIVISION_ORDER, 'other']
+      .filter(key => map[key]?.length)
+      .map(key => ({ key, items: map[key] }))
+  }, [projects])
+
+  // Píldora activa según el grupo visible en la franja superior del viewport
+  useEffect(() => {
+    if (!groups.length) return
+    const scroller = document.querySelector('.page-content.expanded')
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) setActiveGroup(entry.target.dataset.group)
+        })
+      },
+      { root: scroller, rootMargin: '-15% 0px -70% 0px', threshold: 0 }
+    )
+    groups.forEach(({ key }) => {
+      const el = document.getElementById(`division-${key}`)
+      if (el) observer.observe(el)
+    })
+    return () => observer.disconnect()
+  }, [groups])
+
+  const jumpToGroup = (key) => {
+    const el = document.getElementById(`division-${key}`)
+    if (!el) return
+    if (window.__lenis) {
+      window.__lenis.scrollTo(el, { offset: -4, duration: 1.1 })
+    } else {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+  }
 
   return (
     <section className="section" id="portfolio">
@@ -62,26 +100,20 @@ export function Portfolio({ onNavigate }) {
       </header>
 
       <div className="section-wrapper" style={{ padding: 0 }}>
-        <div
-          className="portfolio-filters"
-          style={{
-            padding: 'var(--space-lg) var(--space-xl)',
-            borderBottom: '1px solid var(--border)',
-            display: 'flex',
-            flexWrap: 'wrap',
-            gap: 'var(--space-sm)'
-          }}
-        >
-          {FILTERS.map(f => (
-            <button
-              key={f}
-              className={`portfolio-filter-btn ${filter === f ? 'active' : ''}`}
-              onClick={() => setFilter(f)}
-            >
-              {t(`portfolio.${f}`)}
-            </button>
-          ))}
-        </div>
+        {!loading && groups.length > 1 && (
+          <div className="catalog-index">
+            {groups.map(({ key, items }) => (
+              <button
+                key={key}
+                className={`portfolio-filter-btn ${activeGroup === key ? 'active' : ''}`}
+                onClick={() => jumpToGroup(key)}
+              >
+                {t(`portfolio.${key}`, key)}
+                <span className="catalog-index__count">{items.length}</span>
+              </button>
+            ))}
+          </div>
+        )}
 
         {error && (
           <p className="portfolio-empty" style={{ color: 'var(--accent)' }}>
@@ -97,40 +129,51 @@ export function Portfolio({ onNavigate }) {
           </div>
         )}
 
-        {!loading && filtered.length === 0 && (
+        {!loading && groups.length === 0 && (
           <p className="portfolio-empty">{t('portfolio.empty')}</p>
         )}
 
-        {!loading && filtered.length > 0 && (
-          <div className="editorial-list editorial-list--minimal">
-            {filtered.map((project, i) => (
-              <ProjectEntry
-                key={project._id}
-                project={project}
-                index={i}
-                onOpen={() => {
-                  if (project.slug?.current) {
-                    onNavigate(`/portfolio/${project.slug.current}`)
-                  } else {
-                    console.warn('Project is missing a slug. Please generate one in Sanity.')
-                  }
-                }}
-              />
-            ))}
-          </div>
-        )}
+        {!loading && groups.map(({ key, items }, gi) => (
+          <section
+            className="catalog-group"
+            id={`division-${key}`}
+            data-group={key}
+            key={key}
+          >
+            <div className="catalog-group__header">
+              <span className="catalog-group__index">§ {String(gi + 1).padStart(2, '0')}</span>
+              <span className="catalog-group__label">{t(`portfolio.${key}`, key)}</span>
+              <span className="catalog-group__count">({items.length})</span>
+              <span className="catalog-group__rule" aria-hidden="true" />
+            </div>
+            <div className="editorial-list editorial-list--minimal">
+              {items.map((project, i) => (
+                <ProjectEntry
+                  key={project._id}
+                  project={project}
+                  index={i}
+                  onOpen={() => {
+                    if (project.slug?.current) {
+                      onNavigate(`/portfolio/${project.slug.current}`)
+                    } else {
+                      console.warn('Project is missing a slug. Please generate one in Sanity.')
+                    }
+                  }}
+                />
+              ))}
+            </div>
+          </section>
+        ))}
       </div>
     </section>
   )
 }
 
 function ProjectEntry({ project, index, onOpen }) {
-  const { t } = useTranslation()
   const reduceMotion = useReducedMotion()
   const dateStr = project.date
     ? new Date(project.date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
     : null
-  const division = project.division ? t(`portfolio.${project.division}`, project.division) : null
 
   return (
     <motion.article
@@ -144,7 +187,6 @@ function ProjectEntry({ project, index, onOpen }) {
     >
       <div className="editorial-entry__date-col">
         {dateStr && <span className="editorial-entry__date">{dateStr}</span>}
-        {division && <span className="editorial-entry__meta">{division}</span>}
       </div>
       <div className="editorial-entry__text">
         <h3 className="editorial-entry__title">{project.title}</h3>
