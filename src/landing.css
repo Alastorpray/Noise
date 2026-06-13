@@ -2466,7 +2466,8 @@ mark.blog-highlight {
   letter-spacing: -0.01em;
   line-height: 1.25;
   margin: 0;
-  color: var(--accent);
+  /* estado base: blanco — el escáner revela naranja (igual que CORESEARCH) */
+  color: var(--text-display);
 }
 
 /* La línea de escaneo — su posición la fija el cursor vía --scan-x */
@@ -2492,13 +2493,10 @@ mark.blog-highlight {
   opacity: 1;
 }
 
-/* Colores confirmados tras un barrido > 50% (toggle) */
-.about-brand-block--swapped .about-brand {
-  color: var(--accent);
-}
-
+/* Colores confirmados tras un barrido > 50% (toggle): ambos a naranja */
+.about-brand-block--swapped .about-brand,
 .about-brand-block--swapped .about-tagline {
-  color: var(--text-display);
+  color: var(--accent);
 }
 
 /* Copias reveladas a la IZQUIERDA de la línea, siempre con el color
@@ -2509,11 +2507,23 @@ mark.blog-highlight {
   position: absolute;
   inset: 0;
   pointer-events: none;
+  /* por defecto (entrada por la izquierda): la estela pintada va de 0 → línea */
   clip-path: inset(-15% calc(100% - var(--scan-x, -20px)) -15% 0);
   opacity: 0;
   /* sin transición por defecto: al salir el preview desaparece de golpe,
      evitando que su color cruce con el commit del color base */
   z-index: 1;
+  /* trazo del mismo color: rellena los bordes antialiased para que el
+     preview cubra el texto base por completo y el naranja sea el real,
+     no lavado por el blanco que asoma bajo la serif fina */
+  -webkit-text-stroke: 0.5px currentColor;
+  paint-order: stroke fill;
+}
+
+/* entrada por la derecha: la estela va de la línea → 100% (lado derecho) */
+.about-brand-block--from-right .about-brand::before,
+.about-brand-block--from-right .about-tagline::before {
+  clip-path: inset(-15% 0 -15% var(--scan-x, calc(100% + 20px)));
 }
 
 /* transición suave SOLO en la entrada (mientras el cursor está dentro) */
@@ -2524,20 +2534,16 @@ mark.blog-highlight {
   transition: opacity 0.3s var(--ease);
 }
 
-.about-brand::before {
-  color: var(--accent);
-}
-
+/* Preview a la izquierda de la línea = color OPUESTO al estado base.
+   Base blanco → preview naranja; estado swapped (naranja) → preview blanco. */
+.about-brand::before,
 .about-tagline::before {
-  color: var(--text-display);
-}
-
-.about-brand-block--swapped .about-brand::before {
-  color: var(--text-display);
-}
-
-.about-brand-block--swapped .about-tagline::before {
   color: var(--accent);
+}
+
+.about-brand-block--swapped .about-brand::before,
+.about-brand-block--swapped .about-tagline::before {
+  color: var(--text-display);
 }
 
 /* Franja cian: aberración cromática justo en el borde de la línea */
@@ -2570,16 +2576,18 @@ mark.blog-highlight {
   opacity: 0.55;
 }
 
-/* El color base salta sin transición (commit atómico, sin cruce con el
-   preview que se oculta). Solo el resplandor se desvanece suave. */
+/* Glow naranja mientras se escanea, baja suave al salir (interpolando entre
+   dos sombras del mismo formato, transparente ↔ naranja, nunca desde/hacia
+   `none`, que el navegador no interpola y cae de golpe) */
 .about-brand,
 .about-tagline {
-  transition: text-shadow 0.35s var(--ease);
+  text-shadow: 0 0 16px transparent;
+  transition: text-shadow 0.6s ease-out;
 }
 
 .about-brand-block--live .about-brand,
 .about-brand-block--live .about-tagline {
-  text-shadow: 0 0 16px color-mix(in srgb, var(--accent) 28%, transparent);
+  text-shadow: 0 0 18px color-mix(in srgb, var(--accent) 38%, transparent);
 }
 
 @media (prefers-reduced-motion: reduce) {

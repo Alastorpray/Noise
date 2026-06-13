@@ -138,6 +138,8 @@ export function LandingPage({ initialSection = null, theme = 'dark' }) {
   const [expandedFields, setExpandedFields] = useState([])
   const [scanLive, setScanLive] = useState(false)
   const [brandSwapped, setBrandSwapped] = useState(false)
+  const [scanSide, setScanSide] = useState('left')
+  const scanSideRef = useRef('left')
   const brandBlockRef = useRef(null)
   const scanRaf = useRef(null)
   const scanTarget = useRef(0)
@@ -175,20 +177,31 @@ export function LandingPage({ initialSection = null, theme = 'dark' }) {
     if (reduceMotion) return
     const el = brandBlockRef.current
     if (!el) return
-    const x = clampScanX(e.clientX, el.getBoundingClientRect())
-    scanTarget.current = x
+    const rect = el.getBoundingClientRect()
+    const x = clampScanX(e.clientX, rect)
+    // El lado pintado es el del borde por el que entra el cursor: la estela
+    // (lo ya recorrido) toma el color nuevo. Entrar por la izquierda pinta
+    // a la izquierda de la línea; por la derecha, a la derecha.
+    const side = x < rect.width / 2 ? 'left' : 'right'
+    scanSideRef.current = side
+    setScanSide(side)
     scanCurrent.current = x
+    scanTarget.current = x
     el.style.setProperty('--scan-x', `${x.toFixed(1)}px`)
     setScanLive(true)
   }
 
-  // Al salir, la línea desaparece. Si superó el 50% del recorrido,
-  // el intercambio de colores se confirma (toggle); si no, se descarta.
+  // Al salir, la línea desaparece. Si la estela pintada (lo recorrido desde
+  // el borde de entrada) supera el 50%, el cambio de color se confirma.
   const handleBrandLeave = () => {
     setScanLive(false)
     const el = brandBlockRef.current
     if (!el) return
-    if (scanTarget.current > el.getBoundingClientRect().width / 2) {
+    const w = el.getBoundingClientRect().width
+    const painted = scanSideRef.current === 'left'
+      ? scanTarget.current
+      : w - scanTarget.current
+    if (painted > w / 2) {
       setBrandSwapped((s) => !s)
     }
   }
@@ -312,7 +325,7 @@ export function LandingPage({ initialSection = null, theme = 'dark' }) {
               <div className="grid-col">
                 <div
                   ref={brandBlockRef}
-                  className={`about-brand-block ${scanLive ? 'about-brand-block--live' : ''} ${brandSwapped ? 'about-brand-block--swapped' : ''}`}
+                  className={`about-brand-block ${scanLive ? 'about-brand-block--live' : ''} ${brandSwapped ? 'about-brand-block--swapped' : ''} about-brand-block--from-${scanSide}`}
                   onMouseEnter={handleBrandEnter}
                   onMouseMove={handleBrandMove}
                   onMouseLeave={handleBrandLeave}
