@@ -14,33 +14,40 @@ const FieldIcon = ({ children }) => (
   </svg>
 )
 
+/* pathLength=1 normaliza cada trazo para la animación de dibujado (stroke-dashoffset) */
 const ICONS = {
   educational: (
     <FieldIcon>
-      <path d="M12 5.5C10.1 4.1 7.6 3.5 4.5 3.5v14c3.1 0 5.6.6 7.5 2 1.9-1.4 4.4-2 7.5-2v-14c-3.1 0-5.6.6-7.5 2z" />
-      <path d="M12 5.5v14" />
+      <path pathLength="1" d="M12 5.5C10.1 4.1 7.6 3.5 4.5 3.5v14c3.1 0 5.6.6 7.5 2 1.9-1.4 4.4-2 7.5-2v-14c-3.1 0-5.6.6-7.5 2z" />
+      <path pathLength="1" d="M12 5.5v14" />
     </FieldIcon>
   ),
   print3d: (
     <FieldIcon>
-      <path d="M12 3.5l8 4-8 4-8-4 8-4z" />
-      <path d="M4 12.5l8 4 8-4" />
-      <path d="M4 16.5l8 4 8-4" />
+      <path pathLength="1" d="M12 3.5l8 4-8 4-8-4 8-4z" />
+      <path pathLength="1" d="M4 12.5l8 4 8-4" />
+      <path pathLength="1" d="M4 16.5l8 4 8-4" />
     </FieldIcon>
   ),
   xr: (
     <FieldIcon>
-      <path d="M3 9.5c0-1.1.9-2 2-2h14c1.1 0 2 .9 2 2v4c0 1.1-.9 2-2 2h-3.2c-.6 0-1.18-.27-1.57-.73l-.93-1.1c-.68-.8-1.92-.8-2.6 0l-.93 1.1c-.39.46-.97.73-1.57.73H5c-1.1 0-2-.9-2-2v-4z" />
-      <path d="M7.5 10.75h.01M16.5 10.75h.01" />
+      <path pathLength="1" d="M3 9.5c0-1.1.9-2 2-2h14c1.1 0 2 .9 2 2v4c0 1.1-.9 2-2 2h-3.2c-.6 0-1.18-.27-1.57-.73l-.93-1.1c-.68-.8-1.92-.8-2.6 0l-.93 1.1c-.39.46-.97.73-1.57.73H5c-1.1 0-2-.9-2-2v-4z" />
+      <path pathLength="1" d="M7.5 10.75h.01M16.5 10.75h.01" />
     </FieldIcon>
   ),
   expanding: (
     <FieldIcon>
-      <circle cx="12" cy="12" r="8.5" />
-      <path d="M14.9 9.1l-1.7 4.1-4.1 1.7 1.7-4.1 4.1-1.7z" />
+      <circle pathLength="1" cx="12" cy="12" r="8.5" />
+      <path pathLength="1" d="M14.9 9.1l-1.7 4.1-4.1 1.7 1.7-4.1 4.1-1.7z" />
     </FieldIcon>
   ),
 }
+
+const HOME_SECTIONS = [
+  { id: 'about', index: '01' },
+  { id: 'fields', index: '02' },
+  { id: 'contact', index: '03' },
+]
 
 const FIELDS = [
   { key: 'educational', items: ['sessions', 'advisory', 'partnerships'] },
@@ -58,6 +65,53 @@ const headerRule = {
   visible: { scaleX: 1, transition: { type: 'tween', duration: 1.1, delay: 0.15, ease: [0.22, 1, 0.36, 1] } },
 }
 
+const BRAND = 'CORESEARCH'
+// Glyph pool for the decode effect — data/archive characters
+const SCRAMBLE_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789§Δ░▒█<>/'
+
+/* Mini decode: el label se descifra una vez al entrar en viewport (gesto de marca) */
+function DecodeLabel({ text }) {
+  const reduceMotion = useReducedMotion()
+  const [display, setDisplay] = useState(text)
+  const done = useRef(false)
+  const frame = useRef(null)
+
+  // Si cambia el idioma, mostrar el nuevo texto sin re-descifrar
+  useEffect(() => { setDisplay(text) }, [text])
+  useEffect(() => () => cancelAnimationFrame(frame.current), [])
+
+  const start = () => {
+    if (done.current || reduceMotion) return
+    done.current = true
+    const duration = 520
+    const t0 = performance.now()
+    const step = (now) => {
+      const p = Math.min((now - t0) / duration, 1)
+      const resolved = Math.floor(p * text.length)
+      let out = ''
+      for (let i = 0; i < text.length; i++) {
+        out += i < resolved || text[i] === ' '
+          ? text[i]
+          : SCRAMBLE_CHARS[(Math.random() * SCRAMBLE_CHARS.length) | 0]
+      }
+      setDisplay(p < 1 ? out : text)
+      if (p < 1) frame.current = requestAnimationFrame(step)
+    }
+    frame.current = requestAnimationFrame(step)
+  }
+
+  return (
+    <motion.span
+      className="section-header__label"
+      variants={headerItem}
+      viewport={{ once: true, amount: 0.6 }}
+      onViewportEnter={start}
+    >
+      {display}
+    </motion.span>
+  )
+}
+
 function SectionHeader({ index, label }) {
   const reduceMotion = useReducedMotion()
   return (
@@ -69,15 +123,11 @@ function SectionHeader({ index, label }) {
       transition={{ staggerChildren: 0.08 }}
     >
       <motion.span className="section-header__index" variants={headerItem}>§ {index}</motion.span>
-      <motion.span className="section-header__label" variants={headerItem}>{label}</motion.span>
+      <DecodeLabel text={label} />
       <motion.span className="section-header__rule" variants={headerRule} style={{ originX: 0 }} aria-hidden="true" />
     </motion.div>
   )
 }
-
-const BRAND = 'CORESEARCH'
-// Glyph pool for the decode effect — data/archive characters
-const SCRAMBLE_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789§Δ░▒█<>/'
 
 export function LandingPage({ initialSection = null, theme = 'dark' }) {
   const { t } = useTranslation()
@@ -88,6 +138,86 @@ export function LandingPage({ initialSection = null, theme = 'dark' }) {
   const [brandText, setBrandText] = useState(BRAND)
   const brandFrame = useRef(null)
   const brandAnimating = useRef(false)
+  const [drawnCards, setDrawnCards] = useState([])
+  const [activeSection, setActiveSection] = useState('about')
+  const sectionsRef = useRef(null)
+
+  const markDrawn = (key) => {
+    setDrawnCards((prev) => (prev.includes(key) ? prev : [...prev, key]))
+  }
+
+  // Foco de "lupa": la retícula de puntos se revela alrededor del cursor.
+  // Coordenadas relativas a .landing-sections, con inercia vía rAF.
+  useEffect(() => {
+    const el = sectionsRef.current
+    if (!el || window.matchMedia('(hover: none)').matches) return
+    let raf = null
+    let hasTarget = false
+    let tx = 0, ty = 0, cx = 0, cy = 0
+    const apply = () => {
+      const rect = el.getBoundingClientRect()
+      el.style.setProperty('--spot-x', `${cx - rect.left}px`)
+      el.style.setProperty('--spot-y', `${cy - rect.top}px`)
+    }
+    const loop = () => {
+      raf = requestAnimationFrame(() => {
+        cx += (tx - cx) * 0.16
+        cy += (ty - cy) * 0.16
+        apply()
+        if (Math.abs(tx - cx) > 0.4 || Math.abs(ty - cy) > 0.4) loop()
+        else raf = null
+      })
+    }
+    const onMove = (e) => {
+      tx = e.clientX
+      ty = e.clientY
+      if (!hasTarget) {
+        hasTarget = true
+        cx = tx
+        cy = ty
+      }
+      if (!raf) loop()
+    }
+    const scroller = document.querySelector('.page-content.expanded')
+    const onScroll = () => {
+      if (hasTarget) apply()
+    }
+    window.addEventListener('mousemove', onMove)
+    scroller?.addEventListener('scroll', onScroll, { passive: true })
+    return () => {
+      window.removeEventListener('mousemove', onMove)
+      scroller?.removeEventListener('scroll', onScroll)
+      cancelAnimationFrame(raf)
+    }
+  }, [])
+
+  // Índice lateral: sección activa según la franja central del viewport
+  useEffect(() => {
+    const scroller = document.querySelector('.page-content.expanded')
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) setActiveSection(entry.target.id)
+        })
+      },
+      { root: scroller, rootMargin: '-45% 0px -45% 0px', threshold: 0 }
+    )
+    HOME_SECTIONS.forEach(({ id }) => {
+      const target = document.getElementById(id)
+      if (target) observer.observe(target)
+    })
+    return () => observer.disconnect()
+  }, [])
+
+  const jumpToSection = (id) => {
+    const target = document.getElementById(id)
+    if (!target) return
+    if (window.__lenis) {
+      window.__lenis.scrollTo(target, { offset: 0, duration: 1.1 })
+    } else {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+  }
 
   // Decode/scramble: letters cycle through data glyphs and resolve left → right
   const handleBrandHover = () => {
@@ -182,7 +312,23 @@ export function LandingPage({ initialSection = null, theme = 'dark' }) {
     <div className={`page-content expanded page-content--home theme-${theme}`}>
       <SEO description={t('about.desc1')} />
 
-      <div className="landing-sections" id="top">
+      <nav className="section-index" aria-label="Secciones">
+        {HOME_SECTIONS.map(({ id, index }) => (
+          <button
+            key={id}
+            type="button"
+            className={`section-index__item ${activeSection === id ? 'section-index__item--active' : ''}`}
+            onClick={() => jumpToSection(id)}
+            aria-label={`§ ${index}`}
+          >
+            <span className="section-index__bar" aria-hidden="true" />
+            {index}
+          </button>
+        ))}
+      </nav>
+
+      <div className="landing-sections" id="top" ref={sectionsRef}>
+        <div className="dot-spotlight" aria-hidden="true" />
         {/* About — opening statement */}
         <section className="section section--opening" id="about">
           <div className="section-wrapper">
@@ -249,10 +395,11 @@ export function LandingPage({ initialSection = null, theme = 'dark' }) {
                 return (
                   <motion.article
                     key={key}
-                    className={`field-card ${open ? 'field-card--open' : ''}`}
+                    className={`field-card ${open ? 'field-card--open' : ''} ${drawnCards.includes(key) ? 'field-card--drawn' : ''}`}
                     initial={reduceMotion ? false : { opacity: 0, y: 32 }}
                     whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
-                    viewport={reduceMotion ? undefined : { once: true, amount: 0.2 }}
+                    viewport={{ once: true, amount: 0.2 }}
+                    onViewportEnter={() => markDrawn(key)}
                     transition={reduceMotion ? undefined : { type: 'tween', duration: 0.85, ease: [0.22, 1, 0.36, 1], delay: 0.05 + i * 0.09 }}
                   >
                     <button
@@ -284,7 +431,14 @@ export function LandingPage({ initialSection = null, theme = 'dark' }) {
                 )
               })}
 
-              <Reveal className="field-card field-card--ghost" delay={0.3}>
+              <motion.div
+                className={`field-card field-card--ghost ${drawnCards.includes('expanding') ? 'field-card--drawn' : ''}`}
+                initial={reduceMotion ? false : { opacity: 0, y: 32 }}
+                whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.2 }}
+                onViewportEnter={() => markDrawn('expanding')}
+                transition={reduceMotion ? undefined : { type: 'tween', duration: 0.85, ease: [0.22, 1, 0.36, 1], delay: 0.3 }}
+              >
                 <div className="field-card__ghost-inner">
                   <span className="field-card__icon field-card__icon--ghost">{ICONS.expanding}</span>
                   <span className="field-card__ghost-text">
@@ -292,7 +446,7 @@ export function LandingPage({ initialSection = null, theme = 'dark' }) {
                     <span className="field-card__desc">{t('fields.expanding.desc')}</span>
                   </span>
                 </div>
-              </Reveal>
+              </motion.div>
             </div>
 
             <Reveal className="archive-cta" delay={0.2}>
