@@ -136,8 +136,12 @@ export function LandingPage({ initialSection = null, theme = 'dark' }) {
   const [form, setForm] = useState({ nombre: '', email: '', empresa: '', mensaje: '' })
   const [formStatus, setFormStatus] = useState('idle')
   const [expandedFields, setExpandedFields] = useState([])
-  const [scanning, setScanning] = useState(false)
-  const scanTimeout = useRef(null)
+  const [scanLive, setScanLive] = useState(false)
+  const [brandSwapped, setBrandSwapped] = useState(false)
+  const brandBlockRef = useRef(null)
+  const scanRaf = useRef(null)
+  const scanTarget = useRef(0)
+  const scanCurrent = useRef(0)
   const [drawnCards, setDrawnCards] = useState([])
   const [activeSection, setActiveSection] = useState('about')
 
@@ -145,14 +149,51 @@ export function LandingPage({ initialSection = null, theme = 'dark' }) {
     setDrawnCards((prev) => (prev.includes(key) ? prev : [...prev, key]))
   }
 
-  // Línea de escaneo: un barrido por hover, sin re-disparos a mitad
-  const handleBrandHover = () => {
-    if (reduceMotion || scanning) return
-    setScanning(true)
-    scanTimeout.current = setTimeout(() => setScanning(false), 1150)
+  // Línea de escaneo controlada por el cursor: divide el texto en
+  // blanco (izquierda de la línea) / naranja (derecha), con inercia.
+  const clampScanX = (clientX, rect) =>
+    Math.min(Math.max(clientX - rect.left, 0), rect.width)
+
+  const scanLoop = () => {
+    scanRaf.current = requestAnimationFrame(() => {
+      scanCurrent.current += (scanTarget.current - scanCurrent.current) * 0.22
+      const el = brandBlockRef.current
+      if (el) el.style.setProperty('--scan-x', `${scanCurrent.current.toFixed(1)}px`)
+      if (Math.abs(scanTarget.current - scanCurrent.current) > 0.3) scanLoop()
+      else scanRaf.current = null
+    })
   }
 
-  useEffect(() => () => clearTimeout(scanTimeout.current), [])
+  const handleBrandMove = (e) => {
+    const el = brandBlockRef.current
+    if (!el || reduceMotion) return
+    scanTarget.current = clampScanX(e.clientX, el.getBoundingClientRect())
+    if (!scanRaf.current) scanLoop()
+  }
+
+  const handleBrandEnter = (e) => {
+    if (reduceMotion) return
+    const el = brandBlockRef.current
+    if (!el) return
+    const x = clampScanX(e.clientX, el.getBoundingClientRect())
+    scanTarget.current = x
+    scanCurrent.current = x
+    el.style.setProperty('--scan-x', `${x.toFixed(1)}px`)
+    setScanLive(true)
+  }
+
+  // Al salir, la línea desaparece. Si superó el 50% del recorrido,
+  // el intercambio de colores se confirma (toggle); si no, se descarta.
+  const handleBrandLeave = () => {
+    setScanLive(false)
+    const el = brandBlockRef.current
+    if (!el) return
+    if (scanTarget.current > el.getBoundingClientRect().width / 2) {
+      setBrandSwapped((s) => !s)
+    }
+  }
+
+  useEffect(() => () => cancelAnimationFrame(scanRaf.current), [])
 
   // Índice lateral: sección activa según la franja central del viewport
   useEffect(() => {
@@ -270,9 +311,11 @@ export function LandingPage({ initialSection = null, theme = 'dark' }) {
             <div className="opening-intro">
               <div className="grid-col">
                 <div
-                  className={`about-brand-block ${scanning ? 'about-brand-block--scanning' : ''}`}
-                  onMouseEnter={handleBrandHover}
-                  onTouchStart={handleBrandHover}
+                  ref={brandBlockRef}
+                  className={`about-brand-block ${scanLive ? 'about-brand-block--live' : ''} ${brandSwapped ? 'about-brand-block--swapped' : ''}`}
+                  onMouseEnter={handleBrandEnter}
+                  onMouseMove={handleBrandMove}
+                  onMouseLeave={handleBrandLeave}
                 >
                   <Reveal as="h1" className="about-brand" delay={0.05} data-text={BRAND}>
                     {BRAND}

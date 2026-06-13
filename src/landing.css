@@ -2451,7 +2451,8 @@ mark.blog-highlight {
   letter-spacing: 0.1em;
   text-transform: uppercase;
   line-height: 1.05;
-  color: var(--accent);
+  /* estado base: CORESEARCH blanco — el escáner lo intercambia a naranja */
+  color: var(--text-display);
   margin: 0 0 var(--space-sm) 0;
   white-space: nowrap;
 }
@@ -2468,100 +2469,126 @@ mark.blog-highlight {
   color: var(--accent);
 }
 
-/* La línea de escaneo */
+/* La línea de escaneo — su posición la fija el cursor vía --scan-x */
 .brand-scanline {
   position: absolute;
   top: -10%;
   bottom: -10%;
-  left: -2%;
+  left: 0;
   width: 2px;
+  transform: translateX(var(--scan-x, -20px));
   background: var(--accent);
   box-shadow:
     0 0 10px 2px color-mix(in srgb, var(--accent) 75%, transparent),
     0 0 34px 7px color-mix(in srgb, var(--accent) 30%, transparent);
   opacity: 0;
+  transition: opacity 0.3s var(--ease);
   pointer-events: none;
   z-index: 2;
 }
 
-.about-brand-block--scanning .brand-scanline {
-  animation: scan-sweep 1.05s cubic-bezier(0.55, 0, 0.3, 1) forwards;
+/* La línea solo existe mientras el cursor está en el área */
+.about-brand-block--live .brand-scanline {
+  opacity: 1;
 }
 
-@keyframes scan-sweep {
-  0%   { left: -2%; opacity: 0; }
-  7%   { opacity: 1; }
-  88%  { opacity: 1; }
-  100% { left: 101%; opacity: 0; }
+/* Colores confirmados tras un barrido > 50% (toggle) */
+.about-brand-block--swapped .about-brand {
+  color: var(--accent);
 }
 
-/* Capas fantasma (split RGB) reveladas en una banda que sigue a la línea */
+.about-brand-block--swapped .about-tagline {
+  color: var(--text-display);
+}
+
+/* Copias reveladas a la IZQUIERDA de la línea, siempre con el color
+   OPUESTO al estado actual (previsualizan el intercambio) */
 .about-brand::before,
+.about-tagline::before {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  clip-path: inset(-15% calc(100% - var(--scan-x, -20px)) -15% 0);
+  opacity: 0;
+  /* sin transición por defecto: al salir el preview desaparece de golpe,
+     evitando que su color cruce con el commit del color base */
+  z-index: 1;
+}
+
+/* transición suave SOLO en la entrada (mientras el cursor está dentro) */
+.about-brand-block--live .about-brand::before,
+.about-brand-block--live .about-tagline::before,
+.about-brand-block--live .about-brand::after,
+.about-brand-block--live .about-tagline::after {
+  transition: opacity 0.3s var(--ease);
+}
+
+.about-brand::before {
+  color: var(--accent);
+}
+
+.about-tagline::before {
+  color: var(--text-display);
+}
+
+.about-brand-block--swapped .about-brand::before {
+  color: var(--text-display);
+}
+
+.about-brand-block--swapped .about-tagline::before {
+  color: var(--accent);
+}
+
+/* Franja cian: aberración cromática justo en el borde de la línea */
 .about-brand::after,
-.about-tagline::before,
 .about-tagline::after {
   content: attr(data-text);
   position: absolute;
   inset: 0;
   pointer-events: none;
+  color: #00E5FF;
+  transform: translateX(-2px);
+  clip-path: inset(
+    -15%
+    calc(100% - var(--scan-x, -20px) - 5px)
+    -15%
+    calc(var(--scan-x, -20px) - 5px)
+  );
   opacity: 0;
   z-index: 1;
 }
 
-.about-brand::before,
-.about-tagline::before {
-  color: #00E5FF;
-  transform: translateX(-3px);
+.about-brand-block--live .about-brand::before,
+.about-brand-block--live .about-tagline::before {
+  opacity: 1;
 }
 
-.about-brand::after,
-.about-tagline::after {
-  color: var(--text-display);
-  transform: translateX(3px);
+/* La franja cian solo mientras se escanea activamente */
+.about-brand-block--live .about-brand::after,
+.about-brand-block--live .about-tagline::after {
+  opacity: 0.55;
 }
 
-.about-brand-block--scanning .about-brand::before,
-.about-brand-block--scanning .about-brand::after,
-.about-brand-block--scanning .about-tagline::before,
-.about-brand-block--scanning .about-tagline::after {
-  animation: ghost-band 1.05s cubic-bezier(0.55, 0, 0.3, 1) forwards;
+/* El color base salta sin transición (commit atómico, sin cruce con el
+   preview que se oculta). Solo el resplandor se desvanece suave. */
+.about-brand,
+.about-tagline {
+  transition: text-shadow 0.35s var(--ease);
 }
 
-@keyframes ghost-band {
-  0%   { clip-path: inset(-15% 94% -15% -6%); opacity: 0; }
-  10%  { opacity: 0.85; }
-  86%  { opacity: 0.85; }
-  100% { clip-path: inset(-15% -6% -15% 94%); opacity: 0; }
-}
-
-/* Estela de fósforo: el texto queda brillando tras el paso de la línea */
-.about-brand-block--scanning .about-brand {
-  animation: phosphor-trail 1.1s var(--ease) forwards;
-}
-
-.about-brand-block--scanning .about-tagline {
-  animation: phosphor-trail 1.1s var(--ease) 0.08s forwards;
-}
-
-@keyframes phosphor-trail {
-  0%   { text-shadow: none; }
-  55%  {
-    text-shadow:
-      0 0 20px color-mix(in srgb, var(--accent) 65%, transparent),
-      0 0 55px color-mix(in srgb, var(--accent) 30%, transparent);
-  }
-  100% { text-shadow: 0 0 12px color-mix(in srgb, var(--accent) 22%, transparent); }
+.about-brand-block--live .about-brand,
+.about-brand-block--live .about-tagline {
+  text-shadow: 0 0 16px color-mix(in srgb, var(--accent) 28%, transparent);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .about-brand-block--scanning .brand-scanline,
-  .about-brand-block--scanning .about-brand,
-  .about-brand-block--scanning .about-tagline,
-  .about-brand-block--scanning .about-brand::before,
-  .about-brand-block--scanning .about-brand::after,
-  .about-brand-block--scanning .about-tagline::before,
-  .about-brand-block--scanning .about-tagline::after {
-    animation: none;
+  .brand-scanline,
+  .about-brand::before,
+  .about-brand::after,
+  .about-tagline::before,
+  .about-tagline::after {
+    display: none;
   }
 }
 
