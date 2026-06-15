@@ -40,7 +40,7 @@ export async function onRequestGet() {
 function buildSitemap({ posts, projects }) {
   const entries = []
 
-  for (const path of ['', '/portfolio', '/blog']) {
+  for (const path of ['', '/publications', '/portfolio', '/blog']) {
     for (const lang of LANGS) {
       entries.push(urlEntry(lang, path, LANGS, null))
     }

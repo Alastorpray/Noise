@@ -1,13 +1,11 @@
-import * as THREE from 'three'
-import { render, events, extend } from '@react-three/fiber'
 import { createRoot } from 'react-dom/client'
 import { flushSync } from 'react-dom'
 import { useState, useEffect, useRef } from 'react'
 import { BrowserRouter, Routes, Route, useLocation, useNavigate, useParams, Navigate } from 'react-router-dom'
 import { HelmetProvider } from 'react-helmet-async'
 import './styles.css'
-import App from './App'
 import { LandingPage } from './LandingPage'
+import { PublicationsPage } from './PublicationsPage'
 import { PortfolioPage } from './PortfolioPage'
 import { PortfolioPost } from './PortfolioPost'
 import { BlogPage } from './BlogPage'
@@ -26,25 +24,6 @@ function detectInitialLang() {
   if (SUPPORTED_LANGS.includes(detected)) return detected
   return DEFAULT_LANG
 }
-
-extend(THREE)
-
-window.addEventListener('resize', () =>
-  render(<App />, document.querySelector('canvas'), {
-    events,
-    linear: true,
-    dpr: Math.min(window.devicePixelRatio, 2),
-    camera: { fov: 25, position: [0, 0, 6] },
-    gl: (canvas) => new THREE.WebGLRenderer({
-      canvas,
-      antialias: true,
-      alpha: true,
-      powerPreference: 'high-performance'
-    })
-  })
-)
-
-window.dispatchEvent(new Event('resize'))
 
 const COVER_DURATION = 500   // ms — overlay fades in (covers screen)
 const REVEAL_DURATION = 500  // ms — overlay fades out (reveals new page)
@@ -73,19 +52,21 @@ function AnimatedRoutes({ theme, onToggleTheme }) {
 
   // Custom navigation state for landing page sections
   const [landingSection, setLandingSection] = useState(null)
-  // Home = "/" (pre-redirect) o "/:lang" (post-redirect). Ambos muestran partículas.
-  const isHomePath = pathParts.length === 0 || (urlLang && pathParts.length === 1)
-  const [landingExpanded, setLandingExpanded] = useState(!isHomePath)
 
-  // We ALWAYS render the NavBar, but we control its visibility via CSS classes.
-  const [isNavVisible, setIsNavVisible] = useState(!isHomePath)
+  // Home = "/" (pre-redirect) o "/:lang" (post-redirect). La home usa su propio
+  // fondo oscuro de hero, así que el fondo opaco solo se aplica fuera de home.
+  const displayParts = displayLocation.pathname.split('/').filter(Boolean)
+  const displayLang = SUPPORTED_LANGS.includes(displayParts[0]) ? displayParts[0] : null
+  const isHomeDisplayed = displayParts.length === 0 || (displayLang && displayParts.length === 1)
 
-  // Sync i18n with the URL language
+  // Sync i18n with the DISPLAYED location's language (not the URL's).
+  // displayLocation only updates mid-blackout, so the text swaps while the
+  // screen is covered: fade out → switch language → fade in already translated.
   useEffect(() => {
-    if (urlLang && i18n.language !== urlLang) {
-      i18n.changeLanguage(urlLang)
+    if (displayLang && i18n.language !== displayLang) {
+      i18n.changeLanguage(displayLang)
     }
-  }, [urlLang])
+  }, [displayLang])
 
   useEffect(() => {
     if (!hasMountedRef.current) {
@@ -133,13 +114,8 @@ function AnimatedRoutes({ theme, onToggleTheme }) {
     transitionIntentRef.current = true
     if (path === '/') {
       setLandingSection(section)
-      setLandingExpanded(!!section)
-      if (!section) setIsNavVisible(false)
-      navigate(prefixedPath)
-    } else {
-      setIsNavVisible(true)
-      navigate(prefixedPath)
     }
+    navigate(prefixedPath)
   }
 
   // Listen for nav events from LandingPage (like the "View Project" button)
@@ -148,17 +124,6 @@ function AnimatedRoutes({ theme, onToggleTheme }) {
     window.addEventListener('navigate', onNav)
     return () => window.removeEventListener('navigate', onNav)
   }, [navigate, urlLang])
-
-  useEffect(() => {
-    const onExpand = () => setIsNavVisible(true)
-    const onCollapse = () => setIsNavVisible(false)
-    window.addEventListener('landing-expanded', onExpand)
-    window.addEventListener('landing-collapsed', onCollapse)
-    return () => {
-      window.removeEventListener('landing-expanded', onExpand)
-      window.removeEventListener('landing-collapsed', onCollapse)
-    }
-  }, [])
 
   // If the URL has no recognized language segment, redirect to default lang + keep path
   if (!urlLang) {
@@ -169,25 +134,23 @@ function AnimatedRoutes({ theme, onToggleTheme }) {
   }
 
   return (
-    <div className={`theme-${theme} ${isNavVisible ? 'app-content-visible' : ''}`}>
-      <div style={{ opacity: isNavVisible ? 1 : 0, pointerEvents: isNavVisible ? 'auto' : 'none', transition: 'opacity 0.6s cubic-bezier(0.25, 0.1, 0.25, 1)' }}>
-        <NavBar
-          onNavigate={handleNavigate}
-          onBeforeNavigate={() => { transitionIntentRef.current = true }}
-          theme={theme}
-          onToggleTheme={onToggleTheme}
-        />
-      </div>
+    <div className={`theme-${theme} ${isHomeDisplayed ? '' : 'app-content-visible'}`}>
+      <NavBar
+        onNavigate={handleNavigate}
+        onBeforeNavigate={() => { transitionIntentRef.current = true }}
+        theme={theme}
+        onToggleTheme={onToggleTheme}
+      />
 
       <Routes location={displayLocation}>
         <Route path="/:lang" element={
           <LandingPage
             key={landingSection || 'home'}
-            initialExpanded={landingExpanded}
             initialSection={landingSection}
             theme={theme}
           />
         } />
+        <Route path="/:lang/publications" element={<PublicationsPage />} />
         <Route path="/:lang/portfolio" element={<PortfolioPage theme={theme} onNavigate={handleNavigate} />} />
         <Route path="/:lang/portfolio/:slug" element={<PortfolioPostWrapper onNavigate={handleNavigate} />} />
         <Route path="/:lang/blog" element={<BlogPage onNavigate={handleNavigate} />} />
@@ -216,6 +179,12 @@ function PortfolioPostWrapper({ onNavigate }) {
 
 function MainApp() {
   const [theme, setTheme] = useState('dark')
+
+  // El body queda fuera del wrapper con la clase de tema — sincronizar su fondo
+  // para que la franja de la nav y el overscroll no se vean oscuros en modo claro.
+  useEffect(() => {
+    document.body.style.backgroundColor = theme === 'dark' ? '#0E0E11' : '#EBEBEB'
+  }, [theme])
 
   const toggleTheme = () => {
     if (!document.startViewTransition) {

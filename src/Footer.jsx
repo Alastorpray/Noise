@@ -8,7 +8,7 @@ export function Footer() {
   return (
     <footer className="footer">
       <div className="footer-content">
-        <p className="footer-text">© 2024 Coresearch. {t('footer.rights')}</p>
+        <p className="footer-text">© {new Date().getFullYear()} Coresearch. {t('footer.rights')}</p>
       </div>
     </footer>
   )

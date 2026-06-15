@@ -1,42 +1,84 @@
 {
   "nav": {
     "about": "Über uns",
+    "publications": "Publikationen",
     "portfolio": "Portfolio",
     "blog": "Blog",
     "contact": "Kontakt"
   },
-  "hero": {
-    "title": "Welten verbinden",
-    "subtitle": "Wir verwandeln Ideen in innovative digitale Erlebnisse, die Menschen, Technologien und neue Möglichkeiten verbinden."
-  },
   "about": {
-    "title": "Wer wir sind",
-    "desc1": "Ein multidisziplinäres Team, spezialisiert auf angewandte Forschung und die Entwicklung digitaler Lösungen. Wir entwerfen und validieren Technologien mit echtem Geschäftsnutzen.",
-    "desc2": "Wir kombinieren schnelles Prototyping, kontrollierte Experimente und den Transfer in die Produktion, um den Weg von der Idee zum Ergebnis zu verkürzen."
+    "label": "Wer wir sind",
+    "title": "Welten verbinden",
+    "titleSub": "Wir erkunden die Methoden von heute. Und schaffen die von morgen.",
+    "desc1": "Coresearch ist ein Studio für Forschung und Innovation, fokussiert auf die Entwicklung neuer Methoden, Technologien und Lösungen für die Herausforderungen von heute und morgen.",
+    "desc2": "Wir forschen, experimentieren und schaffen anwendbares Wissen in zahlreichen Disziplinen — mit einem offenen Blick für ständige Erkundung und neue Wege des Denkens, Gestaltens und Konstruierens.",
+    "desc3": "Jede abgeschlossene Studie wird geprüft und als dauerhafter Wert archiviert."
   },
-  "divisions": {
-    "title": "Bereiche",
+  "fields": {
+    "label": "Forschungsfelder",
+    "title": "Aktuelle Forschungsbereiche",
+    "intro": "Bereiche, in denen wir heute intern forschen und entwickeln. Der Umfang wächst mit unseren Fähigkeiten.",
     "educational": {
-      "title": "Bildung",
-      "desc": "Schulung und Beratung für 3D-Entwicklung und XR-Erlebnisse.",
-      "sessions": { "title": "Sitzungen", "text": "Maßgeschneiderte Lehrpläne für Teams und Universitäten." },
-      "advisory": { "title": "XR-Beratung", "text": "Design-Reviews, Interaktionsmodelle und Prototyping." },
-      "partnerships": { "title": "Partnerschaften", "text": "Akademische und industrielle Kooperationen." }
+      "title": "Bildungsforschung",
+      "desc": "Lernmethoden, Lehrpläne und Schulungen auf Basis von 3D- und XR-Technologie.",
+      "sessions": {
+        "title": "Sitzungen",
+        "text": "Maßgeschneiderte Lehrpläne für Teams und Universitäten."
+      },
+      "advisory": {
+        "title": "XR-Beratung",
+        "text": "Design-Reviews, Interaktionsmodelle und Prototyping."
+      },
+      "partnerships": {
+        "title": "Partnerschaften",
+        "text": "Akademische und industrielle Kooperationen."
+      }
     },
     "print3d": {
-      "title": "3D-Druck Entwicklung",
-      "desc": "Entwicklung für additive Fertigung, Prototyping und 3D-Druck-Workflows.",
-      "prototypes": { "title": "Prototypen", "text": "Funktionale Iterationen und zweckmäßige Teile." },
-      "materials": { "title": "Materialien", "text": "Workflows für PLA, PETG, ABS, Harze und Verbundwerkstoffe." },
-      "integration": { "title": "Integration", "text": "Drucker, Slicer und Qualitätskontroll-Pipelines." }
+      "title": "Additive Fertigung",
+      "desc": "Angewandte Forschung im 3D-Druck: Materialien, Prototyping und Produktionsabläufe.",
+      "prototypes": {
+        "title": "Prototypen",
+        "text": "Funktionale Iterationen und zweckmäßige Teile."
+      },
+      "materials": {
+        "title": "Materialien",
+        "text": "Workflows für PLA, PETG, ABS, Harze und Verbundwerkstoffe."
+      },
+      "integration": {
+        "title": "Integration",
+        "text": "Drucker, Slicer und Qualitätskontroll-Pipelines."
+      }
     },
     "xr": {
-      "title": "XR-Entwicklung",
-      "desc": "XR-Simulatoren und Anwendungen mit Unity und Meta Quest 2/3.",
-      "simulators": { "title": "Simulatoren", "text": "Aufgabentraining und prozedurale Umgebungen." },
-      "interaction": { "title": "Interaktion", "text": "Hand-Tracking, Controller und Multi-User-Logik." },
-      "optimization": { "title": "Optimierung", "text": "Leistungsprofilierung für eigenständige VR-Headsets." }
+      "title": "Extended Reality",
+      "desc": "Simulatoren und experimentelle XR-Anwendungen mit Unity und Standalone-Headsets.",
+      "simulators": {
+        "title": "Simulatoren",
+        "text": "Aufgabentraining und prozedurale Umgebungen."
+      },
+      "interaction": {
+        "title": "Interaktion",
+        "text": "Hand-Tracking, Controller und Multi-User-Logik."
+      },
+      "optimization": {
+        "title": "Optimierung",
+        "text": "Leistungsprofilierung für eigenständige VR-Headsets."
+      }
+    },
+    "expanding": {
+      "title": "Wachsender Umfang",
+      "desc": "Von der Archäologie bis zur Raumfahrtwissenschaft — der Umfang wächst mit jeder Untersuchung, stets nach denselben Standards für Methodik und Begutachtung."
     }
+  },
+  "publications": {
+    "eyebrow": "Archiv",
+    "heroTitle": "Publikationen.",
+    "heroSubtitle": "Berichte, Papers und Studien — das dauerhafte Verzeichnis der Coresearch-Untersuchungen.",
+    "empty": "Das Archiv wird vorbereitet. Erste Publikationen folgen in Kürze.",
+    "download": "PDF",
+    "doi": "DOI",
+    "viewIndex": "Publikationsarchiv durchsuchen"
   },
   "portfolio": {
     "title": "Unsere Arbeit",
@@ -49,27 +91,28 @@
     "educational": "Bildung",
     "gameAsset": "Game Asset",
     "empty": "Noch keine Projekte.",
-    "back": "Zurück zum Portfolio"
+    "back": "Zurück zum Portfolio",
+    "other": "Weitere"
   },
   "blog": {
     "title": "Unser Blog",
     "eyebrow": "Blog",
     "heroTitle": "Einblicke.",
-    "heroSubtitle": "Notizen, Experimente und Tiefenanalysen zu kreativer Technologie, Shadern und Echtzeitgrafik.",
+    "heroSubtitle": "Notizen, Experimente und Tiefenanalysen aus laufender Forschung und kreativer Technologie.",
     "empty": "Zurzeit sind keine Beiträge verfügbar.",
     "back": "Zurück zum Blog"
   },
   "contact": {
     "title": "Kontaktieren Sie uns",
-    "desc": "Haben Sie ein Projekt im Sinn? Wir würden uns freuen, von Ihnen zu hören.",
+    "desc": "Eine Forschungsfrage, ein Auftrag oder Fachwissen, das Sie anbieten möchten — wir freuen uns darauf.",
     "email": "Schreiben Sie uns",
     "location": "Weltweit tätig.",
-    "e2e": "E2E delivery",
-    "speed": "Startup Speed",
+    "e2e": "Peer-Review-Verfahren",
+    "speed": "Disziplinübergreifend",
     "form": {
       "name": "Name",
       "email": "E-Mail",
-      "company": "Unternehmen (optional)",
+      "company": "Organisation (optional)",
       "message": "Nachricht",
       "send": "Senden",
       "sending": "Wird gesendet…",

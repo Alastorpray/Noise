@@ -10,6 +10,7 @@ import { SEO, SITE_ORIGIN } from './SEO'
 import { ScrollProgress } from './ScrollProgress'
 import { getReadingTimeMinutes } from './utils/readingTime'
 import { DEFAULT_LANG } from './index'
+import { DotSpotlight } from './DotSpotlight'
 import './landing.css'
 
 const POST_QUERY = `*[_type == "post" && slug.current == $slug]
@@ -174,6 +175,7 @@ export function BlogPost({ slug, onNavigate }) {
 
   return (
     <div className="page-content expanded">
+      <DotSpotlight fixed />
       {post && (
         <SEO
           title={post.title}
