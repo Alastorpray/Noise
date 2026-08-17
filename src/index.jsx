@@ -5,13 +5,15 @@ import { BrowserRouter, Routes, Route, useLocation, useNavigate, useParams, Navi
 import { HelmetProvider } from 'react-helmet-async'
 import './styles.css'
 import { LandingPage } from './LandingPage'
-import { PublicationsPage } from './PublicationsPage'
+import { ResearchPage } from './ResearchPage'
+import { ResearchPost } from './ResearchPost'
 import { PortfolioPage } from './PortfolioPage'
 import { PortfolioPost } from './PortfolioPost'
 import { BlogPage } from './BlogPage'
 import { BlogPost } from './BlogPost'
 import { NavBar } from './NavBar'
 import { LenisProvider } from './LenisProvider'
+import { BLOG_ENABLED } from './config'
 import i18n from './i18n'
 
 export const SUPPORTED_LANGS = ['en', 'es', 'de']
@@ -150,11 +152,16 @@ function AnimatedRoutes({ theme, onToggleTheme }) {
             theme={theme}
           />
         } />
-        <Route path="/:lang/publications" element={<PublicationsPage />} />
+        <Route path="/:lang/research" element={<ResearchPage onNavigate={handleNavigate} />} />
+        <Route path="/:lang/research/:slug" element={<ResearchPostWrapper onNavigate={handleNavigate} />} />
         <Route path="/:lang/portfolio" element={<PortfolioPage theme={theme} onNavigate={handleNavigate} />} />
         <Route path="/:lang/portfolio/:slug" element={<PortfolioPostWrapper onNavigate={handleNavigate} />} />
-        <Route path="/:lang/blog" element={<BlogPage onNavigate={handleNavigate} />} />
-        <Route path="/:lang/blog/:slug" element={<BlogPostWrapper onNavigate={handleNavigate} />} />
+        {BLOG_ENABLED && (
+          <Route path="/:lang/blog" element={<BlogPage onNavigate={handleNavigate} />} />
+        )}
+        {BLOG_ENABLED && (
+          <Route path="/:lang/blog/:slug" element={<BlogPostWrapper onNavigate={handleNavigate} />} />
+        )}
         <Route path="*" element={<LegacyRedirect />} />
       </Routes>
 
@@ -169,6 +176,12 @@ function AnimatedRoutes({ theme, onToggleTheme }) {
 function BlogPostWrapper({ onNavigate }) {
   const { slug } = useParams()
   return <BlogPost slug={slug} onNavigate={onNavigate} />
+}
+
+// Wrapper for ResearchPost
+function ResearchPostWrapper({ onNavigate }) {
+  const { slug } = useParams()
+  return <ResearchPost slug={slug} onNavigate={onNavigate} />
 }
 
 // Wrapper for PortfolioPost

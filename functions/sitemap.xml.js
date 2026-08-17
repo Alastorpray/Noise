@@ -5,6 +5,9 @@ const PROJECT_ID = '2lf16gxk'
 const DATASET = 'production'
 const API_VERSION = 'v2025-04-02'
 
+// Keep in sync with BLOG_ENABLED in src/config.js
+const BLOG_ENABLED = false
+
 const GROQ = `{
   "posts": *[_type == "post" && defined(slug.current)] {
     "slug": slug.current,
@@ -15,6 +18,11 @@ const GROQ = `{
     "slug": slug.current,
     language,
     "lastmod": coalesce(_updatedAt, date)
+  },
+  "research": *[_type == "research" && defined(slug.current) && count(body) > 0] {
+    "slug": slug.current,
+    language,
+    "lastmod": coalesce(_updatedAt, publishedAt)
   }
 }`
 
@@ -27,7 +35,7 @@ export async function onRequestGet() {
   }
   const { result } = await res.json()
 
-  const xml = buildSitemap(result || { posts: [], projects: [] })
+  const xml = buildSitemap(result || { posts: [], projects: [], research: [] })
 
   return new Response(xml, {
     headers: {
@@ -37,24 +45,35 @@ export async function onRequestGet() {
   })
 }
 
-function buildSitemap({ posts, projects }) {
+function buildSitemap({ posts, projects, research }) {
   const entries = []
 
-  for (const path of ['', '/publications', '/portfolio', '/blog']) {
+  const sections = ['', '/research', '/portfolio']
+  if (BLOG_ENABLED) sections.push('/blog')
+
+  for (const path of sections) {
     for (const lang of LANGS) {
       entries.push(urlEntry(lang, path, LANGS, null))
     }
   }
 
-  for (const [slug, { langs, lastmod }] of groupBySlug(posts)) {
-    for (const lang of langs) {
-      entries.push(urlEntry(lang, `/blog/${slug}`, langs, lastmod))
+  if (BLOG_ENABLED) {
+    for (const [slug, { langs, lastmod }] of groupBySlug(posts)) {
+      for (const lang of langs) {
+        entries.push(urlEntry(lang, `/blog/${slug}`, langs, lastmod))
+      }
     }
   }
 
   for (const [slug, { langs, lastmod }] of groupBySlug(projects)) {
     for (const lang of langs) {
       entries.push(urlEntry(lang, `/portfolio/${slug}`, langs, lastmod))
+    }
+  }
+
+  for (const [slug, { langs, lastmod }] of groupBySlug(research)) {
+    for (const lang of langs) {
+      entries.push(urlEntry(lang, `/research/${slug}`, langs, lastmod))
     }
   }
 

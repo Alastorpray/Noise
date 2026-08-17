@@ -6,7 +6,7 @@ import { Reveal } from './Reveal'
 import { motion, useReducedMotion } from 'framer-motion'
 import { SEO } from './SEO'
 
-const DIVISION_ORDER = ['xr', 'print3d', 'educational', 'gameAsset']
+const DIVISION_ORDER = ['spatial', 'print3d', 'educational', 'gameAsset']
 
 const QUERY = `*[_type == "project" && language == $lang] | order(featured desc, date desc) {
   _id, title, slug, division, description, tags, date, featured, mediaType,
@@ -81,7 +81,7 @@ export function Portfolio({ onNavigate }) {
     <section className="section" id="portfolio">
       <SEO
         title={t('portfolio.title', 'Our Work')}
-        description={t('portfolio.heroSubtitle', 'Selected projects across XR, 3D printing, educational tools and interactive experiences.')}
+        description={t('portfolio.heroSubtitle', 'Selected projects across spatial computing, 3D printing, educational tools and interactive experiences.')}
       />
       <header className="editorial-hero">
         <Reveal as="span" className="editorial-hero__eyebrow" delay={0.05}>
@@ -95,7 +95,7 @@ export function Portfolio({ onNavigate }) {
           stagger={70}
         />
         <Reveal as="p" className="editorial-hero__subtitle" delay={0.25}>
-          {t('portfolio.heroSubtitle', 'Selected projects across XR, 3D printing, educational tools and interactive experiences.')}
+          {t('portfolio.heroSubtitle', 'Selected projects across spatial computing, 3D printing, educational tools and interactive experiences.')}
         </Reveal>
       </header>
 

@@ -115,6 +115,9 @@ async function translateDocForLang(sourceDoc, sourceLang, targetLang) {
       if (entry?._type === 'videoEmbed' && typeof entry.caption === 'string') {
         inlineUpdates.push({ i, idx: pushString(entry.caption), field: 'caption' })
       }
+      if (entry?._type === 'videoFile' && typeof entry.caption === 'string') {
+        inlineUpdates.push({ i, idx: pushString(entry.caption), field: 'caption' })
+      }
     })
   }
 

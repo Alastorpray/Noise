@@ -9,6 +9,7 @@ import { ShareButtons } from './ShareButtons'
 import { SEO, SITE_ORIGIN } from './SEO'
 import { ScrollProgress } from './ScrollProgress'
 import { getReadingTimeMinutes } from './utils/readingTime'
+import { getVideoEmbedUrl } from './utils/videoEmbed'
 import { DEFAULT_LANG } from './index'
 import { DotSpotlight } from './DotSpotlight'
 import './landing.css'
@@ -24,17 +25,6 @@ const POST_QUERY = `*[_type == "post" && slug.current == $slug]
 const SIBLINGS_QUERY = `*[_type == "post" && defined(slug.current) && language == $lang] | order(publishedAt desc) {
   title, "slug": slug.current
 }`
-
-function getVideoEmbedUrl(url) {
-  if (!url) return null
-  // YouTube
-  const ytMatch = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/)
-  if (ytMatch) return `https://www.youtube.com/embed/${ytMatch[1]}`
-  // Vimeo
-  const vimeoMatch = url.match(/vimeo\.com\/(\d+)/)
-  if (vimeoMatch) return `https://player.vimeo.com/video/${vimeoMatch[1]}`
-  return url
-}
 
 const CALLOUT_ICONS = { tip: '💡', info: 'ℹ️', warning: '⚠️', danger: '🚨' }
 

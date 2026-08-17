@@ -1,17 +1,18 @@
 {
   "nav": {
     "about": "About",
-    "publications": "Publications",
+    "research": "Research",
     "portfolio": "Portfolio",
     "blog": "Blog",
     "contact": "Contact"
   },
   "about": {
     "label": "Who we are",
+    "metaDescription": "Coresearch, R&D studio in digital technologies to solve problems, preserve knowledge and create new ways of interacting with information.",
     "title": "Connecting worlds",
-    "titleSub": "Exploring today's methodologies. Creating tomorrow's.",
-    "desc1": "Coresearch is a research and innovation studio focused on developing new methodologies, technologies and solutions for the challenges of the present and the future.",
-    "desc2": "We investigate, experiment and create applicable knowledge across multiple disciplines, with a vision open to constant exploration and to generating new ways of thinking, designing and building.",
+    "titleSub": "All men by nature desire to know.",
+    "titleSubCite": "Aristotle, Metaphysics",
+    "desc1": "Coresearch is a research and development studio specialized in the exploration and application of digital technologies to solve problems, preserve knowledge and create new ways of interacting with information.",
     "desc3": "Every completed study is verified and archived as a permanent asset."
   },
   "fields": {
@@ -20,13 +21,13 @@
     "intro": "Areas where we research and build in-house today. The scope expands as our capabilities grow.",
     "educational": {
       "title": "Educational research",
-      "desc": "Learning methods, curricula and training built on 3D and XR technology.",
+      "desc": "Learning methods, curricula and training built on 3D and spatial computing technology.",
       "sessions": {
         "title": "Sessions",
         "text": "Curricula tailored for teams and universities."
       },
       "advisory": {
-        "title": "XR advisory",
+        "title": "Design advisory",
         "text": "Design reviews, interaction models and prototyping."
       },
       "partnerships": {
@@ -50,9 +51,9 @@
         "text": "Printers, slicers and QC pipelines."
       }
     },
-    "xr": {
-      "title": "Extended reality",
-      "desc": "Simulators and experimental XR applications with Unity and standalone headsets.",
+    "spatial": {
+      "title": "Spatial computing",
+      "desc": "Simulators and experimental applications with Unity and standalone headsets.",
       "simulators": {
         "title": "Simulators",
         "text": "Task training and procedural environments."
@@ -63,7 +64,7 @@
       },
       "optimization": {
         "title": "Optimization",
-        "text": "Performance profiling for standalone VR headsets."
+        "text": "Performance profiling for standalone headsets."
       }
     },
     "expanding": {
@@ -71,22 +72,24 @@
       "desc": "From archaeology to space science — the scope grows with every inquiry, always under the same standards of method and review."
     }
   },
-  "publications": {
+  "research": {
     "eyebrow": "Archive",
-    "heroTitle": "Publications.",
-    "heroSubtitle": "Reports, papers and studies — the permanent record of Coresearch investigations.",
-    "empty": "The archive is being prepared. First publications coming soon.",
+    "heroTitle": "Research.",
+    "heroSubtitle": "Studies, reports and papers — the permanent record of Coresearch investigations.",
+    "empty": "The archive is being prepared. First studies coming soon.",
     "download": "PDF",
     "doi": "DOI",
-    "viewIndex": "Browse the publications archive"
+    "viewIndex": "Browse the research archive",
+    "read": "Read",
+    "back": "Back to Research"
   },
   "portfolio": {
     "title": "Our Work",
     "eyebrow": "Portfolio",
     "heroTitle": "Work.",
-    "heroSubtitle": "Selected projects across XR, 3D printing, educational tools and interactive experiences.",
+    "heroSubtitle": "Selected projects across spatial computing, 3D printing, educational tools and interactive experiences.",
     "all": "All",
-    "xr": "XR",
+    "spatial": "Spatial Computing",
     "print3d": "3D Print",
     "educational": "Educational",
     "gameAsset": "Game Asset",

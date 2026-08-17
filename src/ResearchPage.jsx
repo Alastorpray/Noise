@@ -9,14 +9,15 @@ import { SEO } from './SEO'
 import { DotSpotlight } from './DotSpotlight'
 import './landing.css'
 
-const PUBLICATIONS_QUERY = `*[_type == "publication" && language == $lang] | order(publishedAt desc) {
+const RESEARCH_QUERY = `*[_type == "research" && language == $lang] | order(publishedAt desc) {
   _id, title, refCode, fieldOfStudy, abstract, publishedAt, doi,
+  "slug": slug.current, "hasBody": count(body) > 0,
   "pdfUrl": pdfFile.asset->url
 }`
 
-export function PublicationsPage() {
+export function ResearchPage({ onNavigate }) {
   const { t, i18n } = useTranslation()
-  const [publications, setPublications] = useState([])
+  const [entries, setEntries] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const reduceMotion = useReducedMotion()
@@ -24,13 +25,13 @@ export function PublicationsPage() {
   useEffect(() => {
     const lang = (i18n.language || 'en').split('-')[0]
     setLoading(true)
-    client.fetch(PUBLICATIONS_QUERY, { lang })
+    client.fetch(RESEARCH_QUERY, { lang })
       .then(data => {
-        setPublications(data)
+        setEntries(data)
         setLoading(false)
       })
       .catch(e => {
-        console.error('[Publications] Sanity fetch error:', e)
+        console.error('[Research] Sanity fetch error:', e)
         setError(e.message)
         setLoading(false)
       })
@@ -40,22 +41,22 @@ export function PublicationsPage() {
     <div className="page-content expanded">
       <DotSpotlight fixed />
       <SEO
-        title={t('publications.heroTitle', 'Publications.')}
-        description={t('publications.heroSubtitle')}
+        title={t('research.heroTitle', 'Research.')}
+        description={t('research.heroSubtitle')}
       />
       <header className="editorial-hero">
         <Reveal as="span" className="editorial-hero__eyebrow" delay={0.05}>
-          {t('publications.eyebrow', 'Archive')}
+          {t('research.eyebrow', 'Archive')}
         </Reveal>
         <AnimatedWords
           as="h1"
           className="editorial-hero__title"
-          text={t('publications.heroTitle', 'Publications.')}
+          text={t('research.heroTitle', 'Research.')}
           delay={150}
           stagger={70}
         />
         <Reveal as="p" className="editorial-hero__subtitle" delay={0.25}>
-          {t('publications.heroSubtitle')}
+          {t('research.heroSubtitle')}
         </Reveal>
       </header>
 
@@ -75,14 +76,15 @@ export function PublicationsPage() {
             </div>
           )}
 
-          {!loading && publications.length === 0 && !error && (
-            <p className="portfolio-empty">{t('publications.empty')}</p>
+          {!loading && entries.length === 0 && !error && (
+            <p className="portfolio-empty">{t('research.empty')}</p>
           )}
 
-          {!loading && publications.length > 0 && (
+          {!loading && entries.length > 0 && (
             <div className="publication-list">
-              {publications.map((pub, i) => {
+              {entries.map((pub, i) => {
                 const year = pub.publishedAt ? new Date(pub.publishedAt).getFullYear() : null
+                const readable = Boolean(pub.slug && pub.hasBody)
 
                 return (
                   <motion.article
@@ -105,12 +107,33 @@ export function PublicationsPage() {
                           </span>
                         </div>
                       )}
-                      <h3 className="publication-entry__title">{pub.title}</h3>
+                      {readable ? (
+                        <h3 className="publication-entry__title">
+                          <a
+                            href={`/research/${pub.slug}`}
+                            className="publication-entry__title-link"
+                            onClick={e => { e.preventDefault(); onNavigate(`/research/${pub.slug}`) }}
+                          >
+                            {pub.title}
+                          </a>
+                        </h3>
+                      ) : (
+                        <h3 className="publication-entry__title">{pub.title}</h3>
+                      )}
                       {pub.abstract && (
                         <p className="publication-entry__abstract">{pub.abstract}</p>
                       )}
-                      {(pub.pdfUrl || pub.doi) && (
+                      {(readable || pub.pdfUrl || pub.doi) && (
                         <div className="publication-entry__links">
+                          {readable && (
+                            <a
+                              className="publication-entry__link publication-entry__link--read"
+                              href={`/research/${pub.slug}`}
+                              onClick={e => { e.preventDefault(); onNavigate(`/research/${pub.slug}`) }}
+                            >
+                              {t('research.read', 'Read')} →
+                            </a>
+                          )}
                           {pub.pdfUrl && (
                             <a
                               className="publication-entry__link"
@@ -118,7 +141,7 @@ export function PublicationsPage() {
                               target="_blank"
                               rel="noopener noreferrer"
                             >
-                              {t('publications.download', 'PDF')} ↓
+                              {t('research.download', 'PDF')} ↓
                             </a>
                           )}
                           {pub.doi && (
@@ -128,7 +151,7 @@ export function PublicationsPage() {
                               target="_blank"
                               rel="noopener noreferrer"
                             >
-                              {t('publications.doi', 'DOI')} ↗
+                              {t('research.doi', 'DOI')} ↗
                             </a>
                           )}
                         </div>

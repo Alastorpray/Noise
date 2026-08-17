@@ -1,17 +1,18 @@
 {
   "nav": {
     "about": "Nosotros",
-    "publications": "Publicaciones",
+    "research": "Investigación",
     "portfolio": "Portafolio",
     "blog": "Blog",
     "contact": "Contacto"
   },
   "about": {
     "label": "Quiénes somos",
+    "metaDescription": "Coresearch, estudio de I+D en tecnologías digitales para resolver problemas, preservar conocimiento y crear nuevas formas de interacción con la información.",
     "title": "Conectando mundos",
-    "titleSub": "Explorando las metodologías de hoy. Creando las de mañana.",
-    "desc1": "Coresearch es un estudio de investigación e innovación enfocado en el desarrollo de nuevas metodologías, tecnologías y soluciones para los desafíos del presente y del futuro.",
-    "desc2": "Investigamos, experimentamos y creamos conocimiento aplicable en múltiples disciplinas, con una visión abierta a la exploración constante y a la generación de nuevas formas de pensar, diseñar y construir.",
+    "titleSub": "Todos los hombres desean por naturaleza saber.",
+    "titleSubCite": "Aristóteles, Metafísica",
+    "desc1": "Coresearch es un estudio de investigación y desarrollo especializado en la exploración y aplicación de tecnologías digitales para resolver problemas, preservar conocimiento y crear nuevas formas de interacción con la información.",
     "desc3": "Cada estudio completado se verifica y se archiva como un activo permanente."
   },
   "fields": {
@@ -20,13 +21,13 @@
     "intro": "Áreas donde hoy investigamos y desarrollamos con medios propios. El alcance se amplía a medida que crecen nuestras capacidades.",
     "educational": {
       "title": "Investigación educativa",
-      "desc": "Métodos de aprendizaje, planes de estudio y formación sobre tecnología 3D y XR.",
+      "desc": "Métodos de aprendizaje, planes de estudio y formación sobre tecnología 3D y computación espacial.",
       "sessions": {
         "title": "Sesiones",
         "text": "Planes de estudio adaptados para equipos y universidades."
       },
       "advisory": {
-        "title": "Consultoría XR",
+        "title": "Consultoría de diseño",
         "text": "Revisiones de diseño, modelos de interacción y prototipado."
       },
       "partnerships": {
@@ -50,9 +51,9 @@
         "text": "Impresoras, slicers y pipelines de control de calidad."
       }
     },
-    "xr": {
-      "title": "Realidad extendida",
-      "desc": "Simuladores y aplicaciones XR experimentales con Unity y visores autónomos.",
+    "spatial": {
+      "title": "Computación espacial",
+      "desc": "Simuladores y aplicaciones experimentales con Unity y visores autónomos.",
       "simulators": {
         "title": "Simuladores",
         "text": "Entrenamiento de tareas y entornos procedimentales."
@@ -63,7 +64,7 @@
       },
       "optimization": {
         "title": "Optimización",
-        "text": "Perfilado de rendimiento para visores VR autónomos."
+        "text": "Perfilado de rendimiento para visores autónomos."
       }
     },
     "expanding": {
@@ -71,22 +72,24 @@
       "desc": "De la arqueología a la ciencia espacial — el alcance crece con cada investigación, siempre bajo los mismos estándares de método y revisión."
     }
   },
-  "publications": {
+  "research": {
     "eyebrow": "Archivo",
-    "heroTitle": "Publicaciones.",
-    "heroSubtitle": "Reportes, papers y estudios — el registro permanente de las investigaciones de Coresearch.",
-    "empty": "El archivo está en preparación. Primeras publicaciones próximamente.",
+    "heroTitle": "Investigación.",
+    "heroSubtitle": "Estudios, reportes y papers — el registro permanente de las investigaciones de Coresearch.",
+    "empty": "El archivo está en preparación. Primeros estudios próximamente.",
     "download": "PDF",
     "doi": "DOI",
-    "viewIndex": "Explorar el archivo de publicaciones"
+    "viewIndex": "Explorar el archivo de investigación",
+    "read": "Leer",
+    "back": "Volver a Investigación"
   },
   "portfolio": {
     "title": "Nuestro Trabajo",
     "eyebrow": "Portafolio",
     "heroTitle": "Trabajo.",
-    "heroSubtitle": "Proyectos seleccionados en XR, impresión 3D, herramientas educativas y experiencias interactivas.",
+    "heroSubtitle": "Proyectos seleccionados en computación espacial, impresión 3D, herramientas educativas y experiencias interactivas.",
     "all": "Todos",
-    "xr": "XR",
+    "spatial": "Computación espacial",
     "print3d": "Impresión 3D",
     "educational": "Educación",
     "gameAsset": "Game Asset",

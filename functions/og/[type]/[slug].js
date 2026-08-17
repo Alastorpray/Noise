@@ -19,19 +19,21 @@ export async function onRequestGet({ params, request }) {
   const url = new URL(request.url)
   const lang = url.searchParams.get('lang') || 'en'
 
-  if (type !== 'post' && type !== 'project') {
+  const CATEGORY_FIELD = {
+    post: '"category": categories[0]->title',
+    project: '"category": division',
+    research: '"category": fieldOfStudy',
+  }
+  const FALLBACK_CATEGORY = { post: 'Blog', project: 'Portfolio', research: 'Research' }
+
+  if (!CATEGORY_FIELD[type]) {
     return new Response('Invalid type', { status: 400 })
   }
 
-  const groq = type === 'post'
-    ? `*[_type == "post" && slug.current == $slug]
-       | order((language == $lang) desc, (language == "en") desc)[0] {
-         title, "category": categories[0]->title
-       }`
-    : `*[_type == "project" && slug.current == $slug]
-       | order((language == $lang) desc, (language == "en") desc)[0] {
-         title, "category": division
-       }`
+  const groq = `*[_type == "${type}" && slug.current == $slug]
+     | order((language == $lang) desc, (language == "en") desc)[0] {
+       title, ${CATEGORY_FIELD[type]}
+     }`
 
   const sanityUrl = new URL(`https://${PROJECT_ID}.apicdn.sanity.io/${API_VERSION}/data/query/${DATASET}`)
   sanityUrl.searchParams.set('query', groq)
@@ -45,7 +47,7 @@ export async function onRequestGet({ params, request }) {
   const { result } = await res.json()
 
   const title = result?.title || 'Coresearch'
-  const category = (result?.category || (type === 'post' ? 'Blog' : 'Portfolio')).toUpperCase()
+  const category = (result?.category || FALLBACK_CATEGORY[type]).toUpperCase()
 
   const [inter400, inter700] = await Promise.all([
     loadFont(INTER_400_URL),

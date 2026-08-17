@@ -1,17 +1,18 @@
 {
   "nav": {
     "about": "Über uns",
-    "publications": "Publikationen",
+    "research": "Forschung",
     "portfolio": "Portfolio",
     "blog": "Blog",
     "contact": "Kontakt"
   },
   "about": {
     "label": "Wer wir sind",
+    "metaDescription": "Coresearch, F&E-Studio für digitale Technologien: Probleme lösen, Wissen bewahren und neue Formen der Interaktion mit Information schaffen.",
     "title": "Welten verbinden",
-    "titleSub": "Wir erkunden die Methoden von heute. Und schaffen die von morgen.",
-    "desc1": "Coresearch ist ein Studio für Forschung und Innovation, fokussiert auf die Entwicklung neuer Methoden, Technologien und Lösungen für die Herausforderungen von heute und morgen.",
-    "desc2": "Wir forschen, experimentieren und schaffen anwendbares Wissen in zahlreichen Disziplinen — mit einem offenen Blick für ständige Erkundung und neue Wege des Denkens, Gestaltens und Konstruierens.",
+    "titleSub": "Alle Menschen streben von Natur aus nach Wissen.",
+    "titleSubCite": "Aristoteles, Metaphysik",
+    "desc1": "Coresearch ist ein Studio für Forschung und Entwicklung, spezialisiert auf die Erforschung und Anwendung digitaler Technologien, um Probleme zu lösen, Wissen zu bewahren und neue Formen der Interaktion mit Information zu schaffen.",
     "desc3": "Jede abgeschlossene Studie wird geprüft und als dauerhafter Wert archiviert."
   },
   "fields": {
@@ -20,13 +21,13 @@
     "intro": "Bereiche, in denen wir heute intern forschen und entwickeln. Der Umfang wächst mit unseren Fähigkeiten.",
     "educational": {
       "title": "Bildungsforschung",
-      "desc": "Lernmethoden, Lehrpläne und Schulungen auf Basis von 3D- und XR-Technologie.",
+      "desc": "Lernmethoden, Lehrpläne und Schulungen auf Basis von 3D- und Spatial-Computing-Technologie.",
       "sessions": {
         "title": "Sitzungen",
         "text": "Maßgeschneiderte Lehrpläne für Teams und Universitäten."
       },
       "advisory": {
-        "title": "XR-Beratung",
+        "title": "Design-Beratung",
         "text": "Design-Reviews, Interaktionsmodelle und Prototyping."
       },
       "partnerships": {
@@ -50,9 +51,9 @@
         "text": "Drucker, Slicer und Qualitätskontroll-Pipelines."
       }
     },
-    "xr": {
-      "title": "Extended Reality",
-      "desc": "Simulatoren und experimentelle XR-Anwendungen mit Unity und Standalone-Headsets.",
+    "spatial": {
+      "title": "Spatial Computing",
+      "desc": "Simulatoren und experimentelle Anwendungen mit Unity und Standalone-Headsets.",
       "simulators": {
         "title": "Simulatoren",
         "text": "Aufgabentraining und prozedurale Umgebungen."
@@ -63,7 +64,7 @@
       },
       "optimization": {
         "title": "Optimierung",
-        "text": "Leistungsprofilierung für eigenständige VR-Headsets."
+        "text": "Leistungsprofilierung für eigenständige Headsets."
       }
     },
     "expanding": {
@@ -71,22 +72,24 @@
       "desc": "Von der Archäologie bis zur Raumfahrtwissenschaft — der Umfang wächst mit jeder Untersuchung, stets nach denselben Standards für Methodik und Begutachtung."
     }
   },
-  "publications": {
+  "research": {
     "eyebrow": "Archiv",
-    "heroTitle": "Publikationen.",
-    "heroSubtitle": "Berichte, Papers und Studien — das dauerhafte Verzeichnis der Coresearch-Untersuchungen.",
-    "empty": "Das Archiv wird vorbereitet. Erste Publikationen folgen in Kürze.",
+    "heroTitle": "Forschung.",
+    "heroSubtitle": "Studien, Berichte und Papers — das dauerhafte Verzeichnis der Coresearch-Untersuchungen.",
+    "empty": "Das Archiv wird vorbereitet. Erste Studien folgen in Kürze.",
     "download": "PDF",
     "doi": "DOI",
-    "viewIndex": "Publikationsarchiv durchsuchen"
+    "viewIndex": "Forschungsarchiv durchsuchen",
+    "read": "Lesen",
+    "back": "Zurück zur Forschung"
   },
   "portfolio": {
     "title": "Unsere Arbeit",
     "eyebrow": "Portfolio",
     "heroTitle": "Arbeit.",
-    "heroSubtitle": "Ausgewählte Projekte aus XR, 3D-Druck, Bildungstools und interaktiven Erlebnissen.",
+    "heroSubtitle": "Ausgewählte Projekte aus Spatial Computing, 3D-Druck, Bildungstools und interaktiven Erlebnissen.",
     "all": "Alle",
-    "xr": "XR",
+    "spatial": "Spatial Computing",
     "print3d": "3D-Druck",
     "educational": "Bildung",
     "gameAsset": "Game Asset",
