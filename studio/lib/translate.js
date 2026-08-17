@@ -1,3 +1,7 @@
+// Single source of truth — used by sanity.config.js to attach the action and by
+// TranslateAction to decide whether to render it. Keep them from drifting apart.
+export const TRANSLATABLE_TYPES = ['post', 'project', 'research']
+
 const SUPPORTED_TARGETS = {
   en: 'EN-US',
   de: 'DE',
@@ -95,6 +99,10 @@ async function translateDocForLang(sourceDoc, sourceLang, targetLang) {
   const excerptIdx = typeof sourceDoc.excerpt === 'string' ? pushString(sourceDoc.excerpt) : -1
   const descriptionIdx = typeof sourceDoc.description === 'string' ? pushString(sourceDoc.description) : -1
   const mainImageAltIdx = typeof sourceDoc.mainImage?.alt === 'string' ? pushString(sourceDoc.mainImage.alt) : -1
+  // Research entries: abstract is the summary, fieldOfStudy the discipline label.
+  // refCode is deliberately left untranslated — it is an archive identifier.
+  const abstractIdx = typeof sourceDoc.abstract === 'string' ? pushString(sourceDoc.abstract) : -1
+  const fieldOfStudyIdx = typeof sourceDoc.fieldOfStudy === 'string' ? pushString(sourceDoc.fieldOfStudy) : -1
 
   const bodySpanRefs = collectBlockSpans(sourceDoc.body)
   const bodySpanStart = stringBatch.length
@@ -134,6 +142,8 @@ async function translateDocForLang(sourceDoc, sourceLang, targetLang) {
   if (mainImageAltIdx >= 0) {
     result.mainImage = { ...sourceDoc.mainImage, alt: translated[mainImageAltIdx] }
   }
+  if (abstractIdx >= 0) result.abstract = translated[abstractIdx]
+  if (fieldOfStudyIdx >= 0) result.fieldOfStudy = translated[fieldOfStudyIdx]
 
   if (bodySpanRefs.length) {
     const translatedSpans = translated.slice(bodySpanStart, bodySpanStart + bodySpanRefs.length)
