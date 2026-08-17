@@ -4,6 +4,7 @@ import { visionTool } from '@sanity/vision'
 import { documentInternationalization } from '@sanity/document-internationalization'
 import { schemaTypes } from './schemas'
 import { TranslateWithDeepLAction } from './actions/TranslateAction'
+import { TRANSLATABLE_TYPES } from './lib/translate'
 
 const SUPPORTED_LANGUAGES = [
   { id: 'es', title: 'Español' },
@@ -11,7 +12,7 @@ const SUPPORTED_LANGUAGES = [
   { id: 'de', title: 'Deutsch' },
 ]
 
-const TRANSLATED_TYPES = ['post', 'project', 'research']
+const TRANSLATED_TYPES = TRANSLATABLE_TYPES
 
 export default defineConfig({
   name: 'default',

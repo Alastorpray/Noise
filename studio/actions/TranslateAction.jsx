@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useClient } from 'sanity'
-import { translateDocument } from '../lib/translate'
+import { translateDocument, TRANSLATABLE_TYPES } from '../lib/translate'
 
 export function TranslateWithDeepLAction(props) {
   const { id, type, draft, published, onComplete } = props
@@ -10,7 +10,7 @@ export function TranslateWithDeepLAction(props) {
   const doc = draft || published
 
   if (!doc) return null
-  if (!['post', 'project'].includes(type)) return null
+  if (!TRANSLATABLE_TYPES.includes(type)) return null
 
   return {
     label: isRunning ? 'Translating…' : '🌐 Translate with DeepL',
