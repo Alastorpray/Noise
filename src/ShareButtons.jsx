@@ -53,16 +53,16 @@ export function ShareButtons({ title = '' }) {
   }
 
   return (
-    <div className="share-buttons" aria-label={t('share.label', 'Share this page')}>
-      <span className="share-buttons__label">{t('share.label', 'Share')}</span>
-      <div className="share-buttons__list">
+    <div className="post-actions" aria-label={t('share.label', 'Share this page')}>
+      <span className="post-actions__label">{t('share.label', 'Share')}</span>
+      <div className="post-actions__row">
         {targets.map(({ key, label, href, icon }) => (
           <a
             key={key}
             href={href}
             target="_blank"
             rel="noopener noreferrer"
-            className="share-btn"
+            className="post-action"
             aria-label={label}
             title={label}
           >
@@ -71,7 +71,7 @@ export function ShareButtons({ title = '' }) {
         ))}
         <button
           type="button"
-          className={`share-btn ${copied ? 'share-btn--copied' : ''}`}
+          className={`post-action ${copied ? 'post-action--done' : ''}`}
           onClick={handleCopy}
           aria-label={t('share.copy', 'Copy link')}
           title={copied ? t('share.copied', 'Copied!') : t('share.copy', 'Copy link')}
