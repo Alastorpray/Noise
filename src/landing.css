@@ -3408,6 +3408,55 @@ mark.blog-highlight {
   cursor: none;
 }
 
+/* ── Watermark ───────────────────────────────────────────── */
+.vp-mark {
+  position: absolute;
+  top: var(--space-md);
+  right: var(--space-md);
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: var(--caption);
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  color: #EDEDED;
+  opacity: 0.45;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.6));
+  pointer-events: none;
+  user-select: none;
+  transition: opacity var(--duration-normal) var(--ease);
+}
+
+.vp-mark svg {
+  height: 24px;
+  width: auto;
+  display: block;
+}
+
+/* Brighter while the controls are on screen, so it reads as part of the chrome */
+.vp:hover .vp-mark,
+.vp:focus-within .vp-mark {
+  opacity: 0.8;
+}
+
+.vp--idle .vp-mark {
+  opacity: 0.45;
+}
+
+@media (max-width: 640px) {
+  .vp-mark {
+    top: var(--space-sm);
+    right: var(--space-sm);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+  }
+
+  .vp-mark svg {
+    height: 18px;
+  }
+}
+
 /* ── Poster / replay ─────────────────────────────────────── */
 .vp-bigplay {
   position: absolute;
