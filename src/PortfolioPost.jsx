@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
+import { PortableText } from '@portabletext/react'
 import { client, urlFor } from './sanityClient'
 import { Footer } from './Footer'
 import { AnimatedWords } from './AnimatedText'
@@ -8,12 +9,15 @@ import { ShareButtons } from './ShareButtons'
 import { SEO, SITE_ORIGIN } from './SEO'
 import { DEFAULT_LANG } from './index'
 import { DotSpotlight } from './DotSpotlight'
+import { VideoPlayer } from './VideoPlayer'
+import { ptComponents, BODY_PROJECTION } from './portableTextComponents'
 import './landing.css'
 
 const PROJECT_QUERY = `*[_type == "project" && slug.current == $slug]
   | order((language == $lang) desc, (language == $defaultLang) desc)[0] {
   title, division, description, tags, date, mediaType, language,
-  cover, images, "videoUrl": video.asset->url
+  cover, images, "videoUrl": video.asset->url,
+  ${BODY_PROJECTION}
 }`
 
 const SIBLINGS_QUERY = `*[_type == "project" && defined(slug.current) && language == $lang] | order(featured desc, date desc) {
@@ -142,12 +146,10 @@ export function PortfolioPost({ slug, onNavigate }) {
                 {/* Main Media */}
                 <Reveal as="div" className="blog-post-main-img-wrapper" delay={0.25} style={{ background: '#000' }}>
                   {project.mediaType === 'video' && project.videoUrl ? (
-                    <video
+                    <VideoPlayer
                       src={project.videoUrl}
-                      controls
-                      autoPlay
-                      loop
-                      className="blog-post-main-img"
+                      poster={project.cover ? urlFor(project.cover).width(1600).auto('format').url() : undefined}
+                      label={project.title}
                     />
                   ) : project.cover ? (
                     <img
@@ -158,22 +160,12 @@ export function PortfolioPost({ slug, onNavigate }) {
                   ) : null}
                 </Reveal>
 
-                {/* Description and Tags */}
-                <Reveal as="div" className="blog-content blog-post-body" delay={0.35} style={{ marginBottom: '3rem' }}>
-                  {project.description && (
-                    <p className="blog-post-p" style={{ whiteSpace: 'pre-wrap' }}>
-                      {project.description}
-                    </p>
-                  )}
-                  
-                  {project.tags?.length > 0 && (
-                    <div className="portfolio-card-tags" style={{ marginTop: '2rem' }}>
-                      {project.tags.map(tag => (
-                        <span key={tag} className="portfolio-tag">{tag}</span>
-                      ))}
-                    </div>
-                  )}
-                </Reveal>
+                {/* Case study — rich text mixed with images and video */}
+                {project.body?.length > 0 && (
+                  <Reveal as="div" className="blog-content blog-post-body" delay={0.35} style={{ marginBottom: '3rem' }}>
+                    <PortableText value={project.body} components={ptComponents} />
+                  </Reveal>
+                )}
 
                 {/* Image Gallery */}
                 {project.mediaType !== 'video' && project.images?.length > 0 && (
@@ -194,6 +186,18 @@ export function PortfolioPost({ slug, onNavigate }) {
                             onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
                           />
                         </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Tags — taxonomy footer, after the work itself */}
+                {project.tags?.length > 0 && (
+                  <div className="project-tags-footer">
+                    <span className="project-tags-label">{t('post.tags', 'Tags')}</span>
+                    <div className="project-tags-list">
+                      {project.tags.map(tag => (
+                        <span key={tag} className="portfolio-tag">{tag}</span>
                       ))}
                     </div>
                   </div>

@@ -1,6 +1,6 @@
 export default {
-  name: 'project',
-  title: 'Project',
+  name: 'research',
+  title: 'Research',
   type: 'document',
   fields: [
     {
@@ -18,6 +18,7 @@ export default {
       name: 'slug',
       title: 'Slug',
       type: 'slug',
+      description: 'Needed to give this entry its own page. Leave empty for a PDF/DOI-only record.',
       options: {
         source: 'title',
         isUnique: (slug, context) => {
@@ -35,67 +36,51 @@ export default {
           return client.fetch(query, params)
         },
       },
-      validation: Rule => Rule.required()
     },
     {
-      name: 'division',
-      title: 'Division',
+      name: 'refCode',
+      title: 'Reference code',
       type: 'string',
+      description: 'Archive reference, e.g. CRS-2026-001. Shared across translations.',
+    },
+    {
+      name: 'fieldOfStudy',
+      title: 'Field of study',
+      type: 'string',
+      description: 'E.g. Ornithology, Additive Manufacturing, Archaeology…',
+    },
+    {
+      name: 'origin',
+      title: 'Origin (internal record)',
+      type: 'string',
+      description: 'Internal only — never displayed on the public website.',
       options: {
         list: [
-          { title: 'Spatial Computing', value: 'spatial' },
-          { title: '3D Print', value: 'print3d' },
-          { title: 'Educational', value: 'educational' },
-          { title: 'Game Asset', value: 'gameAsset' }
+          { title: 'In-house', value: 'inHouse' },
+          { title: 'Commissioned (external specialist)', value: 'commissioned' },
         ],
         layout: 'radio'
       },
-      validation: Rule => Rule.required()
+      initialValue: 'inHouse'
     },
     {
-      name: 'cover',
-      title: 'Cover Image',
-      type: 'image',
-      options: { hotspot: true },
-      validation: Rule => Rule.required()
-    },
-    {
-      name: 'mediaType',
-      title: 'Media Type',
+      name: 'researcher',
+      title: 'External researcher (internal record)',
       type: 'string',
-      options: {
-        list: [
-          { title: 'Images', value: 'images' },
-          { title: 'Video', value: 'video' }
-        ],
-        layout: 'radio'
-      }
+      description: 'Internal only — never displayed on the public website.',
+      hidden: ({ document }) => document?.origin !== 'commissioned',
     },
     {
-      name: 'images',
-      title: 'Images',
-      type: 'array',
-      of: [{ type: 'image', options: { hotspot: true } }],
-      hidden: ({ document }) => document?.mediaType !== 'images'
-    },
-    {
-      name: 'video',
-      title: 'Video File',
-      type: 'file',
-      options: { accept: 'video/*' },
-      hidden: ({ document }) => document?.mediaType !== 'video'
-    },
-    {
-      name: 'description',
-      title: 'Description',
+      name: 'abstract',
+      title: 'Abstract',
       type: 'text',
-      rows: 4,
-      description: 'Excerpt for the portfolio listing and the SEO meta description — not shown on the project page itself'
+      rows: 5,
+      description: 'Short summary shown in the research index.',
     },
     {
       name: 'body',
-      title: 'Case Study',
-      description: 'Long-form content: mix text, images and videos in any order',
+      title: 'Full text',
+      description: 'Read the study on the site itself. Needs a slug. Leave empty if the PDF is the whole record.',
       type: 'array',
       of: [
         // ── Rich text block ───────────────────────────────────────
@@ -143,7 +128,7 @@ export default {
           }
         },
 
-        // ── Image with caption ────────────────────────────────────
+        // ── Figure ────────────────────────────────────────────────
         {
           type: 'image',
           options: { hotspot: true },
@@ -179,7 +164,6 @@ export default {
               title: 'Poster image',
               type: 'image',
               options: { hotspot: true },
-              description: 'Frame shown before playback starts'
             },
             {
               name: 'caption',
@@ -190,7 +174,6 @@ export default {
               name: 'loop',
               title: 'Loop silently',
               type: 'boolean',
-              description: 'Autoplay muted on repeat, for short clips',
               initialValue: false
             }
           ],
@@ -230,36 +213,36 @@ export default {
       ]
     },
     {
-      name: 'tags',
-      title: 'Tags',
-      type: 'array',
-      of: [{ type: 'string' }],
-      options: { layout: 'tags' }
+      name: 'publishedAt',
+      title: 'Published at',
+      type: 'datetime',
     },
     {
-      name: 'date',
-      title: 'Date',
-      type: 'date'
+      name: 'pdfFile',
+      title: 'PDF',
+      type: 'file',
+      options: { accept: 'application/pdf' },
     },
     {
-      name: 'featured',
-      title: 'Featured',
-      type: 'boolean',
-      description: 'Show this project highlighted at the top'
-    }
+      name: 'doi',
+      title: 'DOI / external link',
+      type: 'url',
+      validation: Rule => Rule.uri({ scheme: ['http', 'https'] })
+    },
   ],
+
   preview: {
     select: {
       title: 'title',
-      division: 'division',
-      media: 'cover'
+      refCode: 'refCode',
+      fieldOfStudy: 'fieldOfStudy',
+      language: 'language',
     },
-    prepare({ title, division, media }) {
+    prepare({ title, refCode, fieldOfStudy, language }) {
       return {
         title,
-        subtitle: division?.toUpperCase(),
-        media
+        subtitle: [refCode, fieldOfStudy, language?.toUpperCase()].filter(Boolean).join(' · '),
       }
-    }
-  }
+    },
+  },
 }

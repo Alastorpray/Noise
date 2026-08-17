@@ -30,7 +30,7 @@ const ICONS = {
       <path pathLength="1" d="M4 16.5l8 4 8-4" />
     </FieldIcon>
   ),
-  xr: (
+  spatial: (
     <FieldIcon>
       <path pathLength="1" d="M3 9.5c0-1.1.9-2 2-2h14c1.1 0 2 .9 2 2v4c0 1.1-.9 2-2 2h-3.2c-.6 0-1.18-.27-1.57-.73l-.93-1.1c-.68-.8-1.92-.8-2.6 0l-.93 1.1c-.39.46-.97.73-1.57.73H5c-1.1 0-2-.9-2-2v-4z" />
       <path pathLength="1" d="M7.5 10.75h.01M16.5 10.75h.01" />
@@ -53,7 +53,7 @@ const HOME_SECTIONS = [
 const FIELDS = [
   { key: 'educational', items: ['sessions', 'advisory', 'partnerships'] },
   { key: 'print3d', items: ['prototypes', 'materials', 'integration'] },
-  { key: 'xr', items: ['simulators', 'interaction', 'optimization'] },
+  { key: 'spatial', items: ['simulators', 'interaction', 'optimization'] },
 ]
 
 const headerItem = {
@@ -293,13 +293,13 @@ export function LandingPage({ initialSection = null, theme = 'dark' }) {
     )
   }
 
-  const goToPublications = () => {
-    window.dispatchEvent(new CustomEvent('navigate', { detail: '/publications' }))
+  const goToResearch = () => {
+    window.dispatchEvent(new CustomEvent('navigate', { detail: '/research' }))
   }
 
   return (
     <div className={`page-content expanded page-content--home theme-${theme}`}>
-      <SEO description={t('about.desc1')} />
+      <SEO description={t('about.metaDescription')} />
 
       <nav className="section-index" aria-label="Secciones">
         {HOME_SECTIONS.map(({ id, index }) => (
@@ -345,18 +345,16 @@ export function LandingPage({ initialSection = null, theme = 'dark' }) {
             <SectionHeader index="01" label={t('about.label')} />
             <div className="grid-2 grid-2--loose">
               <div className="grid-col">
-                <Reveal as="p" className="about-title-sub" delay={0.18}>
-                  {t('about.titleSub')}
+                <Reveal as="blockquote" className="about-quote" delay={0.18}>
+                  <p className="about-title-sub">{t('about.titleSub')}</p>
+                  <cite className="about-quote__cite">{t('about.titleSubCite')}</cite>
                 </Reveal>
               </div>
               <div className="grid-col">
                 <Reveal as="p" className="body-text" delay={0.15}>
                   {t('about.desc1')}
                 </Reveal>
-                <Reveal as="p" className="body-text" delay={0.2}>
-                  {t('about.desc2')}
-                </Reveal>
-                <Reveal as="p" className="body-text body-text--muted" delay={0.25}>
+                <Reveal as="p" className="body-text body-text--muted" delay={0.2}>
                   {t('about.desc3')}
                 </Reveal>
               </div>
@@ -442,8 +440,8 @@ export function LandingPage({ initialSection = null, theme = 'dark' }) {
             </div>
 
             <Reveal className="archive-cta" delay={0.2}>
-              <button type="button" className="archive-cta__link" onClick={goToPublications}>
-                {t('publications.viewIndex')}
+              <button type="button" className="archive-cta__link" onClick={goToResearch}>
+                {t('research.viewIndex')}
                 <span className="archive-cta__arrow" aria-hidden="true">→</span>
               </button>
             </Reveal>

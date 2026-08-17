@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { SUPPORTED_LANGS } from './index'
+import { BLOG_ENABLED } from './config'
 
 export function NavBar({ onNavigate, onBeforeNavigate, theme, onToggleTheme }) {
   const { t, i18n } = useTranslation()
@@ -44,7 +45,7 @@ export function NavBar({ onNavigate, onBeforeNavigate, theme, onToggleTheme }) {
   const handleNavClick = (e, target) => {
     e.preventDefault()
     setIsMobileMenuOpen(false) // Close menu on navigation
-    if (target === '/portfolio' || target === '/blog' || target === '/publications') {
+    if (target === '/portfolio' || target === '/blog' || target === '/research') {
       onNavigate(target)
     } else {
       if (route !== '/') {
@@ -100,11 +101,11 @@ export function NavBar({ onNavigate, onBeforeNavigate, theme, onToggleTheme }) {
             {t('nav.about')}
           </a>
           <a
-            href="/publications"
-            className={`nav-link ${route.startsWith('/publications') ? 'nav-link--active' : ''}`}
-            onClick={(e) => handleNavClick(e, '/publications')}
+            href="/research"
+            className={`nav-link ${route.startsWith('/research') ? 'nav-link--active' : ''}`}
+            onClick={(e) => handleNavClick(e, '/research')}
           >
-            {t('nav.publications', 'Publications')}
+            {t('nav.research', 'Research')}
           </a>
           <a
             href="/portfolio"
@@ -113,13 +114,15 @@ export function NavBar({ onNavigate, onBeforeNavigate, theme, onToggleTheme }) {
           >
             {t('nav.portfolio')}
           </a>
-          <a
-            href="/blog"
-            className={`nav-link ${route.startsWith('/blog') ? 'nav-link--active' : ''}`}
-            onClick={(e) => handleNavClick(e, '/blog')}
-          >
-            {t('nav.blog', 'Blog')}
-          </a>
+          {BLOG_ENABLED && (
+            <a
+              href="/blog"
+              className={`nav-link ${route.startsWith('/blog') ? 'nav-link--active' : ''}`}
+              onClick={(e) => handleNavClick(e, '/blog')}
+            >
+              {t('nav.blog', 'Blog')}
+            </a>
+          )}
           <a
             href="/#contact"
             className="nav-link"

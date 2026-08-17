@@ -11,7 +11,7 @@ const SUPPORTED_LANGUAGES = [
   { id: 'de', title: 'Deutsch' },
 ]
 
-const TRANSLATED_TYPES = ['post', 'project', 'publication']
+const TRANSLATED_TYPES = ['post', 'project', 'research']
 
 export default defineConfig({
   name: 'default',

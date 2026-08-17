@@ -4,17 +4,32 @@ const PROJECT_ID = '2lf16gxk'
 const DATASET = 'production'
 const API_VERSION = 'v2025-04-02'
 
-const POST_PATTERN = /^\/(en|es|de)\/(blog|portfolio)\/([^/]+)\/?$/
+// Keep in sync with BLOG_ENABLED in src/config.js
+const BLOG_ENABLED = false
+
+const POST_PATTERN = BLOG_ENABLED
+  ? /^\/(en|es|de)\/(blog|portfolio|research)\/([^/]+)\/?$/
+  : /^\/(en|es|de)\/(portfolio|research)\/([^/]+)\/?$/
+
+const TYPE_BY_SECTION = { blog: 'post', portfolio: 'project', research: 'research' }
+
+// /publications was renamed to /research — keep old links and indexed URLs alive
+const RENAMED_PATTERN = /^\/(en|es|de)\/publications\/?$/
 
 export async function onRequest(context) {
   const { request, next } = context
   const url = new URL(request.url)
 
+  const renamed = url.pathname.match(RENAMED_PATTERN)
+  if (renamed) {
+    return Response.redirect(`${SITE_ORIGIN}/${renamed[1]}/research`, 301)
+  }
+
   const match = url.pathname.match(POST_PATTERN)
   if (!match) return next()
 
   const [, lang, section, slug] = match
-  const type = section === 'blog' ? 'post' : 'project'
+  const type = TYPE_BY_SECTION[section]
 
   const data = await fetchContent(type, slug, lang)
   if (!data) return next()
@@ -52,16 +67,17 @@ export async function onRequest(context) {
   return rewriter.transform(response)
 }
 
+const EXCERPT_FIELD = {
+  post: 'excerpt',
+  project: '"excerpt": description',
+  research: '"excerpt": abstract',
+}
+
 async function fetchContent(type, slug, lang) {
-  const groq = type === 'post'
-    ? `*[_type == "post" && slug.current == $slug]
-       | order((language == $lang) desc, (language == "en") desc)[0] {
-         title, excerpt, language
-       }`
-    : `*[_type == "project" && slug.current == $slug]
-       | order((language == $lang) desc, (language == "en") desc)[0] {
-         title, "excerpt": description, language
-       }`
+  const groq = `*[_type == "${type}" && slug.current == $slug]
+     | order((language == $lang) desc, (language == "en") desc)[0] {
+       title, ${EXCERPT_FIELD[type]}, language
+     }`
 
   const sanityUrl = new URL(`https://${PROJECT_ID}.apicdn.sanity.io/${API_VERSION}/data/query/${DATASET}`)
   sanityUrl.searchParams.set('query', groq)
