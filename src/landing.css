@@ -2358,7 +2358,7 @@ mark.blog-highlight {
 /* ============================================================
    SHARE BUTTONS
    ============================================================ */
-.share-buttons {
+.post-actions {
   display: flex;
   align-items: center;
   gap: var(--space-md);
@@ -2368,7 +2368,7 @@ mark.blog-highlight {
   border-bottom: 1px solid var(--border);
 }
 
-.share-buttons__label {
+.post-actions__label {
   font-family: var(--font-body);
   font-size: var(--caption);
   font-weight: 500;
@@ -2377,12 +2377,12 @@ mark.blog-highlight {
   color: var(--text-disabled);
 }
 
-.share-buttons__list {
+.post-actions__row {
   display: flex;
   gap: var(--space-sm);
 }
 
-.share-btn {
+.post-action {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -2400,17 +2400,17 @@ mark.blog-highlight {
   padding: 0;
 }
 
-.share-btn svg {
+.post-action svg {
   width: 16px;
   height: 16px;
 }
 
-.share-btn:hover {
+.post-action:hover {
   color: var(--accent);
   border-color: var(--accent);
 }
 
-.share-btn--copied {
+.post-action--done {
   color: var(--accent);
   border-color: var(--accent);
 }
