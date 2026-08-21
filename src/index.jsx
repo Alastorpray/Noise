@@ -9,6 +9,7 @@ import { ResearchPage } from './ResearchPage'
 import { ResearchPost } from './ResearchPost'
 import { PortfolioPage } from './PortfolioPage'
 import { PortfolioPost } from './PortfolioPost'
+import { ProjectLogEntry } from './ProjectLogEntry'
 import { BlogPage } from './BlogPage'
 import { BlogPost } from './BlogPost'
 import { NavBar } from './NavBar'
@@ -16,7 +17,7 @@ import { LenisProvider } from './LenisProvider'
 import { BLOG_ENABLED } from './config'
 import i18n from './i18n'
 
-export const SUPPORTED_LANGS = ['en', 'es', 'de']
+export const SUPPORTED_LANGS = ['en', 'es']
 export const DEFAULT_LANG = 'en'
 
 function detectInitialLang() {
@@ -29,6 +30,11 @@ function detectInitialLang() {
 
 const COVER_DURATION = 500   // ms — overlay fades in (covers screen)
 const REVEAL_DURATION = 500  // ms — overlay fades out (reveals new page)
+
+function RenamedSectionRedirect() {
+  const { lang, slug } = useParams()
+  return <Navigate to={`/${lang}/projects${slug ? `/${slug}` : ''}`} replace />
+}
 
 function LegacyRedirect() {
   const location = useLocation()
@@ -154,8 +160,13 @@ function AnimatedRoutes({ theme, onToggleTheme }) {
         } />
         <Route path="/:lang/research" element={<ResearchPage onNavigate={handleNavigate} />} />
         <Route path="/:lang/research/:slug" element={<ResearchPostWrapper onNavigate={handleNavigate} />} />
-        <Route path="/:lang/portfolio" element={<PortfolioPage theme={theme} onNavigate={handleNavigate} />} />
-        <Route path="/:lang/portfolio/:slug" element={<PortfolioPostWrapper onNavigate={handleNavigate} />} />
+        <Route path="/:lang/projects" element={<PortfolioPage theme={theme} onNavigate={handleNavigate} />} />
+        <Route path="/:lang/projects/:slug" element={<PortfolioPostWrapper onNavigate={handleNavigate} />} />
+        <Route path="/:lang/projects/:projectSlug/log/:slug" element={<ProjectLogEntryWrapper onNavigate={handleNavigate} />} />
+        {/* /portfolio was renamed to /projects. The Pages middleware 301s direct
+            hits; these keep in-app links and old history entries working. */}
+        <Route path="/:lang/portfolio" element={<RenamedSectionRedirect />} />
+        <Route path="/:lang/portfolio/:slug" element={<RenamedSectionRedirect />} />
         {BLOG_ENABLED && (
           <Route path="/:lang/blog" element={<BlogPage onNavigate={handleNavigate} />} />
         )}
@@ -188,6 +199,11 @@ function ResearchPostWrapper({ onNavigate }) {
 function PortfolioPostWrapper({ onNavigate }) {
   const { slug } = useParams()
   return <PortfolioPost slug={slug} onNavigate={onNavigate} />
+}
+
+function ProjectLogEntryWrapper({ onNavigate }) {
+  const { projectSlug, slug } = useParams()
+  return <ProjectLogEntry projectSlug={projectSlug} slug={slug} onNavigate={onNavigate} />
 }
 
 function MainApp() {

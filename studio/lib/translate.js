@@ -4,14 +4,12 @@ export const TRANSLATABLE_TYPES = ['post', 'project', 'research']
 
 const SUPPORTED_TARGETS = {
   en: 'EN-US',
-  de: 'DE',
   es: 'ES',
 }
 
 const TARGETS_PER_SOURCE = {
-  es: ['en', 'de'],
-  en: ['es', 'de'],
-  de: ['es', 'en'],
+  es: ['en'],
+  en: ['es'],
 }
 
 function getProxyUrl() {

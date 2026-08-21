@@ -3,8 +3,11 @@ import { urlFor } from './sanityClient'
 import { VideoPlayer } from './VideoPlayer'
 import { getVideoEmbedUrl } from './utils/videoEmbed'
 
-// Shared renderer for the `body` field of projects and research entries.
-// The blog keeps its own set — it adds callouts, code blocks and dividers.
+const CALLOUT_ICONS = { tip: '💡', info: 'ℹ️', warning: '⚠️', danger: '🚨' }
+
+// Shared renderer for the `body` field of projects, research entries and the
+// log entries shown inside a project. Log entries come from `post`, so this set
+// covers everything that schema allows: code blocks, callouts and dividers too.
 export const ptComponents = {
   types: {
     image: ({ value }) => {
@@ -36,6 +39,32 @@ export const ptComponents = {
           {value.caption && <figcaption className="blog-img-caption">{value.caption}</figcaption>}
         </figure>
       )
+    },
+
+    codeBlock: ({ value }) => (
+      <div className="blog-code-block">
+        {(value.filename || value.language) && (
+          <div className="blog-code-header">
+            {value.filename && <span className="blog-code-filename">{value.filename}</span>}
+            {value.language && <span className="blog-code-lang">{value.language}</span>}
+          </div>
+        )}
+        <pre className="blog-code-pre"><code>{value.code}</code></pre>
+      </div>
+    ),
+
+    callout: ({ value }) => (
+      <div className={`blog-callout blog-callout--${value.type || 'info'}`}>
+        <span className="blog-callout-icon">{CALLOUT_ICONS[value.type] || 'ℹ️'}</span>
+        <p className="blog-callout-text">{value.text}</p>
+      </div>
+    ),
+
+    divider: ({ value }) => {
+      const style = value.style || 'line'
+      if (style === 'dots') return <div className="blog-divider blog-divider--dots"><span>·</span><span>·</span><span>·</span></div>
+      if (style === 'space') return <div className="blog-divider blog-divider--space" />
+      return <hr className="blog-divider blog-divider--line" />
     },
 
     videoEmbed: ({ value }) => {

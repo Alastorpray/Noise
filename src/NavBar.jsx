@@ -19,8 +19,7 @@ export function NavBar({ onNavigate, onBeforeNavigate, theme, onToggleTheme }) {
 
   const languages = [
     { code: 'en', label: 'English' },
-    { code: 'es', label: 'Español' },
-    { code: 'de', label: 'Deutsch' }
+    { code: 'es', label: 'Español' }
   ]
 
   const currentLang = languages.find(l => l.code === (urlLang || i18n.language)) || languages[0]
@@ -45,7 +44,7 @@ export function NavBar({ onNavigate, onBeforeNavigate, theme, onToggleTheme }) {
   const handleNavClick = (e, target) => {
     e.preventDefault()
     setIsMobileMenuOpen(false) // Close menu on navigation
-    if (target === '/portfolio' || target === '/blog' || target === '/research') {
+    if (target === '/projects' || target === '/blog' || target === '/research') {
       onNavigate(target)
     } else {
       if (route !== '/') {
@@ -108,11 +107,11 @@ export function NavBar({ onNavigate, onBeforeNavigate, theme, onToggleTheme }) {
             {t('nav.research', 'Research')}
           </a>
           <a
-            href="/portfolio"
-            className={`nav-link ${route.startsWith('/portfolio') ? 'nav-link--active' : ''}`}
-            onClick={(e) => handleNavClick(e, '/portfolio')}
+            href="/projects"
+            className={`nav-link ${route.startsWith('/projects') ? 'nav-link--active' : ''}`}
+            onClick={(e) => handleNavClick(e, '/projects')}
           >
-            {t('nav.portfolio')}
+            {t('nav.projects')}
           </a>
           {BLOG_ENABLED && (
             <a

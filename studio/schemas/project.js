@@ -53,6 +53,20 @@ export default {
       validation: Rule => Rule.required()
     },
     {
+      name: 'status',
+      title: 'Status',
+      type: 'string',
+      description: 'In progress projects are grouped at the top of the listing and lead with their log',
+      options: {
+        list: [
+          { title: 'In progress', value: 'in-progress' },
+          { title: 'Delivered', value: 'delivered' }
+        ],
+        layout: 'radio'
+      },
+      initialValue: 'delivered'
+    },
+    {
       name: 'cover',
       title: 'Cover Image',
       type: 'image',
@@ -91,6 +105,24 @@ export default {
       type: 'text',
       rows: 4,
       description: 'Excerpt for the portfolio listing and the SEO meta description — not shown on the project page itself'
+    },
+    {
+      name: 'client',
+      title: 'Client',
+      type: 'string',
+      description: 'Leave empty if the client is confidential — the sector is shown instead'
+    },
+    {
+      name: 'sector',
+      title: 'Sector',
+      type: 'string',
+      description: 'Shown in place of the client name when there is none, e.g. "Museum" or "Medical devices"'
+    },
+    {
+      name: 'role',
+      title: 'Role',
+      type: 'string',
+      description: 'What Coresearch did on this project, e.g. "Design and development"'
     },
     {
       name: 'body',
@@ -237,9 +269,22 @@ export default {
       options: { layout: 'tags' }
     },
     {
+      name: 'startedAt',
+      title: 'Started',
+      type: 'date',
+      description: 'Start of the project — also drives the order of the listing'
+    },
+    {
+      name: 'deliveredAt',
+      title: 'Delivered',
+      type: 'date',
+      hidden: ({ document }) => document?.status === 'in-progress'
+    },
+    {
       name: 'date',
-      title: 'Date',
-      type: 'date'
+      title: 'Date (legacy)',
+      type: 'date',
+      description: 'Superseded by Started. Kept so older projects keep their date — fill in Started instead.'
     },
     {
       name: 'featured',
@@ -252,11 +297,13 @@ export default {
     select: {
       title: 'title',
       division: 'division',
+      status: 'status',
       media: 'cover'
     },
-    prepare({ title, division, media }) {
+    prepare({ title, division, status, media }) {
+      const wip = status === 'in-progress'
       return {
-        title,
+        title: wip ? `${title} — in progress` : title,
         subtitle: division?.toUpperCase(),
         media
       }

@@ -2,7 +2,7 @@
   "nav": {
     "about": "Nosotros",
     "research": "Investigación",
-    "portfolio": "Portafolio",
+    "projects": "Proyectos",
     "blog": "Blog",
     "contact": "Contacto"
   },
@@ -83,19 +83,35 @@
     "read": "Leer",
     "back": "Volver a Investigación"
   },
-  "portfolio": {
-    "title": "Nuestro Trabajo",
-    "eyebrow": "Portafolio",
-    "heroTitle": "Trabajo.",
-    "heroSubtitle": "Proyectos seleccionados en computación espacial, impresión 3D, herramientas educativas y experiencias interactivas.",
+  "projects": {
+    "title": "Proyectos",
+    "eyebrow": "Proyectos",
+    "heroTitle": "Proyectos.",
+    "heroSubtitle": "Trabajo seleccionado en computación espacial, impresión 3D, herramientas educativas y experiencias interactivas — incluidos proyectos aún en curso.",
     "all": "Todos",
     "spatial": "Computación espacial",
     "print3d": "Impresión 3D",
     "educational": "Educación",
     "gameAsset": "Game Asset",
+    "other": "Otros",
+    "wip": "En curso",
     "empty": "Aún no hay proyectos.",
-    "back": "Volver al Portafolio",
-    "other": "Otros"
+    "back": "Volver a Proyectos",
+    "status": "Estado",
+    "inProgress": "En curso",
+    "delivered": "Entregado",
+    "client": "Cliente",
+    "sector": "Sector",
+    "role": "Rol",
+    "period": "Periodo",
+    "since": "Desde {{date}}",
+    "log": "Registro",
+    "readEntry": "Leer entrada",
+    "close": "Cerrar",
+    "backToProject": "Volver a {{title}}",
+    "today": "Hoy",
+    "undated": "Sin fecha",
+    "rhythm": "Línea de tiempo del registro"
   },
   "blog": {
     "title": "Nuestro Blog",
@@ -141,7 +157,6 @@
   },
   "languages": {
     "en": "inglés",
-    "es": "español",
-    "de": "alemán"
+    "es": "español"
   }
 }

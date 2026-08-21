@@ -8,10 +8,15 @@ import { SEO } from './SEO'
 
 const DIVISION_ORDER = ['spatial', 'print3d', 'educational', 'gameAsset']
 
-const QUERY = `*[_type == "project" && language == $lang] | order(featured desc, date desc) {
-  _id, title, slug, division, description, tags, date, featured, mediaType,
+const QUERY = `*[_type == "project" && language == $lang]
+  | order(featured desc, coalesce(startedAt, date) desc) {
+  _id, title, slug, division, description, tags, featured, mediaType,
+  "status": coalesce(status, "delivered"),
+  "startedAt": coalesce(startedAt, date),
   cover, images, "videoUrl": video.asset->url
 }`
+
+const WIP_GROUP = 'wip'
 
 export function Portfolio({ onNavigate }) {
   const { t, i18n } = useTranslation()
@@ -35,17 +40,21 @@ export function Portfolio({ onNavigate }) {
       })
   }, [i18n.language])
 
-  // Catálogo agrupado por división, en orden fijo; lo desconocido cae en "other"
+  // Catálogo agrupado por división, en orden fijo; lo desconocido cae en "other".
+  // Los proyectos en curso salen de su división y se agrupan arriba: mezclados
+  // por fecha, un WIP con dos entradas pierde siempre contra uno ya fotografiado.
   const groups = useMemo(() => {
+    const live = projects.filter(p => p.status === 'in-progress')
     const map = {}
-    projects.forEach(p => {
+    projects.filter(p => p.status !== 'in-progress').forEach(p => {
       const key = DIVISION_ORDER.includes(p.division) ? p.division : 'other'
       if (!map[key]) map[key] = []
       map[key].push(p)
     })
-    return [...DIVISION_ORDER, 'other']
+    const byDivision = [...DIVISION_ORDER, 'other']
       .filter(key => map[key]?.length)
       .map(key => ({ key, items: map[key] }))
+    return live.length ? [{ key: WIP_GROUP, items: live }, ...byDivision] : byDivision
   }, [projects])
 
   // Píldora activa según el grupo visible en la franja superior del viewport
@@ -78,24 +87,24 @@ export function Portfolio({ onNavigate }) {
   }
 
   return (
-    <section className="section" id="portfolio">
+    <section className="section" id="projects">
       <SEO
-        title={t('portfolio.title', 'Our Work')}
-        description={t('portfolio.heroSubtitle', 'Selected projects across spatial computing, 3D printing, educational tools and interactive experiences.')}
+        title={t('projects.title', 'Projects')}
+        description={t('projects.heroSubtitle', 'Selected work across spatial computing, 3D printing, educational tools and interactive experiences — including projects still running.')}
       />
       <header className="editorial-hero">
         <Reveal as="span" className="editorial-hero__eyebrow" delay={0.05}>
-          {t('portfolio.eyebrow', 'Portfolio')}
+          {t('projects.eyebrow', 'Projects')}
         </Reveal>
         <AnimatedWords
           as="h1"
           className="editorial-hero__title"
-          text={t('portfolio.heroTitle', 'Work.')}
+          text={t('projects.heroTitle', 'Projects.')}
           delay={150}
           stagger={70}
         />
         <Reveal as="p" className="editorial-hero__subtitle" delay={0.25}>
-          {t('portfolio.heroSubtitle', 'Selected projects across spatial computing, 3D printing, educational tools and interactive experiences.')}
+          {t('projects.heroSubtitle', 'Selected work across spatial computing, 3D printing, educational tools and interactive experiences — including projects still running.')}
         </Reveal>
       </header>
 
@@ -108,7 +117,7 @@ export function Portfolio({ onNavigate }) {
                 className={`portfolio-filter-btn ${activeGroup === key ? 'active' : ''}`}
                 onClick={() => jumpToGroup(key)}
               >
-                {t(`portfolio.${key}`, key)}
+                {t(`projects.${key}`, key)}
                 <span className="catalog-index__count">{items.length}</span>
               </button>
             ))}
@@ -130,19 +139,19 @@ export function Portfolio({ onNavigate }) {
         )}
 
         {!loading && groups.length === 0 && (
-          <p className="portfolio-empty">{t('portfolio.empty')}</p>
+          <p className="portfolio-empty">{t('projects.empty')}</p>
         )}
 
         {!loading && groups.map(({ key, items }, gi) => (
           <section
-            className="catalog-group"
+            className={`catalog-group ${key === WIP_GROUP ? 'catalog-group--wip' : ''}`}
             id={`division-${key}`}
             data-group={key}
             key={key}
           >
             <div className="catalog-group__header">
               <span className="catalog-group__index">§ {String(gi + 1).padStart(2, '0')}</span>
-              <span className="catalog-group__label">{t(`portfolio.${key}`, key)}</span>
+              <span className="catalog-group__label">{t(`projects.${key}`, key)}</span>
               <span className="catalog-group__count">({items.length})</span>
               <span className="catalog-group__rule" aria-hidden="true" />
             </div>
@@ -152,9 +161,10 @@ export function Portfolio({ onNavigate }) {
                   key={project._id}
                   project={project}
                   index={i}
+                  locale={i18n.language}
                   onOpen={() => {
                     if (project.slug?.current) {
-                      onNavigate(`/portfolio/${project.slug.current}`)
+                      onNavigate(`/projects/${project.slug.current}`)
                     } else {
                       console.warn('Project is missing a slug. Please generate one in Sanity.')
                     }
@@ -169,10 +179,12 @@ export function Portfolio({ onNavigate }) {
   )
 }
 
-function ProjectEntry({ project, index, onOpen }) {
+function ProjectEntry({ project, index, locale, onOpen }) {
+  const { t } = useTranslation()
   const reduceMotion = useReducedMotion()
-  const dateStr = project.date
-    ? new Date(project.date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
+  const isWip = project.status === 'in-progress'
+  const dateStr = project.startedAt
+    ? new Date(project.startedAt).toLocaleDateString(locale || 'en', { month: 'short', year: 'numeric' })
     : null
 
   return (
@@ -187,6 +199,12 @@ function ProjectEntry({ project, index, onOpen }) {
     >
       <div className="editorial-entry__date-col">
         {dateStr && <span className="editorial-entry__date">{dateStr}</span>}
+        {isWip && (
+          <span className="project-status project-status--wip">
+            <span className="project-status__dot" aria-hidden="true" />
+            {t('projects.inProgress', 'In progress')}
+          </span>
+        )}
       </div>
       <div className="editorial-entry__text">
         <h3 className="editorial-entry__title">{project.title}</h3>
