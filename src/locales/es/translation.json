@@ -158,5 +158,20 @@
   "languages": {
     "en": "inglés",
     "es": "español"
+  },
+  "player": {
+    "region": "Reproductor de vídeo",
+    "play": "Reproducir",
+    "pause": "Pausa",
+    "replay": "Repetir",
+    "mute": "Silenciar",
+    "unmute": "Activar sonido",
+    "volume": "Volumen",
+    "seek": "Buscar",
+    "fullscreen": "Pantalla completa",
+    "exitFullscreen": "Salir de pantalla completa",
+    "loading": "Cargando",
+    "error": "Este vídeo no se puede reproducir en tu navegador.",
+    "openFile": "Abrir el archivo"
   }
 }

@@ -96,6 +96,10 @@ function groupBySlug(items) {
   const map = new Map()
   for (const item of items) {
     if (!item.slug || !item.language) continue
+    // Documents in dropped languages survive in Sanity; the sitemap must never
+    // advertise their URLs, which only redirect. This also keeps them out of
+    // the hreflang alternates built from the same list.
+    if (!LANGS.includes(item.language)) continue
     if (!map.has(item.slug)) map.set(item.slug, { langs: [], lastmod: null, projectKey: null })
     const g = map.get(item.slug)
     if (item.projectKey && !g.projectKey) g.projectKey = item.projectKey

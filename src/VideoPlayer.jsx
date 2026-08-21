@@ -93,12 +93,51 @@ export function VideoPlayer({
   const [hover, setHover] = useState(null)
   const [fullscreen, setFullscreen] = useState(false)
   const [idle, setIdle] = useState(false)
+  const [shouldLoad, setShouldLoad] = useState(false)
+  const [inView, setInView] = useState(false)
+  const [failed, setFailed] = useState(false)
+  const [waiting, setWaiting] = useState(false)
 
   const progress = duration > 0 ? Math.min(1, current / duration) : 0
   const controlsHidden = started && playing && idle && !scrubbing
 
+  /* ── Viewport ─────────────────────────────────────────────
+     Nothing is fetched until the player is close to the screen: a page with
+     several clips would otherwise open N connections at once. Lenis scrolls
+     `.page-content.expanded` natively, so that element is the right root. */
+  useEffect(() => {
+    const el = wrapRef.current
+    if (!el || typeof IntersectionObserver === 'undefined') {
+      setShouldLoad(true)
+      setInView(true)
+      return
+    }
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setInView(entry.isIntersecting)
+        // Sticky: once loaded it stays loaded, or we would throw away
+        // buffering and playback position every time it scrolls past.
+        if (entry.isIntersecting) setShouldLoad(true)
+      },
+      { root: el.closest('.page-content.expanded'), rootMargin: '300px 0px' }
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [])
+
+  // Silent loops are decoration: off screen they are pure waste. A video the
+  // visitor started themselves keeps playing — they may be listening to it.
+  useEffect(() => {
+    if (!(autoPlay && loop) || !shouldLoad) return
+    const v = videoRef.current
+    if (!v) return
+    if (inView) v.play().catch(() => {})
+    else v.pause()
+  }, [inView, autoPlay, loop, shouldLoad])
+
   /* ── Playback ─────────────────────────────────────────── */
   const togglePlay = useCallback(() => {
+    setShouldLoad(true)
     const v = videoRef.current
     if (!v) return
     setStarted(true)
@@ -272,7 +311,7 @@ export function VideoPlayer({
       <video
         ref={videoRef}
         className="vp-video"
-        src={src}
+        src={shouldLoad ? src : undefined}
         poster={poster}
         playsInline
         loop={loop}
@@ -282,6 +321,10 @@ export function VideoPlayer({
         onClick={togglePlay}
         onPlay={() => { setPlaying(true); setEnded(false); setStarted(true) }}
         onPause={() => setPlaying(false)}
+        onError={() => { setFailed(true); setWaiting(false) }}
+        onWaiting={() => setWaiting(true)}
+        onPlaying={() => setWaiting(false)}
+        onCanPlay={() => setWaiting(false)}
         onEnded={() => { setPlaying(false); setEnded(true) }}
         onLoadedMetadata={e => {
           setDuration(e.currentTarget.duration || 0)
@@ -304,8 +347,31 @@ export function VideoPlayer({
         </span>
       )}
 
+      {/* A codec the browser refuses is otherwise a dead black rectangle */}
+      {failed && (
+        <div className="vp-error" role="alert">
+          <svg {...svgProps} className="vp-error-icon" aria-hidden="true">
+            <circle cx="12" cy="12" r="9" />
+            <line x1="12" y1="8" x2="12" y2="13" />
+            <line x1="12" y1="16.5" x2="12" y2="16.5" />
+          </svg>
+          <p className="vp-error-text">
+            {t('player.error', 'This video cannot be played in your browser.')}
+          </p>
+          {src && (
+            <a className="vp-error-link" href={src} target="_blank" rel="noopener noreferrer">
+              {t('player.openFile', 'Open the file')}
+            </a>
+          )}
+        </div>
+      )}
+
+      {waiting && !failed && (
+        <span className="vp-spinner" role="status" aria-label={t('player.loading', 'Loading')} />
+      )}
+
       {/* Poster / replay overlay */}
-      {(!started || ended) && (
+      {!failed && (!started || ended) && (
         <button
           type="button"
           className="vp-bigplay"

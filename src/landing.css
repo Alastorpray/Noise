@@ -3458,6 +3458,69 @@ mark.blog-highlight {
 }
 
 /* ── Poster / replay ─────────────────────────────────────── */
+.vp-error {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  padding: var(--space-lg);
+  text-align: center;
+  background: rgba(0, 0, 0, 0.82);
+  color: #fff;
+}
+
+.vp-error-icon {
+  width: 28px;
+  height: 28px;
+  color: var(--accent);
+}
+
+.vp-error-text {
+  margin: 0;
+  max-width: 32ch;
+  font-size: 0.9375rem;
+  line-height: 1.45;
+}
+
+.vp-error-link {
+  font-family: var(--font-data);
+  font-size: var(--caption);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: 1px solid currentColor;
+}
+
+.vp-spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 3;
+  width: 34px;
+  height: 34px;
+  margin: -17px 0 0 -17px;
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: vp-spin 800ms linear infinite;
+  pointer-events: none;
+}
+
+@keyframes vp-spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vp-spinner {
+    animation-duration: 2s;
+  }
+}
+
 .vp-bigplay {
   position: absolute;
   inset: 0;
