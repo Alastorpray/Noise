@@ -263,28 +263,82 @@ export default {
           }
         },
 
-        // ── Video embed (YouTube / Vimeo) ─────────────────────────
+        // ── Video: uploaded file or YouTube / Vimeo link ──────────
         {
           type: 'object',
-          name: 'videoEmbed',
+          name: 'video',
           title: 'Video',
           fields: [
+            {
+              name: 'source',
+              title: 'Source',
+              type: 'string',
+              options: {
+                list: [
+                  { title: 'Upload a file', value: 'upload' },
+                  { title: 'YouTube / Vimeo link', value: 'embed' }
+                ],
+                layout: 'radio'
+              },
+              initialValue: 'upload',
+              validation: Rule => Rule.required()
+            },
+            {
+              name: 'file',
+              title: 'Video file',
+              type: 'file',
+              options: { accept: 'video/*' },
+              hidden: ({ parent }) => parent?.source !== 'upload',
+              validation: Rule => Rule.custom((file, context) =>
+                context.parent?.source === 'upload' && !file?.asset
+                  ? 'Upload a video file'
+                  : true
+              )
+            },
             {
               name: 'url',
               title: 'YouTube or Vimeo URL',
               type: 'url',
-              validation: Rule => Rule.required()
+              hidden: ({ parent }) => parent?.source !== 'embed',
+              validation: Rule => Rule
+                .uri({ scheme: ['http', 'https'] })
+                .custom((url, context) =>
+                  context.parent?.source === 'embed' && !url
+                    ? 'Paste the video URL'
+                    : true
+                )
+            },
+            {
+              name: 'poster',
+              title: 'Poster image',
+              type: 'image',
+              options: { hotspot: true },
+              description: 'Frame shown before playback starts',
+              // YouTube and Vimeo bring their own thumbnail
+              hidden: ({ parent }) => parent?.source !== 'upload'
             },
             {
               name: 'caption',
               title: 'Caption',
               type: 'string'
+            },
+            {
+              name: 'loop',
+              title: 'Loop silently',
+              type: 'boolean',
+              description: 'Autoplay muted on repeat, for short clips',
+              initialValue: false,
+              hidden: ({ parent }) => parent?.source !== 'upload'
             }
           ],
           preview: {
-            select: { url: 'url', caption: 'caption' },
-            prepare({ url, caption }) {
-              return { title: caption || 'Video', subtitle: url }
+            select: { source: 'source', caption: 'caption', url: 'url', media: 'poster' },
+            prepare({ source, caption, url, media }) {
+              return {
+                title: caption || 'Video',
+                subtitle: source === 'embed' ? (url || 'Link') : 'Uploaded file',
+                media
+              }
             }
           }
         },

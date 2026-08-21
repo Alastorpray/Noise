@@ -25,6 +25,44 @@ export const ptComponents = {
       )
     },
 
+    // One block, two sources: an uploaded file or a YouTube / Vimeo link
+    video: ({ value }) => {
+      if (value?.source === 'embed') {
+        const embedUrl = getVideoEmbedUrl(value.url)
+        if (!embedUrl) return null
+        return (
+          <figure className="blog-video-embed">
+            <div className="blog-video-embed-wrapper">
+              <iframe
+                src={embedUrl}
+                title={value.caption || 'Video'}
+                allowFullScreen
+                loading="lazy"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              />
+            </div>
+            {value.caption && <figcaption className="blog-img-caption">{value.caption}</figcaption>}
+          </figure>
+        )
+      }
+
+      if (!value?.fileUrl) return null
+      return (
+        <figure className="blog-figure">
+          <VideoPlayer
+            src={value.fileUrl}
+            poster={value.poster ? urlFor(value.poster).width(1200).auto('format').url() : undefined}
+            autoPlay={Boolean(value.loop)}
+            loop={Boolean(value.loop)}
+            label={value.caption}
+          />
+          {value.caption && <figcaption className="blog-img-caption">{value.caption}</figcaption>}
+        </figure>
+      )
+    },
+
+    // Legacy blocks — the schema no longer offers them, but any document
+    // written before the two were merged still renders.
     videoFile: ({ value }) => {
       if (!value?.url) return null
       return (
@@ -121,5 +159,6 @@ export const ptComponents = {
 // GROQ projection that resolves uploaded video assets inside a `body` field.
 export const BODY_PROJECTION = `body[]{
   ...,
+  _type == "video" => { ..., "fileUrl": file.asset->url },
   _type == "videoFile" => { ..., "url": file.asset->url }
 }`
