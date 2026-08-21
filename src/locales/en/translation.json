@@ -2,7 +2,7 @@
   "nav": {
     "about": "About",
     "research": "Research",
-    "portfolio": "Portfolio",
+    "projects": "Projects",
     "blog": "Blog",
     "contact": "Contact"
   },
@@ -83,19 +83,35 @@
     "read": "Read",
     "back": "Back to Research"
   },
-  "portfolio": {
-    "title": "Our Work",
-    "eyebrow": "Portfolio",
-    "heroTitle": "Work.",
-    "heroSubtitle": "Selected projects across spatial computing, 3D printing, educational tools and interactive experiences.",
+  "projects": {
+    "title": "Projects",
+    "eyebrow": "Projects",
+    "heroTitle": "Projects.",
+    "heroSubtitle": "Selected work across spatial computing, 3D printing, educational tools and interactive experiences — including projects still running.",
     "all": "All",
     "spatial": "Spatial Computing",
     "print3d": "3D Print",
     "educational": "Educational",
     "gameAsset": "Game Asset",
+    "other": "Other",
+    "wip": "In progress",
     "empty": "No projects yet.",
-    "back": "Back to Portfolio",
-    "other": "Other"
+    "back": "Back to Projects",
+    "status": "Status",
+    "inProgress": "In progress",
+    "delivered": "Delivered",
+    "client": "Client",
+    "sector": "Sector",
+    "role": "Role",
+    "period": "Period",
+    "since": "Since {{date}}",
+    "log": "Log",
+    "readEntry": "Read entry",
+    "close": "Close",
+    "backToProject": "Back to {{title}}",
+    "today": "Today",
+    "undated": "No date",
+    "rhythm": "Log timeline"
   },
   "blog": {
     "title": "Our Blog",
@@ -141,7 +157,6 @@
   },
   "languages": {
     "en": "English",
-    "es": "Spanish",
-    "de": "German"
+    "es": "Spanish"
   }
 }

@@ -1,6 +1,8 @@
+// Kept as `post` so existing documents and the disabled /blog route stay valid.
+// In practice these are the dated log entries shown inside a project page.
 export default {
   name: 'post',
-  title: 'Post',
+  title: 'Log entry',
   type: 'document',
   fields: [
     {
@@ -62,6 +64,13 @@ export default {
       title: 'Categories',
       type: 'array',
       of: [{ type: 'reference', to: { type: 'category' } }],
+    },
+    {
+      name: 'projectKey',
+      title: 'Project',
+      type: 'string',
+      description: 'Slug of the project this entry belongs to, e.g. "kiosk-museo". Deliberately a plain slug and not a reference: the slug is shared across EN/ES/DE, so it survives auto-translation. Leave empty for a standalone entry.',
+      validation: Rule => Rule.regex(/^[a-z0-9-]+$/, { name: 'slug' }).warning('Should look like a slug: lowercase, numbers and hyphens')
     },
     {
       name: 'publishedAt',
@@ -316,15 +325,18 @@ export default {
   preview: {
     select: {
       title: 'title',
-      author: 'author.name',
+      projectKey: 'projectKey',
+      publishedAt: 'publishedAt',
+      language: 'language',
       media: 'mainImage',
     },
-    prepare({ title, author, media }) {
-      return {
-        title,
-        subtitle: author ? `by ${author}` : 'No author',
-        media,
-      }
+    prepare({ title, projectKey, publishedAt, language, media }) {
+      const parts = [
+        language?.toUpperCase(),
+        publishedAt ? publishedAt.slice(0, 10) : 'undated',
+        projectKey || 'standalone',
+      ].filter(Boolean)
+      return { title, subtitle: parts.join(' · '), media }
     },
   },
 }

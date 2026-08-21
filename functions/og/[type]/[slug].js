@@ -24,7 +24,7 @@ export async function onRequestGet({ params, request }) {
     project: '"category": division',
     research: '"category": fieldOfStudy',
   }
-  const FALLBACK_CATEGORY = { post: 'Blog', project: 'Portfolio', research: 'Research' }
+  const FALLBACK_CATEGORY = { post: 'Log', project: 'Projects', research: 'Research' }
 
   if (!CATEGORY_FIELD[type]) {
     return new Response('Invalid type', { status: 400 })

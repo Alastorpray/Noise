@@ -1,5 +1,5 @@
 const SITE = 'https://coresearch.studio'
-const LANGS = ['en', 'es', 'de']
+const LANGS = ['en', 'es']
 const DEFAULT_LANG = 'en'
 const PROJECT_ID = '2lf16gxk'
 const DATASET = 'production'
@@ -12,6 +12,7 @@ const GROQ = `{
   "posts": *[_type == "post" && defined(slug.current)] {
     "slug": slug.current,
     language,
+    projectKey,
     "lastmod": coalesce(_updatedAt, publishedAt)
   },
   "projects": *[_type == "project" && defined(slug.current)] {
@@ -48,7 +49,7 @@ export async function onRequestGet() {
 function buildSitemap({ posts, projects, research }) {
   const entries = []
 
-  const sections = ['', '/research', '/portfolio']
+  const sections = ['', '/research', '/projects']
   if (BLOG_ENABLED) sections.push('/blog')
 
   for (const path of sections) {
@@ -67,7 +68,14 @@ function buildSitemap({ posts, projects, research }) {
 
   for (const [slug, { langs, lastmod }] of groupBySlug(projects)) {
     for (const lang of langs) {
-      entries.push(urlEntry(lang, `/portfolio/${slug}`, langs, lastmod))
+      entries.push(urlEntry(lang, `/projects/${slug}`, langs, lastmod))
+    }
+  }
+
+  // Log entries are indexed under the project they document
+  for (const [slug, { langs, lastmod, projectKey }] of groupBySlug(posts.filter(p => p.projectKey))) {
+    for (const lang of langs) {
+      entries.push(urlEntry(lang, `/projects/${projectKey}/log/${slug}`, langs, lastmod))
     }
   }
 
@@ -88,8 +96,9 @@ function groupBySlug(items) {
   const map = new Map()
   for (const item of items) {
     if (!item.slug || !item.language) continue
-    if (!map.has(item.slug)) map.set(item.slug, { langs: [], lastmod: null })
+    if (!map.has(item.slug)) map.set(item.slug, { langs: [], lastmod: null, projectKey: null })
     const g = map.get(item.slug)
+    if (item.projectKey && !g.projectKey) g.projectKey = item.projectKey
     if (!g.langs.includes(item.language)) g.langs.push(item.language)
     if (item.lastmod && (!g.lastmod || item.lastmod > g.lastmod)) g.lastmod = item.lastmod
   }
