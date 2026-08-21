@@ -158,5 +158,20 @@
   "languages": {
     "en": "English",
     "es": "Spanish"
+  },
+  "player": {
+    "region": "Video player",
+    "play": "Play",
+    "pause": "Pause",
+    "replay": "Replay",
+    "mute": "Mute",
+    "unmute": "Unmute",
+    "volume": "Volume",
+    "seek": "Seek",
+    "fullscreen": "Fullscreen",
+    "exitFullscreen": "Exit fullscreen",
+    "loading": "Loading",
+    "error": "This video cannot be played in your browser.",
+    "openFile": "Open the file"
   }
 }
